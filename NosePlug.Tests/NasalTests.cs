@@ -1,3 +1,4 @@
+using NosePlug.Tests.TestClasses;
 using System;
 using System.Threading.Tasks;
 using Xunit;
@@ -7,7 +8,45 @@ namespace NosePlug.Tests
     public class NasalTests
     {
         [Fact]
-        public async Task IsItMyBirthday()
+        public async Task CanReplacePublicPropertyGetter()
+        {
+            Guid testGuid = Guid.NewGuid();
+            Nasal mocker = new();
+            mocker.Property(() => HasPublicProperty.Foo)
+                  .Returns(() => testGuid);
+
+            using IDisposable _ = await mocker.ApplyAsync();
+            
+            Assert.Equal(testGuid, HasPublicProperty.Foo);
+        }
+
+        [Fact(Skip = "TODO")]
+        public async Task CanReplacePublicPropertySetter()
+        {
+
+        }
+
+        [Fact]
+        public async Task GetReplacePrivarPropertyGetter()
+        {
+            Guid testGuid = Guid.NewGuid();
+            Nasal mocker = new();
+            mocker.Property<HasPrivateProperty>("Foo")
+                  .Returns(() => testGuid);
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            Assert.Equal(testGuid, HasPrivateProperty.ReadPrivateProperty());
+        }
+
+        [Fact(Skip = "TODO")]
+        public async Task CanReplacePrivatePropertySetter()
+        {
+
+        }
+
+        [Fact]
+        public async Task CanReplaceAndUndoDateTimeNow()
         {
             DateTime today = DateTime.Today;
 
@@ -25,7 +64,7 @@ namespace NosePlug.Tests
         }
 
         [Fact]
-        public async Task AhToBeYoungAgain()
+        public async Task CanReplaceAndUndoTaskRun()
         {
             Nasal mocker = new();
             mocker.Method(() => Task.Run((Func<int>)null!))
@@ -37,25 +76,6 @@ namespace NosePlug.Tests
             }
 
             Assert.Equal(21, await Task.Run(() => 21));
-        }
-
-        [Fact]
-        public async Task TestSyntax()
-        {
-            //Arrange
-            Nasal mocker = new();
-            mocker.Method(() => Task.Run((Func<int>)null!)).Returns(() => Task.FromResult(42));
-            mocker.Property<DateTime>(nameof(DateTime.Today)).Returns(() => new DateTime(1987, 4, 20));
-
-            using IDisposable _ = await mocker.ApplyAsync();
-
-            //Act
-            DateTime today = DateTime.Today;
-            int result = await Task.Run(() => 21);
-
-            //Assert
-            Assert.Equal(new DateTime(1987, 4, 20), today);
-            Assert.Equal(42, result);
         }
     }
 }

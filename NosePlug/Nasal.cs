@@ -12,25 +12,23 @@ namespace NosePlug
     {
         private List<IPlug> Plugs { get; } = new();
 
-        public INasalPlug Property<T>(string name)
+        public INasalPlug Property(PropertyInfo property)
         {
-            var property = typeof(T).GetProperty(name);
-            MethodInfo origianl = property!.GetGetMethod()!;
+            if (property is null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
+
+            MethodInfo origianl = property!.GetGetMethod(true)!;
 
             Smell smell = GetCodeSmell(origianl);
 
             return new NasalPlug(this, smell);
         }
 
-        public INasalPlug Method(Expression<Action> methodExpression)
+        public INasalPlug GetPlug(MethodInfo method)
         {
-            var methodCallExpression = methodExpression.Body as MethodCallExpression;
-            if (methodCallExpression is null)
-            {
-                throw new ArgumentException();
-            }
-            MethodInfo origianl = methodCallExpression.Method;
-            Smell smell = GetCodeSmell(origianl);
+            Smell smell = GetCodeSmell(method);
             return new NasalPlug(this, smell);
         }
 
@@ -49,7 +47,13 @@ namespace NosePlug
         {
             foreach (var plug in Plugs.OrderBy(x => x.Id))
             {
-                await plug.PatchAsync();
+                await plug.AcquireLockAsync();
+            }
+
+            //Ordering here not strictly neccisary since we have acquired all locks
+            foreach(var plug in Plugs.OrderBy(x => x.Id))
+            {
+                plug.Patch();
             }
 
             return new NoseCleaner(this);

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace NosePlug
 {
-
     internal class Plug<TReturn> : IPlug
     {
         private static Dictionary<InterceptorKey, Func<TReturn>> Callbacks { get; } = new();
@@ -32,9 +31,10 @@ namespace NosePlug
         public InterceptorKey Key { get; }
         public Func<TReturn> Interceptor { get; }
 
-        public async Task PatchAsync()
+        public async Task AcquireLockAsync() => await Key.LockAsync();
+
+        public void Patch()
         {
-            await Key.LockAsync();
             lock (Callbacks)
             {
                 Callbacks[Key] = Interceptor;

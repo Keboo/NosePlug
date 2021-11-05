@@ -6,6 +6,7 @@ namespace NosePlug
     internal interface IPlug : IDisposable
     {
         string Id { get; }
-        Task PatchAsync();
+        Task AcquireLockAsync();
+        void Patch();
     }
 }
