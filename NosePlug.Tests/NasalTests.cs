@@ -11,8 +11,10 @@ namespace NosePlug.Tests
         {
             DateTime today = DateTime.Today;
 
-            using (await Smell<DateTime>.PlugProperty(
-                nameof(DateTime.Today), () => new DateTime(1987, 4, 20)))
+            Nasal mocker = new();
+            mocker.PlugProperty<DateTime, DateTime>(nameof(DateTime.Today), () => new DateTime(1987, 4, 20));
+
+            using (await mocker.ApplyAsync())
             {
                 Assert.Equal(new DateTime(1987, 4, 20), DateTime.Today);
             }
@@ -24,8 +26,10 @@ namespace NosePlug.Tests
         [Fact]
         public async Task AhToBeYoungAgain()
         {
-            using (await Smell<Task>.PlugMethod(() => Task.Run((Func<int>)null!),
-                    () => Task.FromResult(42)))
+            Nasal mocker = new();
+            mocker.PlugMethod(() => Task.Run((Func<int>)null!), () => Task.FromResult(42));
+
+            using (await mocker.ApplyAsync())
             {
                 Assert.Equal(42, await Task.Run(() => 21));
             }
@@ -33,20 +37,23 @@ namespace NosePlug.Tests
             Assert.Equal(21, await Task.Run(() => 21));
         }
 
-        [Fact(Skip = "Just testing syntax")]
+        [Fact]
         public async Task TestSyntax()
         {
             //Arrange
             Nasal mocker = new();
             mocker.PlugMethod(() => Task.Run((Func<int>)null!), () => Task.FromResult(42));
-            mocker.PlugProperty<DateTime>(nameof(DateTime.Today), () => new DateTime(1987, 4, 20));
+            mocker.PlugProperty<DateTime, DateTime>(nameof(DateTime.Today), () => new DateTime(1987, 4, 20));
 
             using IDisposable _ = await mocker.ApplyAsync();
 
             //Act
-
+            DateTime today = DateTime.Today;
+            int result = await Task.Run(() => 21);
 
             //Assert
+            Assert.Equal(new DateTime(1987, 4, 20), today);
+            Assert.Equal(42, result);
         }
     }
 }
