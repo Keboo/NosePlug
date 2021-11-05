@@ -7,11 +7,6 @@ using System.Threading.Tasks;
 namespace NosePlug
 {
 
-    internal interface IPlug : IDisposable
-    {
-        Task PatchAsync();
-    }
-
     internal class Plug<TReturn> : IPlug
     {
         private static Dictionary<InterceptorKey, Func<TReturn>> Callbacks { get; } = new();

@@ -12,7 +12,8 @@ namespace NosePlug.Tests
             DateTime today = DateTime.Today;
 
             Nasal mocker = new();
-            mocker.PlugProperty<DateTime, DateTime>(nameof(DateTime.Today), () => new DateTime(1987, 4, 20));
+            mocker.Property<DateTime>(nameof(DateTime.Today))
+                  .Returns(() => new DateTime(1987, 4, 20));
 
             using (await mocker.ApplyAsync())
             {
@@ -27,7 +28,8 @@ namespace NosePlug.Tests
         public async Task AhToBeYoungAgain()
         {
             Nasal mocker = new();
-            mocker.PlugMethod(() => Task.Run((Func<int>)null!), () => Task.FromResult(42));
+            mocker.Method(() => Task.Run((Func<int>)null!))
+                  .Returns(() => Task.FromResult(42));
 
             using (await mocker.ApplyAsync())
             {
@@ -42,8 +44,8 @@ namespace NosePlug.Tests
         {
             //Arrange
             Nasal mocker = new();
-            mocker.PlugMethod(() => Task.Run((Func<int>)null!), () => Task.FromResult(42));
-            mocker.PlugProperty<DateTime, DateTime>(nameof(DateTime.Today), () => new DateTime(1987, 4, 20));
+            mocker.Method(() => Task.Run((Func<int>)null!)).Returns(() => Task.FromResult(42));
+            mocker.Property<DateTime>(nameof(DateTime.Today)).Returns(() => new DateTime(1987, 4, 20));
 
             using IDisposable _ = await mocker.ApplyAsync();
 

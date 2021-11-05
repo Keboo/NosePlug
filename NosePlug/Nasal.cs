@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -11,22 +12,17 @@ namespace NosePlug
     {
         private List<IPlug> Plugs { get; } = new();
 
-        public Nasal PlugProperty<T, TReturn>(
-            string name, Func<TReturn> getReturnValue)
+        public INasalPlug Property<T>(string name)
         {
-            string id = GetId<T>(name);
             var property = typeof(T).GetProperty(name);
             MethodInfo origianl = property!.GetGetMethod()!;
 
-            Smell smell = GetCodeSmell(origianl, id);
-            IPlug plug = smell.Plug<TReturn>(getReturnValue);
-            Plugs.Add(plug);
+            Smell smell = GetCodeSmell(origianl);
 
-            return this;
+            return new NasalPlug(this, smell);
         }
 
-        public Nasal PlugMethod<TReturn>
-            (Expression<Action> methodExpression, Func<TReturn> getReturnValue)
+        public INasalPlug Method(Expression<Action> methodExpression)
         {
             var methodCallExpression = methodExpression.Body as MethodCallExpression;
             if (methodCallExpression is null)
@@ -34,20 +30,13 @@ namespace NosePlug
                 throw new ArgumentException();
             }
             MethodInfo origianl = methodCallExpression.Method;
-            string id = GetId(origianl.Name, origianl.DeclaringType!);
-            Smell smell = GetCodeSmell(origianl, id);
-
-            IPlug plug = smell.Plug(getReturnValue);
-            Plugs.Add(plug);
-
-            return this;
+            Smell smell = GetCodeSmell(origianl);
+            return new NasalPlug(this, smell);
         }
 
-        private static string GetId<T>(string name) => GetId(name, typeof(T));
-        private static string GetId(string name, Type type) => $"noseplug.{type.Name}.{name}";
-
-        private static Smell GetCodeSmell(MethodInfo method, string id)
+        private static Smell GetCodeSmell(MethodInfo method)
         {
+            string id = $"noseplug.{method.FullDescription()}";
             var instance = new Harmony(id);
 
             var processor = instance.CreateProcessor(method);
@@ -58,10 +47,11 @@ namespace NosePlug
 
         public async Task<IDisposable> ApplyAsync()
         {
-            foreach(var plug in Plugs)
+            foreach (var plug in Plugs.OrderBy(x => x.Id))
             {
                 await plug.PatchAsync();
             }
+
             return new NoseCleaner(this);
         }
 
@@ -76,10 +66,28 @@ namespace NosePlug
 
             public void Dispose()
             {
-                foreach(var plug in Nasal.Plugs)
+                foreach (var plug in Nasal.Plugs.OrderByDescending(x => x.Id))
                 {
                     plug.Dispose();
                 }
+            }
+        }
+
+        internal class NasalPlug : INasalPlug
+        {
+            private Nasal Nasal { get; }
+            private Smell Smell { get; }
+
+            public NasalPlug(Nasal nasal, Smell smell)
+            {
+                Nasal = nasal;
+                Smell = smell;
+            }
+
+            public void Returns<TReturn>(Func<TReturn> getReturnValue)
+            {
+                IPlug plug = Smell.Plug(getReturnValue);
+                Nasal.Plugs.Add(plug);
             }
         }
     }
