@@ -5,7 +5,9 @@ VisualStudioVersion = 17.0.31825.309
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NosePlug", "NosePlug\NosePlug.csproj", "{7CBB1904-DC97-4A86-8CA5-C167845D2A90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NosePlug.Tests", "NosePlug.Tests\NosePlug.Tests.csproj", "{88F55E91-CD2F-43FD-92FB-0E34320772DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NosePlug.Tests", "NosePlug.Tests\NosePlug.Tests.csproj", "{88F55E91-CD2F-43FD-92FB-0E34320772DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NosePlug.AutoMock", "NosePlug.AutoMock\NosePlug.AutoMock.csproj", "{17A53D19-4409-4692-9B1A-CC963A8CE5C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{88F55E91-CD2F-43FD-92FB-0E34320772DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88F55E91-CD2F-43FD-92FB-0E34320772DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88F55E91-CD2F-43FD-92FB-0E34320772DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17A53D19-4409-4692-9B1A-CC963A8CE5C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17A53D19-4409-4692-9B1A-CC963A8CE5C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17A53D19-4409-4692-9B1A-CC963A8CE5C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17A53D19-4409-4692-9B1A-CC963A8CE5C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
