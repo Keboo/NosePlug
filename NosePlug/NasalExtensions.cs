@@ -6,7 +6,7 @@ namespace NosePlug
 {
     public static class NasalExtensions
     {
-        public static INasalPlug Property<T>(this Nasal nasal, string name)
+        public static INasalPropertyPlug<TProperty> Property<T, TProperty>(this Nasal nasal, string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -15,10 +15,10 @@ namespace NosePlug
 
             var property = typeof(T).GetProperty(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.GetProperty)
                 ?? throw new ArgumentException($"Could not find property '{name}' on type '{typeof(T).FullName}'");
-            return nasal.Property(property);
+            return nasal.Property<TProperty>(property);
         }
 
-        public static INasalPlug Property<TProperty>(this Nasal nasal, 
+        public static INasalPropertyPlug<TProperty> Property<TProperty>(this Nasal nasal, 
             Expression<Func<TProperty>> propertyExpression)
         {
             if (propertyExpression is null)
@@ -31,7 +31,7 @@ namespace NosePlug
                 throw new ArgumentException("Expresion is not a member expression to a property");
             }
 
-            return nasal.Property(propertyInfo);
+            return nasal.Property<TProperty>(propertyInfo);
         }
 
 

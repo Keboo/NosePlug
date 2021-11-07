@@ -2,38 +2,34 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace NosePlug
 {
-    internal class Plug<TReturn> : IPlug
+    internal class MethodPlug<TReturn> : Plug
     {
         private static Dictionary<InterceptorKey, Func<TReturn>> Callbacks { get; } = new();
 
         private static MethodInfo PrefixInfo { get; }
-            = typeof(Plug<TReturn>).GetMethod(nameof(Prefix)) ?? throw new MissingMethodException();
+            = typeof(MethodPlug<TReturn>).GetMethod(nameof(Prefix)) ?? throw new MissingMethodException();
 
-        public Plug(PatchProcessor processor, string id,
+        protected override InterceptorKey Key { get; }
+        private PatchProcessor Processor { get; }
+        private Func<TReturn> Interceptor { get; }
+
+        public MethodPlug(
             MethodBase original,
             Func<TReturn> prefix)
+            : base($"noseplug.{original.FullDescription()}")
         {
-            Processor = processor ?? throw new ArgumentNullException(nameof(processor));
-            Id = id ?? throw new ArgumentNullException(nameof(id));
             Key = InterceptorKey.FromMethod(original ?? throw new ArgumentNullException(nameof(original)));
             Interceptor = prefix ?? throw new ArgumentNullException(nameof(prefix));
-
-            Processor = Processor.AddPrefix(PrefixInfo);
+            
+            var instance = new Harmony(Id);
+            Processor = instance.CreateProcessor(original);
+            Processor.AddPrefix(PrefixInfo);
         }
 
-
-        public PatchProcessor Processor { get; }
-        public string Id { get; }
-        public InterceptorKey Key { get; }
-        public Func<TReturn> Interceptor { get; }
-
-        public async Task AcquireLockAsync() => await Key.LockAsync();
-
-        public void Patch()
+        public override void Patch()
         {
             lock (Callbacks)
             {
@@ -42,14 +38,14 @@ namespace NosePlug
             _ = Processor.Patch();
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             lock (Callbacks)
             {
                 Callbacks.Remove(Key);
             }
             Processor.Unpatch(HarmonyPatchType.All, Id);
-            Key.Unlock();
+            base.Dispose();
         }
 
         public static bool Prefix(ref TReturn __result, MethodBase __originalMethod)

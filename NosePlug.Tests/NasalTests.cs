@@ -20,10 +20,22 @@ namespace NosePlug.Tests
             Assert.Equal(testGuid, HasPublicProperty.Foo);
         }
 
-        [Fact(Skip = "TODO")]
+        [Fact]
         public async Task CanReplacePublicPropertySetter()
         {
+            Guid testGuid = Guid.NewGuid();
+            Guid passedGuid = Guid.Empty;
 
+            Nasal mocker = new();
+            mocker.Property(() => HasPublicProperty.Foo)
+                  .ReplaceSetter(x => passedGuid = x);
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            HasPublicProperty.Foo = testGuid;
+
+            Assert.Equal(testGuid, passedGuid);
+            Assert.NotEqual(testGuid, HasPublicProperty.Foo);
         }
 
         [Fact]
@@ -31,7 +43,7 @@ namespace NosePlug.Tests
         {
             Guid testGuid = Guid.NewGuid();
             Nasal mocker = new();
-            mocker.Property<HasPrivateProperty>("Foo")
+            mocker.Property<HasPrivateProperty, Guid>("Foo")
                   .Returns(() => testGuid);
 
             using IDisposable _ = await mocker.ApplyAsync();
@@ -51,7 +63,7 @@ namespace NosePlug.Tests
             DateTime today = DateTime.Today;
 
             Nasal mocker = new();
-            mocker.Property<DateTime>(nameof(DateTime.Today))
+            mocker.Property(() => DateTime.Today)
                   .Returns(() => new DateTime(1987, 4, 20));
 
             using (await mocker.ApplyAsync())

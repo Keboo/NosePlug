@@ -12,35 +12,19 @@ namespace NosePlug
     {
         private List<IPlug> Plugs { get; } = new();
 
-        public INasalPlug Property(PropertyInfo property)
+        public INasalPropertyPlug<TProperty> Property<TProperty>(PropertyInfo property)
         {
             if (property is null)
             {
                 throw new ArgumentNullException(nameof(property));
             }
 
-            MethodInfo origianl = property!.GetGetMethod(true)!;
-
-            Smell smell = GetCodeSmell(origianl);
-
-            return new NasalPlug(this, smell);
+            return new NasalPropertyPlug<TProperty>(this, property);
         }
 
         public INasalPlug GetPlug(MethodInfo method)
         {
-            Smell smell = GetCodeSmell(method);
-            return new NasalPlug(this, smell);
-        }
-
-        private static Smell GetCodeSmell(MethodInfo method)
-        {
-            string id = $"noseplug.{method.FullDescription()}";
-            var instance = new Harmony(id);
-
-            var processor = instance.CreateProcessor(method);
-
-            Smell smell = new(processor, id, method);
-            return smell;
+            return new NasalMethodPlug(this, method);
         }
 
         public async Task<IDisposable> ApplyAsync()
@@ -51,7 +35,7 @@ namespace NosePlug
             }
 
             //Ordering here not strictly neccisary since we have acquired all locks
-            foreach(var plug in Plugs.OrderBy(x => x.Id))
+            foreach (var plug in Plugs.OrderBy(x => x.Id))
             {
                 plug.Patch();
             }
@@ -77,21 +61,61 @@ namespace NosePlug
             }
         }
 
-        internal class NasalPlug : INasalPlug
+        internal abstract class NasalPlug
         {
-            private Nasal Nasal { get; }
-            private Smell Smell { get; }
+            public Nasal Nasal { get; }
 
-            public NasalPlug(Nasal nasal, Smell smell)
+            public NasalPlug(Nasal nasal)
             {
                 Nasal = nasal;
-                Smell = smell;
             }
+        }
+
+        internal class NasalMethodPlug : NasalPlug, INasalPlug
+        {
+            public NasalMethodPlug(Nasal nasal, MethodInfo method)
+                : base(nasal)
+            {
+                Method = method ?? throw new ArgumentNullException(nameof(method));
+            }
+
+            public MethodInfo Method { get; }
 
             public void Returns<TReturn>(Func<TReturn> getReturnValue)
             {
-                IPlug plug = Smell.Plug(getReturnValue);
+                IPlug plug = new MethodPlug<TReturn>(Method, getReturnValue);
                 Nasal.Plugs.Add(plug);
+            }
+
+        }
+
+        internal class NasalPropertyPlug<TProperty> : NasalPlug, INasalPropertyPlug<TProperty>
+        {
+            public NasalPropertyPlug(Nasal nasal, PropertyInfo property)
+                : base(nasal)
+            {
+                Property = property ?? throw new ArgumentNullException(nameof(property));
+            }
+
+            public PropertyInfo Property { get; }
+            private PropertyPlug<TProperty>? Plug { get; set; }
+
+            public void Returns(Func<TProperty> getReturnValue)
+                => _ = GetPlug(getReturnValue, null);
+
+            public void ReplaceSetter(Action<TProperty> newSetter) 
+                => _ = GetPlug(null, newSetter);
+
+            private IPlug GetPlug(Func<TProperty>? getter, Action<TProperty>? setter)
+            {
+                if (Plug is { } plug)
+                {
+                    Nasal.Plugs.Remove(plug);
+                }
+
+                plug = Plug = new PropertyPlug<TProperty>(Property, getter ?? Plug?.Getter, setter ?? Plug?.Setter);
+                Nasal.Plugs.Add(plug);
+                return plug;
             }
         }
     }

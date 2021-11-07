@@ -6,7 +6,7 @@ namespace NosePlug.AutoMock
 {
     public static class AutoMockerExtensions
     {
-        public static INasalPlug StaticProperty<TProperty>(this Moq.AutoMock.AutoMocker mocker,
+        public static INasalPropertyPlug<TProperty> StaticProperty<TProperty>(this Moq.AutoMock.AutoMocker mocker,
             Expression<Func<TProperty>> propertyExpression)
         {
             Nasal nasal = mocker.Get<Nasal>();

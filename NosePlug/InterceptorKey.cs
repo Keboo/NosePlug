@@ -14,11 +14,11 @@ namespace NosePlug
 
         private SemaphoreSlim Semaphore { get; } = new(1, 1);
 
-        public string Name { get; }
-        public Type? DelcaringType { get; }
-        public IReadOnlyList<Type> ParameterTypes { get; }
+        private string Name { get; }
+        private Type? DelcaringType { get; }
+        private IReadOnlyList<Type> ParameterTypes { get; }
         // Not possible in C# but IL allows methods to differ by return type
-        public Type? ReturnType { get; }
+        private Type? ReturnType { get; }
 
         private InterceptorKey(
             string name,
@@ -31,6 +31,17 @@ namespace NosePlug
             ParameterTypes = paramtersTypes;
             ReturnType = returnType;
         }
+        public static InterceptorKey FromProperty(PropertyInfo property)
+        {
+            InterceptorKey rv = new(
+                property.Name,
+                property.DeclaringType,
+                new[] { property.PropertyType },
+                property.PropertyType
+            );
+
+            return GetKey(rv);
+        }
 
         public static InterceptorKey FromMethod(MethodBase method)
         {
@@ -41,14 +52,19 @@ namespace NosePlug
                 (method as MethodInfo)?.ReturnType
             );
 
+            return GetKey(rv);
+        }
+
+        private static InterceptorKey GetKey(InterceptorKey key)
+        {
             lock (Keys)
             {
-                if (Keys.TryGetValue(rv, out var existing))
+                if (Keys.TryGetValue(key, out var existing))
                 {
                     return existing;
                 }
-                Keys[rv] = rv;
-                return rv;
+                Keys[key] = key;
+                return key;
             }
         }
 
