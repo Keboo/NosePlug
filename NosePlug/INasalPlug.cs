@@ -9,8 +9,8 @@ namespace NosePlug
 
     public interface INasalPropertyPlug<TProperty>
     {
-        void Returns(Func<TProperty> getReturnValue);
+        INasalPropertyPlug<TProperty> Returns(Func<TProperty> getReturnValue);
 
-        void ReplaceSetter(Action<TProperty> newSetter);
+        INasalPropertyPlug<TProperty> ReplaceSetter(Action<TProperty> newSetter);
     }
 }

@@ -100,11 +100,25 @@ namespace NosePlug
             public PropertyInfo Property { get; }
             private PropertyPlug<TProperty>? Plug { get; set; }
 
-            public void Returns(Func<TProperty> getReturnValue)
-                => _ = GetPlug(getReturnValue, null);
+            public INasalPropertyPlug<TProperty> Returns(Func<TProperty> getReturnValue)
+            {
+                if (!Property.CanRead)
+                {
+                    throw new NasalException($"Property '{Property.DeclaringType?.FullName}.{Property.Name}' does not have a getter");
+                }
+                _ = GetPlug(getReturnValue, null);
+                return this;
+            }
 
-            public void ReplaceSetter(Action<TProperty> newSetter) 
-                => _ = GetPlug(null, newSetter);
+            public INasalPropertyPlug<TProperty> ReplaceSetter(Action<TProperty> newSetter)
+            {
+                if (!Property.CanWrite)
+                {
+                    throw new NasalException($"Property '{Property.DeclaringType?.FullName}.{Property.Name}' does not have a setter");
+                }
+                _ = GetPlug(null, newSetter);
+                return this;
+            }
 
             private IPlug GetPlug(Func<TProperty>? getter, Action<TProperty>? setter)
             {

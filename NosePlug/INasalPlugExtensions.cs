@@ -14,14 +14,14 @@ namespace NosePlug
             plug.Returns(() => returnValue);
         }
 
-        public static void Returns<TProperty>(this INasalPropertyPlug<TProperty> plug, TProperty returnValue)
+        public static INasalPropertyPlug<TProperty> Returns<TProperty>(this INasalPropertyPlug<TProperty> plug, TProperty returnValue)
         {
             if (plug is null)
             {
                 throw new ArgumentNullException(nameof(plug));
             }
 
-            plug.Returns(() => returnValue);
+            return plug.Returns(() => returnValue);
         }
     }
 }
