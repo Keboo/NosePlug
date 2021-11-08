@@ -1,8 +1,6 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -19,12 +17,16 @@ namespace NosePlug
                 throw new ArgumentNullException(nameof(property));
             }
 
-            return new NasalPropertyPlug<TProperty>(this, property);
+            PropertyPlug<TProperty> plug = new(property);
+            Plugs.Add(plug);
+            return plug;
         }
 
-        public INasalPlug GetPlug(MethodInfo method)
+        public INasalMethodPlug Method(MethodInfo method)
         {
-            return new NasalMethodPlug(this, method);
+            MethodPlug plug = new(method);
+            Plugs.Add(plug);
+            return plug;
         }
 
         public async Task<IDisposable> ApplyAsync()
@@ -58,78 +60,6 @@ namespace NosePlug
                 {
                     plug.Dispose();
                 }
-            }
-        }
-
-        internal abstract class NasalPlug
-        {
-            public Nasal Nasal { get; }
-
-            public NasalPlug(Nasal nasal)
-            {
-                Nasal = nasal;
-            }
-        }
-
-        internal class NasalMethodPlug : NasalPlug, INasalPlug
-        {
-            public NasalMethodPlug(Nasal nasal, MethodInfo method)
-                : base(nasal)
-            {
-                Method = method ?? throw new ArgumentNullException(nameof(method));
-            }
-
-            public MethodInfo Method { get; }
-
-            public void Returns<TReturn>(Func<TReturn> getReturnValue)
-            {
-                IPlug plug = new MethodPlug<TReturn>(Method, getReturnValue);
-                Nasal.Plugs.Add(plug);
-            }
-
-        }
-
-        internal class NasalPropertyPlug<TProperty> : NasalPlug, INasalPropertyPlug<TProperty>
-        {
-            public NasalPropertyPlug(Nasal nasal, PropertyInfo property)
-                : base(nasal)
-            {
-                Property = property ?? throw new ArgumentNullException(nameof(property));
-            }
-
-            public PropertyInfo Property { get; }
-            private PropertyPlug<TProperty>? Plug { get; set; }
-
-            public INasalPropertyPlug<TProperty> Returns(Func<TProperty> getReturnValue)
-            {
-                if (!Property.CanRead)
-                {
-                    throw new NasalException($"Property '{Property.DeclaringType?.FullName}.{Property.Name}' does not have a getter");
-                }
-                _ = GetPlug(getReturnValue, null);
-                return this;
-            }
-
-            public INasalPropertyPlug<TProperty> ReplaceSetter(Action<TProperty> newSetter)
-            {
-                if (!Property.CanWrite)
-                {
-                    throw new NasalException($"Property '{Property.DeclaringType?.FullName}.{Property.Name}' does not have a setter");
-                }
-                _ = GetPlug(null, newSetter);
-                return this;
-            }
-
-            private IPlug GetPlug(Func<TProperty>? getter, Action<TProperty>? setter)
-            {
-                if (Plug is { } plug)
-                {
-                    Nasal.Plugs.Remove(plug);
-                }
-
-                plug = Plug = new PropertyPlug<TProperty>(Property, getter ?? Plug?.Getter, setter ?? Plug?.Setter);
-                Nasal.Plugs.Add(plug);
-                return plug;
             }
         }
     }

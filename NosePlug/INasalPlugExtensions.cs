@@ -4,7 +4,7 @@ namespace NosePlug
 {
     public static class INasalPlugExtensions
     {
-        public static void Returns<TReturn>(this INasalPlug plug, TReturn returnValue)
+        public static void Returns<TReturn>(this INasalMethodPlug plug, TReturn returnValue)
         {
             if (plug is null)
             {

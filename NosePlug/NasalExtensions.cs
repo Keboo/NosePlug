@@ -35,7 +35,7 @@ namespace NosePlug
         }
 
 
-        public static INasalPlug Method(this Nasal nasal, Expression<Action> methodExpression)
+        public static INasalMethodPlug Method(this Nasal nasal, Expression<Action> methodExpression)
         {
             var methodCallExpression = methodExpression.Body as MethodCallExpression;
             if (methodCallExpression is null)
@@ -43,7 +43,7 @@ namespace NosePlug
                 throw new ArgumentException();
             }
             MethodInfo origianl = methodCallExpression.Method;
-            return nasal.GetPlug(origianl);
+            return nasal.Method(origianl);
         }
     }
 }

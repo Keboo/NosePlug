@@ -184,5 +184,19 @@ namespace NosePlug.Tests
                       .Returns(() => Guid.NewGuid())
             );
         }
+
+        [Fact]
+        public async Task CanCallBaseMethod()
+        {
+            Nasal mocker = new();
+            mocker.Property(() => HasFullProperty.Property)
+                  .CallBase();
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            HasFullProperty.Property = 42;
+
+            Assert.Equal(42, HasFullProperty._field);
+        }
     }
 }
