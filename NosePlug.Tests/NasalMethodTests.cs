@@ -125,5 +125,39 @@ namespace NosePlug.Tests
 
             Assert.Equal(4, await HasPublicMethod.AsyncMethodWithReturn());
         }
+
+        [Fact]
+        public async Task CanReplacePublicMethodWithOverride()
+        {
+            int invocationCount = 0;
+            Nasal mocker = new();
+            mocker.Method(() => HasPublicMethod.Overloaded(0))
+                .Callback(() => invocationCount++);
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            HasPublicMethod.Overloaded(42);
+            Assert.Equal(1, invocationCount);
+        }
+
+        [Fact]
+        public async Task CanReplacePublicMethodWithOverrideWithParametersInCallback()
+        {
+            int invocationCount = 0;
+            string? passedString = null;
+            int passedValue = 0;
+            Nasal mocker = new();
+            mocker.Method(() => HasPublicMethod.Overloaded("", 0))
+                .Callback((string foo, int value) => {
+                    passedString = foo;
+                    passedValue = value;
+                    invocationCount++;
+                });
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            HasPublicMethod.Overloaded("Foo", 42);
+            Assert.Equal(1, invocationCount);
+        }
     }
 }

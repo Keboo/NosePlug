@@ -68,6 +68,12 @@ namespace NosePlug
             return this;
         }
 
+        public INasalMethodPlug Callback(Action<object[]> callback)
+        {
+            MethodHandler = new MethodHandler<object[]>(Key, callback);
+
+        }
+
         public INasalMethodPlug Callback(Func<Task> callback)
         {
             MethodHandler = new MethodHandler<Task>(Key, async () =>
