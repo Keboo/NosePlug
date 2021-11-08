@@ -45,6 +45,85 @@ namespace NosePlug.Tests
             Assert.Equal(1, invocationCount);
         }
 
-        
+        [Fact]
+        public async Task CanReplacePublicMethodWithReturnValue()
+        {
+            Nasal mocker = new();
+
+            mocker.Method(() => HasPublicMethod.ReturnValue())
+                .Returns(4);
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            Assert.Equal(4, HasPublicMethod.ReturnValue());
+        }
+
+        [Fact]
+        public async Task CanReplacePublicAsyncMethodWithActionCallback()
+        {
+            int invocationCount = 0;
+            Nasal mocker = new();
+            mocker.Method(() => HasPublicMethod.AsyncMethod())
+                .Callback(() => invocationCount++);
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            await HasPublicMethod.AsyncMethod();
+            Assert.Equal(1, invocationCount);
+        }
+
+        [Fact]
+        public async Task CanReplacePublicAsyncMethodWithAsyncCallback()
+        {
+            int invocationCount = 0;
+            Nasal mocker = new();
+            mocker.Method(() => HasPublicMethod.AsyncMethod())
+                .Callback(async () =>
+                {
+                    await Task.Yield();
+                    invocationCount++;
+                });
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            await HasPublicMethod.AsyncMethod();
+            Assert.Equal(1, invocationCount);
+        }
+
+        [Fact]
+        public async Task CanReplacePublicAsyncMethodWithReturnValueDelegateCallback()
+        {
+            Nasal mocker = new();
+            mocker.Method(() => HasPublicMethod.AsyncMethodWithReturn())
+                .Returns(() => Task.FromResult(4));
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            Assert.Equal(4, await HasPublicMethod.AsyncMethodWithReturn());
+        }
+
+        [Fact]
+        public async Task CanReplacePublicAsyncMethodWithReturnValueCallback()
+        {
+            Nasal mocker = new();
+            mocker.Method(() => HasPublicMethod.AsyncMethodWithReturn())
+                .Returns(Task.FromResult(4));
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            Assert.Equal(4, await HasPublicMethod.AsyncMethodWithReturn());
+        }
+
+        [Fact]
+        public async Task CanReplacePublicAsyncMethodWithTaskReturnValueCallback()
+        {
+            Nasal mocker = new();
+            mocker.Method(() => HasPublicMethod.AsyncMethodWithReturn())
+                .Returns(4);
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            Assert.Equal(4, await HasPublicMethod.AsyncMethodWithReturn());
+        }
     }
 }

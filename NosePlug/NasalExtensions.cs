@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace NosePlug
 {
@@ -36,6 +37,17 @@ namespace NosePlug
 
 
         public static INasalMethodPlug Method(this Nasal nasal, Expression<Action> methodExpression)
+        {
+            var methodCallExpression = methodExpression.Body as MethodCallExpression;
+            if (methodCallExpression is null)
+            {
+                throw new ArgumentException();
+            }
+            MethodInfo origianl = methodCallExpression.Method;
+            return nasal.Method(origianl);
+        }
+
+        public static INasalMethodPlug Method(this Nasal nasal, Expression<Func<Task>> methodExpression)
         {
             var methodCallExpression = methodExpression.Body as MethodCallExpression;
             if (methodCallExpression is null)

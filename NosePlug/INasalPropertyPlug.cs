@@ -7,6 +7,6 @@ namespace NosePlug
         INasalPropertyPlug<TProperty> Returns(Func<TProperty> getReturnValue);
 
         INasalPropertyPlug<TProperty> ReplaceSetter(Action<TProperty> newSetter);
-        INasalPropertyPlug<TProperty> CallBase(bool shouldCallBase = true);
+        INasalPropertyPlug<TProperty> CallOriginal(bool shouldCallBase = true);
     }
 }

@@ -186,11 +186,11 @@ namespace NosePlug.Tests
         }
 
         [Fact]
-        public async Task CanCallBaseMethod()
+        public async Task CanCallOriginalProperty()
         {
             Nasal mocker = new();
             mocker.Property(() => HasFullProperty.Property)
-                  .CallBase();
+                  .CallOriginal();
 
             using IDisposable _ = await mocker.ApplyAsync();
 

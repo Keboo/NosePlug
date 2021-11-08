@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace NosePlug
 {
@@ -7,5 +8,7 @@ namespace NosePlug
         INasalMethodPlug Returns<TReturn>(Func<TReturn> getReturnValue);
 
         INasalMethodPlug Callback(Action callback);
+        INasalMethodPlug Callback(Func<Task> callback);
+
     }
 }
