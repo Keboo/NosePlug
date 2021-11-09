@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace NosePlug
+namespace NosePlug.Plugs
 {
     internal interface IPlug : IDisposable
     {

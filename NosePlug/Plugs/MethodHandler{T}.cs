@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace NosePlug
+namespace NosePlug.Plugs
 {
     internal sealed class MethodHandler<T1, T2, TReturn> : BaseMethodHandler
     {

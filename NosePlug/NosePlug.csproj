@@ -3,9 +3,15 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
+	<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Lib.Harmony" Version="2.1.1" />
+
+	<ProjectReference Include="../NosePlug.Generators/NosePlug.Generators.csproj">
+	  <OutputItemType>Analyzer</OutputItemType>
+	  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+	</ProjectReference>
   </ItemGroup>
 </Project>

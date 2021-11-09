@@ -14,8 +14,10 @@ namespace NosePlug.Tests.TestClasses
 
         public static void GuidParameter(Guid value) { }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public static async Task AsyncMethod() { }
         public static async Task<int> AsyncMethodWithReturn() => 42;
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
         public static T GenericMethod<T>() { return default; }
     }

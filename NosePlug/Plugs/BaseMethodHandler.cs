@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-namespace NosePlug
+namespace NosePlug.Plugs
 {
     internal abstract class BaseMethodHandler : IMethodHandler
     {
@@ -36,7 +36,7 @@ namespace NosePlug
             }
         }
 
-        protected static bool TryGetHandler<THandler>(MethodBase originalMethod, 
+        protected static bool TryGetHandler<THandler>(MethodBase originalMethod,
             [NotNullWhen(true)] out THandler? handler)
             where THandler : IMethodHandler
         {

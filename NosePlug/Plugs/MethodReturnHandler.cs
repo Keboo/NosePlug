@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace NosePlug
+namespace NosePlug.Plugs
 {
     internal class MethodReturnHandler : IMethodHandler
     {

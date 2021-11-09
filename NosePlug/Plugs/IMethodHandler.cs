@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 
-namespace NosePlug
+namespace NosePlug.Plugs
 {
     internal interface IMethodHandler : IDisposable
     {

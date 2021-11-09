@@ -3,9 +3,9 @@ using System;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace NosePlug
+namespace NosePlug.Plugs
 {
-    internal class MethodPlug : Plug, INasalMethodPlug
+    internal partial class MethodPlug : Plug, INasalMethodPlug
     {
         protected override InterceptorKey Key { get; }
         private PatchProcessor? Processor { get; set; }
@@ -51,7 +51,7 @@ namespace NosePlug
             return this;
         }
 
-        public INasalMethodPlug Callback(Action callback)
+        public INasalMethodPlug Callback_old(Action callback)
         {
             if (Original.ReturnType == typeof(void))
             {
@@ -68,11 +68,11 @@ namespace NosePlug
             return this;
         }
 
-        public INasalMethodPlug Callback<T1, T2>(Action<T1, T2> callback)
-        {
-            MethodHandler = new VoidMethodHandler<T1, T2>(Key, callback);
-            return this;
-        }
+        //public INasalMethodPlug Callback<T1, T2>(Action<T1, T2> callback)
+        //{
+        //    MethodHandler = new VoidMethodHandler<T1, T2>(Key, callback);
+        //    return this;
+        //}
 
         public INasalMethodPlug Callback(Func<Task> callback)
         {

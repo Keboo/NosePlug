@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NosePlug.Tests", "NosePlug.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NosePlug.AutoMock", "NosePlug.AutoMock\NosePlug.AutoMock.csproj", "{17A53D19-4409-4692-9B1A-CC963A8CE5C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NodePlug.Generators", "NodePlug.Generators\NodePlug.Generators.csproj", "{FDF74303-9A00-4975-B49C-C60E0C93A938}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NosePlug.Generators", "NosePlug.Generators\NosePlug.Generators.csproj", "{FDF74303-9A00-4975-B49C-C60E0C93A938}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
