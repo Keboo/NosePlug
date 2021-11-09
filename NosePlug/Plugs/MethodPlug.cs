@@ -10,7 +10,7 @@ namespace NosePlug
         protected override InterceptorKey Key { get; }
         private PatchProcessor? Processor { get; set; }
 
-        private IMethodHandler? MethodHandler { get; set; }
+        internal IMethodHandler? MethodHandler { get; set; }
         private MethodInfo Original { get; }
 
         public MethodPlug(MethodInfo original)
@@ -55,7 +55,7 @@ namespace NosePlug
         {
             if (Original.ReturnType == typeof(void))
             {
-                MethodHandler = new MethodHandler(Key, callback);
+                MethodHandler = new VoidMethodHandler(Key, callback);
             }
             else
             {
@@ -68,10 +68,10 @@ namespace NosePlug
             return this;
         }
 
-        public INasalMethodPlug Callback(Action<object[]> callback)
+        public INasalMethodPlug Callback<T1, T2>(Action<T1, T2> callback)
         {
-            MethodHandler = new MethodHandler<object[]>(Key, callback);
-
+            MethodHandler = new VoidMethodHandler<T1, T2>(Key, callback);
+            return this;
         }
 
         public INasalMethodPlug Callback(Func<Task> callback)

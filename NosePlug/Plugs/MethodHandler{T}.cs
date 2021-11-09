@@ -1,56 +1,74 @@
-﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Reflection;
 
 namespace NosePlug
 {
-    internal class MethodHandler<TReturn> : IMethodHandler
+    internal sealed class MethodHandler<T1, T2, TReturn> : BaseMethodHandler
     {
-        private static MethodInfo PrefixInfo { get; }
+        protected override MethodInfo PrefixInfo { get; }
+            = typeof(MethodHandler<T1, T2, TReturn>).GetMethod(nameof(MethodWithReturnPrefix)) ?? throw new MissingMethodException();
+
+        private Func<T1, T2, TReturn> Callback { get; }
+
+        public MethodHandler(InterceptorKey key, Func<T1, T2, TReturn> callback)
+             : base(key)
+        {
+            Callback = callback;
+        }
+
+        public static bool MethodWithReturnPrefix(MethodBase __originalMethod, ref TReturn __result, T1 __0, T2 __1)
+        {
+            if (TryGetHandler(__originalMethod, out MethodHandler<T1, T2, TReturn>? handler))
+            {
+                __result = handler.Callback(__0, __1);
+                return false;
+            }
+            return true;
+        }
+    }
+
+    internal sealed class MethodHandler<T1, TReturn> : BaseMethodHandler
+    {
+        protected override MethodInfo PrefixInfo { get; }
+            = typeof(MethodHandler<T1, TReturn>).GetMethod(nameof(MethodWithReturnPrefix)) ?? throw new MissingMethodException();
+
+        private Func<T1, TReturn> Callback { get; }
+
+        public MethodHandler(InterceptorKey key, Func<T1, TReturn> callback)
+             : base(key)
+        {
+            Callback = callback;
+        }
+
+        public static bool MethodWithReturnPrefix(MethodBase __originalMethod, ref TReturn __result, T1 __0)
+        {
+            if (TryGetHandler(__originalMethod, out MethodHandler<T1, TReturn>? handler))
+            {
+                __result = handler.Callback(__0);
+                return false;
+            }
+            return true;
+        }
+    }
+
+    internal sealed class MethodHandler<TReturn> : BaseMethodHandler
+    {
+        protected override MethodInfo PrefixInfo { get; }
             = typeof(MethodHandler<TReturn>).GetMethod(nameof(MethodWithReturnPrefix)) ?? throw new MissingMethodException();
 
-        private static Dictionary<InterceptorKey, Func<TReturn>> Callbacks { get; } = new();
+        private Func<TReturn> Callback { get; }
 
-        private InterceptorKey Key { get; }
-
-        private Func<TReturn> Interceptor { get; }
-
-        public MethodHandler(InterceptorKey key, Func<TReturn> interceptor)
+        public MethodHandler(InterceptorKey key, Func<TReturn> callback)
+             : base(key)
         {
-            Key = key;
-            Interceptor = interceptor;
+            Callback = callback;
         }
 
-        public void Patch(PatchProcessor processor)
+        public static bool MethodWithReturnPrefix(MethodBase __originalMethod, ref TReturn __result)
         {
-            lock (Callbacks)
+            if (TryGetHandler(__originalMethod, out MethodHandler<TReturn>? handler))
             {
-                Callbacks[Key] = Interceptor;
-            }
-            processor.AddPrefix(PrefixInfo);
-            _ = processor.Patch();
-        }
-
-        public void Dispose()
-        {
-            lock (Callbacks)
-            {
-                Callbacks.Remove(Key);
-            }
-        }
-
-        public static bool MethodWithReturnPrefix(ref TReturn __result, MethodBase __originalMethod)
-        {
-            bool gotValue;
-            Func<TReturn>? callback;
-            lock (Callbacks)
-            {
-                gotValue = Callbacks.TryGetValue(InterceptorKey.FromMethod(__originalMethod), out callback);
-            }
-            if (gotValue && callback is not null)
-            {
-                __result = callback();
+                __result = handler.Callback();
                 return false;
             }
             return true;

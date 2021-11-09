@@ -43,7 +43,7 @@ namespace NosePlug
         public static bool MethodWithReturnPrefix(ref object? __result, MethodBase __originalMethod)
         {
             bool gotValue;
-            MethodReturnHandler handler;
+            MethodReturnHandler? handler;
             lock (Callbacks)
             {
                 gotValue = Callbacks.TryGetValue(InterceptorKey.FromMethod(__originalMethod), out handler);
