@@ -51,7 +51,7 @@ namespace NosePlug.Plugs
             return this;
         }
 
-        public INasalMethodPlug Callback_old(Action callback)
+        public INasalMethodPlug Callback(Action callback)
         {
             if (Original.ReturnType == typeof(void))
             {
@@ -59,20 +59,10 @@ namespace NosePlug.Plugs
             }
             else
             {
-                MethodHandler = new MethodReturnHandler(Key, () =>
-                {
-                    callback();
-                    return GetDefaultValue(Original.ReturnType);
-                });
+                MethodHandler = new DefaultMethodReturnHandler(Key, callback);
             }
             return this;
         }
-
-        //public INasalMethodPlug Callback<T1, T2>(Action<T1, T2> callback)
-        //{
-        //    MethodHandler = new VoidMethodHandler<T1, T2>(Key, callback);
-        //    return this;
-        //}
 
         public INasalMethodPlug Callback(Func<Task> callback)
         {
@@ -82,33 +72,6 @@ namespace NosePlug.Plugs
             });
 
             return this;
-        }
-
-        private static object? GetDefaultValue(Type type)
-        {
-            if (type == typeof(void))
-            {
-                return null;
-            }
-            if (type.IsValueType)
-            {
-                return Activator.CreateInstance(type);
-            }
-            if (type == typeof(Task))
-            {
-                return Task.CompletedTask;
-            }
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Task<>))
-            {
-                Type taskType = type.GetGenericArguments()[0];
-                object? taskDefaultValue = GetDefaultValue(taskType);
-                //TODO: Cache
-                return typeof(Task)
-                    .GetMethod(nameof(Task.FromResult))!
-                    .MakeGenericMethod(taskType)
-                    .Invoke(null, new[] {taskDefaultValue});
-            }
-            return null;
         }
     }
 }

@@ -20,8 +20,9 @@ namespace NodePlug.Generators
             StringBuilder methodPlugBuilder = new();
 
             handlerBuilder.AppendLine(@"
+#nullable enable
 using System;
-using System.Reflection; 
+using System.Reflection;
 
 namespace NosePlug.Plugs
 {");
@@ -71,14 +72,18 @@ namespace NosePlug.Plugs
         }}
     }}");
 
-                interfaceBuilder.AppendLine(@$"        INasalMethodPlug Callback{genericTypes}(Action{genericTypes} callback);");
 
-                methodPlugBuilder.AppendLine($@"
+                if (numParameters > 0)
+                {
+                    interfaceBuilder.AppendLine(@$"        INasalMethodPlug Callback{genericTypes}(Action{genericTypes} callback);");
+
+                    methodPlugBuilder.AppendLine($@"
         public INasalMethodPlug Callback{genericTypes}(Action{genericTypes} callback)
         {{
             MethodHandler = new VoidMethodHandler{genericTypes}(Key, callback);
             return this;
         }}");
+                }
             }
 
             handlerBuilder.AppendLine("}");
