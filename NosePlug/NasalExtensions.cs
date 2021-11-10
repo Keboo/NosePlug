@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -56,6 +58,41 @@ namespace NosePlug
             }
             MethodInfo origianl = methodCallExpression.Method;
             return nasal.Method(origianl);
+        }
+
+        public static INasalMethodPlug Method<T>(this Nasal nasal, string methodName, params Type[] parameterTypes)
+            => Method<T>(nasal, methodName, null, parameterTypes);
+
+        public static INasalMethodPlug Method<T>(this Nasal nasal, string methodName, Type[]? genericTypeParameters, Type[] parameterTypes)
+        {
+            if (nasal is null)
+            {
+                throw new ArgumentNullException(nameof(nasal));
+            }
+
+            if (string.IsNullOrWhiteSpace(methodName))
+            {
+                throw new ArgumentException($"'{nameof(methodName)}' cannot be null or whitespace.", nameof(methodName));
+            }
+
+            var methods = AccessTools.GetDeclaredMethods(typeof(T))
+                .Where(x => string.Equals(x.Name, methodName))
+                .ToList();
+
+            MethodInfo method = methods.Count switch
+            {
+                0 => throw new MissingMethodException($"Could not find method '{methodName}' on '{typeof(T).FullName}'"),
+                1 => methods[0],
+                _ => methods.FirstOrDefault(x => x.GetParameters().Select(p => p.ParameterType).SequenceEqual(parameterTypes))
+                        ?? throw new MissingMethodException($"Could not find method '{methodName}' on '{typeof(T).FullName}' with parameter type(s) {string.Join(", ", parameterTypes.Select(x => x.FullName))}")
+            };
+
+            if (genericTypeParameters is not null)
+            {
+                method = method.MakeGenericMethod(genericTypeParameters);
+            }
+
+            return nasal.Method(method);
         }
     }
 }

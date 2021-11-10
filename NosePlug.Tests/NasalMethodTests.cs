@@ -158,6 +158,174 @@ namespace NosePlug.Tests
 
             HasPublicMethod.Overloaded("Foo", 42);
             Assert.Equal(1, invocationCount);
+            Assert.Equal("Foo", passedString);
+            Assert.Equal(42, passedValue);
+        }
+
+        [Fact]
+        public async Task CanReplacePublicGenericMethods()
+        {
+            Nasal mocker = new();
+            mocker.Method(() => HasPublicMethod.GenericMethod<int>())
+                .Returns(42);
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            int value = HasPublicMethod.GenericMethod<int>();
+            string? stringValue = HasPublicMethod.GenericMethod<string>();
+
+            Assert.Equal(42, value);
+            Assert.Null(stringValue);
+        }
+
+
+        [Fact]
+        public async Task CanReplacePrivateMethod()
+        {
+            Nasal mocker = new();
+            int invocationCount = 0;
+
+            mocker.Method<HasPrivateMethod>("NoParameters")
+                .Callback(() => invocationCount++);
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            HasPrivateMethod.InvokeNoParameters();
+
+            Assert.Equal(1, invocationCount);
+        }
+
+        [Fact]
+        public async Task CanReplacePrivateMethodWithReturnValue()
+        {
+            Nasal mocker = new();
+
+            mocker.Method<HasPrivateMethod>("ReturnValue")
+                .Returns(4);
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            Assert.Equal(4, HasPrivateMethod.InvokeReturnValue());
+        }
+
+        [Fact]
+        public async Task CanReplacePrivateAsyncMethodWithActionCallback()
+        {
+            int invocationCount = 0;
+            Nasal mocker = new();
+            mocker.Method<HasPrivateMethod>("AsyncMethod")
+                .Callback(() => invocationCount++);
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            await HasPrivateMethod.InvokeAsyncMethod();
+            Assert.Equal(1, invocationCount);
+        }
+
+        [Fact]
+        public async Task CanReplacePrivateAsyncMethodWithAsyncCallback()
+        {
+            int invocationCount = 0;
+            Nasal mocker = new();
+            mocker.Method<HasPrivateMethod>("AsyncMethod")
+                .Callback(async () =>
+                {
+                    await Task.Yield();
+                    invocationCount++;
+                });
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            await HasPrivateMethod.InvokeAsyncMethod();
+            Assert.Equal(1, invocationCount);
+        }
+
+        [Fact]
+        public async Task CanReplacePrivateAsyncMethodWithReturnValueDelegateCallback()
+        {
+            Nasal mocker = new();
+            mocker.Method<HasPrivateMethod>("AsyncMethodWithReturn")
+                .Returns(() => Task.FromResult(4));
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            Assert.Equal(4, await HasPrivateMethod.InvokeAsyncMethodWithReturn());
+        }
+
+        [Fact]
+        public async Task CanReplacePrivateAsyncMethodWithReturnValueCallback()
+        {
+            Nasal mocker = new();
+            mocker.Method<HasPrivateMethod>("AsyncMethodWithReturn")
+                .Returns(Task.FromResult(4));
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            Assert.Equal(4, await HasPrivateMethod.InvokeAsyncMethodWithReturn());
+        }
+
+        [Fact]
+        public async Task CanReplacePrivateAsyncMethodWithTaskReturnValueCallback()
+        {
+            Nasal mocker = new();
+            mocker.Method<HasPrivateMethod>("AsyncMethodWithReturn")
+                .Returns(4);
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            Assert.Equal(4, await HasPrivateMethod.InvokeAsyncMethodWithReturn());
+        }
+
+        [Fact]
+        public async Task CanReplacePrivateMethodWithOverride()
+        {
+            int invocationCount = 0;
+            Nasal mocker = new();
+            mocker.Method<HasPrivateMethod>("Overloaded", typeof(int))
+                .Callback(() => invocationCount++);
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            HasPrivateMethod.InvokeOverloaded(42);
+            Assert.Equal(1, invocationCount);
+        }
+
+        [Fact]
+        public async Task CanReplacePrivateMethodWithOverrideWithParametersInCallback()
+        {
+            int invocationCount = 0;
+            string? passedString = null;
+            int passedValue = 0;
+            Nasal mocker = new();
+            mocker.Method<HasPrivateMethod>("InvokeOverloaded", typeof(string), typeof(int))
+                .Callback((string foo, int value) => {
+                    passedString = foo;
+                    passedValue = value;
+                    invocationCount++;
+                });
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            HasPrivateMethod.InvokeOverloaded("Foo", 42);
+            Assert.Equal(1, invocationCount);
+            Assert.Equal("Foo", passedString);
+            Assert.Equal(42, passedValue);
+        }
+
+        [Fact]
+        public async Task CanReplacePrivateGenericMethods()
+        {
+            Nasal mocker = new();
+            mocker.Method<HasPrivateMethod>("GenericMethod", new Type[] { typeof(int) }, Array.Empty<Type>())
+                .Returns(42);
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            int value = HasPrivateMethod.InvokeGenericMethod<int>();
+            string? stringValue = HasPrivateMethod.InvokeGenericMethod<string>();
+
+            Assert.Equal(42, value);
+            Assert.Null(stringValue);
         }
     }
 }
