@@ -19,6 +19,6 @@ namespace NosePlug.Tests.TestClasses
         public static async Task<int> AsyncMethodWithReturn() => 42;
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
-        public static T GenericMethod<T>() { return default; }
+        public static T GenericMethod<T>() { return default!; }
     }
 }

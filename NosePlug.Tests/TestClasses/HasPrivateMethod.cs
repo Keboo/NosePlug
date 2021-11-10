@@ -10,8 +10,8 @@ namespace NosePlug.Tests.TestClasses
 
         private static void GuidParameter(Guid value) { }
 
-        private static async Task AsyncMethod() { }
+        private static Task AsyncMethod() => Task.CompletedTask;
 
-        private static T GenericMethod<T>() { return default; }
+        private static T GenericMethod<T>() { return default!; }
     }
 }

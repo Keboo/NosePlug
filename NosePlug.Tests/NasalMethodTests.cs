@@ -24,7 +24,7 @@ namespace NosePlug.Tests
         }
 
         [Fact(Skip = "TODO")]
-        public async Task CanReplaceLinqWhereMethod()
+        public void CanReplaceLinqWhereMethod()
         {
 
         }
