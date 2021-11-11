@@ -11,7 +11,6 @@ namespace NosePlug
     {
         private static Dictionary<InterceptorKey, InterceptorKey> Keys { get; } = new();
 
-
         private SemaphoreSlim Semaphore { get; } = new(1, 1);
 
         private string Name { get; }

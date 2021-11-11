@@ -11,6 +11,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NosePlug.AutoMock", "NosePl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NosePlug.Generators", "NosePlug.Generators\NosePlug.Generators.csproj", "{FDF74303-9A00-4975-B49C-C60E0C93A938}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AD7C4780-C9E1-4701-87E7-C781F19C9CBD}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		HashCode.cs = HashCode.cs
+		System.Diagnostics.CodeAnalysis.cs = System.Diagnostics.CodeAnalysis.cs
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
