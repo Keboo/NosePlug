@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using NosePlug.Tests.TestClasses;
 using Xunit;
@@ -23,10 +25,18 @@ namespace NosePlug.Tests
             Assert.Equal(21, await Task.Run(() => 21));
         }
 
-        [Fact(Skip = "TODO")]
-        public void CanReplaceLinqWhereMethod()
+        [Fact]
+        public async Task CanReplaceLinqWhereMethod()
         {
+            Nasal mocker = new();
+            mocker.Method(() => Enumerable.Where(Enumerable.Empty<int>(), x => true))
+                  .Returns<IEnumerable<int>>(() => new[] {1, 2, 3});
 
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            var rv = Enumerable.Range(1, 10).Where(x => x > 5).ToArray();
+
+            Assert.Equal(new[] { 1, 2, 3 }, rv);
         }
 
         [Fact]
@@ -88,6 +98,49 @@ namespace NosePlug.Tests
 
             await HasPublicMethod.AsyncMethod();
             Assert.Equal(1, invocationCount);
+        }
+
+        [Fact]
+        public async Task CanReplacePublicAsyncMethodInludingParametersWithActionCallback()
+        {
+            int invocationCount = 0;
+            int passedValue = 0;
+            Nasal mocker = new();
+            mocker.Method(() => HasPublicMethod.AsyncMethod(0))
+                .Callback((int value) =>
+                {
+                    invocationCount++;
+                    passedValue = value;
+                });
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            await HasPublicMethod.AsyncMethod(42);
+            Assert.Equal(1, invocationCount);
+            Assert.Equal(42, passedValue);
+        }
+
+        [Fact]
+        public async Task CanReplacePublicAsyncMethodInludingMultipleParametersWithActionCallback()
+        {
+            int invocationCount = 0;
+            string passString = "";
+            int passedValue = 0;
+            Nasal mocker = new();
+            mocker.Method(() => HasPublicMethod.AsyncMethod("", 0))
+                .Callback((string @string, int value) =>
+                {
+                    invocationCount++;
+                    passString = @string;
+                    passedValue = value;
+                });
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            await HasPublicMethod.AsyncMethod("Test", 42);
+            Assert.Equal(1, invocationCount);
+            Assert.Equal("Test", passString);
+            Assert.Equal(42, passedValue);
         }
 
         [Fact]
@@ -238,6 +291,49 @@ namespace NosePlug.Tests
 
             await HasPrivateMethod.InvokeAsyncMethod();
             Assert.Equal(1, invocationCount);
+        }
+
+        [Fact]
+        public async Task CanReplacePrivateAsyncMethodInludingParametersWithActionCallback()
+        {
+            int invocationCount = 0;
+            int passedValue = 0;
+            Nasal mocker = new();
+            mocker.Method<HasPrivateMethod>("AsyncMethod", typeof(int))
+                .Callback((int value) =>
+                {
+                    invocationCount++;
+                    passedValue = value;
+                });
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            await HasPrivateMethod.InvokeAsyncMethod(42);
+            Assert.Equal(1, invocationCount);
+            Assert.Equal(42, passedValue);
+        }
+
+        [Fact]
+        public async Task CanReplacePrivateAsyncMethodInludingMultipleParametersWithActionCallback()
+        {
+            int invocationCount = 0;
+            string passString = "";
+            int passedValue = 0;
+            Nasal mocker = new();
+            mocker.Method<HasPrivateMethod>("AsyncMethod", typeof(string), typeof(int))
+                .Callback((string @string, int value) =>
+                {
+                    invocationCount++;
+                    passString = @string;
+                    passedValue = value;
+                });
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            await HasPrivateMethod.InvokeAsyncMethod("Test", 42);
+            Assert.Equal(1, invocationCount);
+            Assert.Equal("Test", passString);
+            Assert.Equal(42, passedValue);
         }
 
         [Fact]

@@ -35,6 +35,7 @@ namespace NosePlug
     {{");
 
             methodPlugBuilder.AppendLine($@"
+#nullable enable
 using System;
 
 namespace NosePlug.Plugs
@@ -44,8 +45,18 @@ namespace NosePlug.Plugs
 
             for (int numParameters = 0; numParameters <= NumberOfParameters; numParameters++)
             {
-                string genericTypes = "<" + string.Join(", ", Enumerable.Range(1, numParameters).Select(x => $"T{x}")) + ">";
-                if (numParameters == 0) genericTypes = "";
+                string genericTypes;
+                string genericTypesWithReturn;
+                if (numParameters == 0)
+                {
+                    genericTypes = "";
+                    genericTypesWithReturn = "<TReturn>";
+                }
+                else
+                {
+                    genericTypes = "<" + string.Join(", ", Enumerable.Range(1, numParameters).Select(x => $"T{x}")) + ">";
+                    genericTypesWithReturn = "<" + string.Join(", ", Enumerable.Range(1, numParameters).Select(x => $"T{x}")) + ", TReturn>";
+                }
 
                 handlerBuilder.AppendLine(@$"
     internal sealed class VoidMethodHandler{genericTypes} : BaseMethodHandler
@@ -71,19 +82,51 @@ namespace NosePlug.Plugs
             return true;
         }}
     }}");
+                handlerBuilder.AppendLine($@"
+    internal sealed class MethodHandler{genericTypesWithReturn} : BaseMethodHandler
+    {{
+        protected override MethodInfo PrefixInfo {{ get; }}
+            = typeof(MethodHandler{genericTypesWithReturn}).GetMethod(nameof(MethodWithReturnPrefix)) ?? throw new MissingMethodException();
+
+        private Func{genericTypesWithReturn} Callback {{ get; }}
+
+        public MethodHandler(InterceptorKey key, Func{genericTypesWithReturn} callback)
+             : base(key)
+        {{
+            Callback = callback;
+        }}
+
+        public static bool MethodWithReturnPrefix(ref TReturn __result, {string.Join(", ", GetPrefixParameters(numParameters))})
+        {{
+            if (TryGetHandler(__originalMethod, out MethodHandler{genericTypesWithReturn}? handler))
+            {{
+                __result = handler.Callback({string.Join(", ", GetCallbackParameters(numParameters))});
+                return false;
+            }}
+            return true;
+        }}
+    }}");
 
 
-                if (numParameters > 0)
-                {
-                    interfaceBuilder.AppendLine(@$"        INasalMethodPlug Callback{genericTypes}(Action{genericTypes} callback);");
+                interfaceBuilder.AppendLine(@$"        INasalMethodPlug Callback{genericTypes}(Action{genericTypes} callback);");
 
-                    methodPlugBuilder.AppendLine($@"
+                methodPlugBuilder.AppendLine($@"
         public INasalMethodPlug Callback{genericTypes}(Action{genericTypes} callback)
         {{
-            MethodHandler = new VoidMethodHandler{genericTypes}(Key, callback);
+            if (Original.ReturnType == typeof(void))
+            {{
+                MethodHandler = new VoidMethodHandler{genericTypes}(Key, callback);
+            }}
+            else
+            {{
+                MethodHandler = new MethodHandler<{genericTypes.Trim('<', '>')}{(numParameters > 0 ? ", " : "")}object?>(Key, ({string.Join(", ", GetPrefixParameters(numParameters).Skip(1))}) =>
+                {{
+                    callback({string.Join(", ", GetCallbackParameters(numParameters))});
+                    return GetDefaultValue(Original.ReturnType);
+                }});
+            }}
             return this;
         }}");
-                }
             }
 
             handlerBuilder.AppendLine("}");
@@ -95,7 +138,7 @@ namespace NosePlug.Plugs
     }}
 }}");
 
-            context.AddSource("VoidMethodHandler.g.cs", handlerBuilder.ToString());
+            context.AddSource("MethodHandler.g.cs", handlerBuilder.ToString());
             context.AddSource("INasalMethodPlug.g.cs", interfaceBuilder.ToString());
             context.AddSource("MethodPlug.g.cs", methodPlugBuilder.ToString());
 

@@ -18,6 +18,9 @@ namespace NosePlug.Tests.TestClasses
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public static async Task AsyncMethod() { }
         public static async Task<int> AsyncMethodWithReturn() => 42;
+
+        public static async Task AsyncMethod(int value) { }
+        public static async Task<double> AsyncMethod(string @string, int value) => 42.0;
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
         [return:MaybeNull]

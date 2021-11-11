@@ -7,6 +7,5 @@ namespace NosePlug
     {
         INasalMethodPlug Returns<TReturn>(Func<TReturn> getReturnValue);
         INasalMethodPlug Callback(Func<Task> callback);
-        INasalMethodPlug Callback(Action callback);
     }
 }
