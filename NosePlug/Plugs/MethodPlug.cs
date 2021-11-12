@@ -38,28 +38,28 @@ namespace NosePlug.Plugs
             base.Dispose();
         }
 
-        public INasalMethodPlug Returns<TReturn>(Func<TReturn> getReturnValue)
-        {
-            if (Original.ReturnType == typeof(Task<TReturn>))
-            {
-                MethodHandler = new MethodHandler<Task<TReturn>>(Key, () => Task.FromResult(getReturnValue()));
-            }
-            else
-            {
-                MethodHandler = new MethodHandler<TReturn>(Key, getReturnValue);
-            }
-            return this;
-        }
+        //public INasalMethodPlug Returns<TReturn>(Func<TReturn> getReturnValue)
+        //{
+        //    if (Original.ReturnType == typeof(Task<TReturn>))
+        //    {
+        //        MethodHandler = new MethodHandler<Task<TReturn>>(Key, () => Task.FromResult(getReturnValue()));
+        //    }
+        //    else
+        //    {
+        //        MethodHandler = new MethodHandler<TReturn>(Key, getReturnValue);
+        //    }
+        //    return this;
+        //}
 
-        public INasalMethodPlug Callback(Func<Task> callback)
-        {
-            MethodHandler = new MethodHandler<Task>(Key, async () =>
-            {
-                await callback();
-            });
+        //public INasalMethodPlug Callback(Func<Task> callback)
+        //{
+        //    MethodHandler = new MethodHandler<Task>(Key, async () =>
+        //    {
+        //        await callback();
+        //    });
 
-            return this;
-        }
+        //    return this;
+        //}
 
         private static object? GetDefaultValue(Type type)
         {

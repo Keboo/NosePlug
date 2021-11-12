@@ -4,6 +4,7 @@
     <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <AnalysisLevel>5</AnalysisLevel>
+    <AllFrameworks>net472;net48;netcoreapp3.1;net5.0;net6.0</AllFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -12,10 +13,10 @@
 
   <PropertyGroup>
     <Title>NosePlug</Title>
-    <Description></Description>
+    <Description>A library for testing code that smells</Description>
     <Copyright>Copyright 2021</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageIcon>icon.png</PackageIcon>
+    <PackageIcon>../Icons/icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/Keboo/NosePlug</RepositoryUrl>
     <Authors>Keboo</Authors>
   </PropertyGroup>

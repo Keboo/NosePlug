@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
+    <TargetFrameworks>$(AllFrameworks)</TargetFrameworks>
+  </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="Moq.AutoMock" Version="3.1.0" />
   </ItemGroup>

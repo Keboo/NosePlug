@@ -30,7 +30,7 @@ namespace NosePlug.Tests
         {
             Nasal mocker = new();
             mocker.Method(() => Enumerable.Where(Enumerable.Empty<int>(), x => true))
-                  .Returns<IEnumerable<int>>(() => new[] {1, 2, 3});
+                  .Returns<IEnumerable<int>>(new[] {1, 2, 3});
 
             using IDisposable _ = await mocker.ApplyAsync();
 
@@ -393,6 +393,7 @@ namespace NosePlug.Tests
             string? passedString = null;
             int passedValue = 0;
             Nasal mocker = new();
+            HarmonyLib.Harmony.DEBUG = true;
             mocker.Method<HasPrivateMethod>("InvokeOverloaded", typeof(string), typeof(int))
                 .Callback((string foo, int value) => {
                     passedString = foo;
