@@ -108,23 +108,32 @@ namespace NosePlug.Plugs
     }}");
 
 
-                interfaceBuilder.AppendLine(@$"        INasalMethodPlug Callback{genericTypes}(Action{genericTypes} callback);");
+                interfaceBuilder.AppendLine(@$"        INasalMethodPlug ReplaceWith{genericTypes}(Action{genericTypes} replacement);");
 
                 methodPlugBuilder.AppendLine($@"
-        public INasalMethodPlug Callback{genericTypes}(Action{genericTypes} callback)
+        public INasalMethodPlug ReplaceWith{genericTypes}(Action{genericTypes} replacement)
         {{
             if (Original.ReturnType == typeof(void))
             {{
-                MethodHandler = new VoidMethodHandler{genericTypes}(Key, callback);
+                MethodHandler = new VoidMethodHandler{genericTypes}(Key, replacement);
             }}
             else
             {{
                 MethodHandler = new MethodHandler<{genericTypes.Trim('<', '>')}{(numParameters > 0 ? ", " : "")}object?>(Key, ({string.Join(", ", GetPrefixParameters(numParameters).Skip(1))}) =>
                 {{
-                    callback({string.Join(", ", GetCallbackParameters(numParameters))});
+                    replacement({string.Join(", ", GetCallbackParameters(numParameters))});
                     return GetDefaultValue(Original.ReturnType);
                 }});
             }}
+            return this;
+        }}");
+
+                interfaceBuilder.AppendLine(@$"        INasalMethodPlug Returns{genericTypesWithReturn}(Func{genericTypesWithReturn} replacement);");
+                
+                methodPlugBuilder.AppendLine($@"
+        public INasalMethodPlug Returns{genericTypesWithReturn}(Func{genericTypesWithReturn} replacement)
+        {{
+            MethodHandler = new MethodHandler{genericTypesWithReturn}(Key, replacement);
             return this;
         }}");
             }

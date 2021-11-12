@@ -16,7 +16,7 @@ namespace NosePlug.Tests
 
             AutoMocker mocker = new();
             mocker.StaticProperty(() => HasPublicProperty.Foo)
-                  .Returns(testGuid);
+                  .ReturnsValue(testGuid);
 
             using IDisposable _ = await mocker.ApplyStaticMocksAsync();
 

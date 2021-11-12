@@ -114,7 +114,7 @@ namespace NosePlug.Tests
 
             Nasal mocker = new();
             mocker.Property(() => HasPublicProperty.Foo)
-                  .Returns(returnValue)
+                  .ReturnsValue(returnValue)
                   .ReplaceSetter(x => passedGuid = x);
 
             using IDisposable _ = await mocker.ApplyAsync();
@@ -135,9 +135,9 @@ namespace NosePlug.Tests
 
             Nasal mocker = new();
             mocker.Property(() => HasPublicProperty.Foo)
-                  .Returns(firstValue)
-                  .Returns(secondValue)
-                  .Returns(thirdValue);
+                  .ReturnsValue(firstValue)
+                  .ReturnsValue(secondValue)
+                  .ReturnsValue(thirdValue);
 
             using IDisposable _ = await mocker.ApplyAsync();
 

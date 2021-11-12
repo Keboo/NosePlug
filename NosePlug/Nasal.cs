@@ -32,18 +32,26 @@ namespace NosePlug
 
         public async Task<IDisposable> ApplyAsync()
         {
+            var rv = new NoseCleaner(this);
             foreach (var plug in Plugs.OrderBy(x => x.Id))
             {
                 await plug.AcquireLockAsync();
             }
 
-            //Ordering here not strictly neccisary since we have acquired all locks
-            foreach (var plug in Plugs.OrderBy(x => x.Id))
+            try
             {
-                plug.Patch();
+                //Ordering here not strictly neccisary since we have acquired all locks
+                foreach (var plug in Plugs.OrderBy(x => x.Id))
+                {
+                    plug.Patch();
+                }
             }
-
-            return new NoseCleaner(this);
+            catch(Exception)
+            {
+                rv.Dispose();
+                throw;
+            }
+            return rv;
         }
 
         private sealed class NoseCleaner : IDisposable
