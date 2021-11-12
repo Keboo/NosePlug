@@ -46,8 +46,10 @@ namespace NosePlug
             return new NoseCleaner(this);
         }
 
-        private class NoseCleaner : IDisposable
+        private sealed class NoseCleaner : IDisposable
         {
+            private bool disposedValue;
+
             private Nasal Nasal { get; }
 
             public NoseCleaner(Nasal nasal)
@@ -55,12 +57,26 @@ namespace NosePlug
                 Nasal = nasal ?? throw new ArgumentNullException(nameof(nasal));
             }
 
+            private void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        foreach (var plug in Nasal.Plugs.OrderByDescending(x => x.Id))
+                        {
+                            plug.Dispose();
+                        }
+                    }
+
+                    disposedValue = true;
+                }
+            }
+
             public void Dispose()
             {
-                foreach (var plug in Nasal.Plugs.OrderByDescending(x => x.Id))
-                {
-                    plug.Dispose();
-                }
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
             }
         }
     }
