@@ -370,7 +370,7 @@ namespace NosePlug.Tests
             int passedValue = 0;
             Nasal mocker = new();
             HarmonyLib.Harmony.DEBUG = true;
-            mocker.Method<HasPrivateMethod>("InvokeOverloaded", typeof(string), typeof(int))
+            mocker.Method<HasPrivateMethod>("Overloaded", typeof(string), typeof(int))
                 .ReplaceWith((string foo, int value) => {
                     passedString = foo;
                     passedValue = value;

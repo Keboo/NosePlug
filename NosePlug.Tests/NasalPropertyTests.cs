@@ -1,6 +1,8 @@
-﻿using NosePlug.Tests.TestClasses;
+﻿using HarmonyLib;
+using NosePlug.Tests.TestClasses;
 using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -55,6 +57,7 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanReplacePrivatePropertySetter()
         {
+            HarmonyLib.Harmony.DEBUG = true;
             Guid testGuid = Guid.NewGuid();
             Guid passedGuid = Guid.Empty;
 
@@ -73,19 +76,19 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanReplaceAndUndoDateTimeNow()
         {
-            DateTime today = DateTime.Today;
+            DateTime now = DateTime.Now;
 
             Nasal mocker = new();
-            mocker.Property(() => DateTime.Today)
+            mocker.Property(() => DateTime.Now)
                   .Returns(() => new DateTime(1987, 4, 20));
 
             using (await mocker.ApplyAsync())
             {
-                Assert.Equal(new DateTime(1987, 4, 20), DateTime.Today);
+                Assert.Equal(new DateTime(1987, 4, 20), DateTime.Now);
             }
 
-            Assert.NotEqual(new DateTime(1987, 4, 20), DateTime.Today);
-            Assert.Equal(today, DateTime.Today);
+            Assert.NotEqual(new DateTime(1987, 4, 20), DateTime.Now);
+            Assert.Equal(now.Date, DateTime.Now.Date);
         }
 
         [Fact]
@@ -127,7 +130,7 @@ namespace NosePlug.Tests
         }
 
         [Fact]
-        public async Task CallCallReturnsMultipleTimes()
+        public async Task CanCallReturnsMultipleTimes()
         {
             Guid firstValue = Guid.NewGuid();
             Guid secondValue = Guid.NewGuid();
@@ -147,7 +150,7 @@ namespace NosePlug.Tests
         }
 
         [Fact]
-        public async Task CallCallReplaceSetterMultipleTimes()
+        public async Task CanCallReplaceSetterMultipleTimes()
         {
             Guid firstValue = Guid.Empty;
             Guid secondValue = Guid.Empty;
@@ -164,6 +167,35 @@ namespace NosePlug.Tests
 
             Assert.Equal(Guid.Empty, firstValue);
             Assert.Equal(setValue, secondValue);
+        }
+
+        
+        public static Guid Foo { get; set; }
+
+        static Guid testValue;
+        [Fact]
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        public void TestHarmony()
+        {
+            Guid setValue = Guid.NewGuid();
+
+            var prop = GetType().GetProperty("Foo");
+            var prefix = GetType().GetMethod(nameof(SetterPrefix));
+
+            var harmony = new Harmony("abc");
+            var processor = harmony.CreateProcessor(prop.SetMethod);
+            processor.AddPrefix(prefix);
+            processor.Patch();
+
+            Foo = setValue;
+
+            Assert.Equal(setValue, testValue);
+        }
+
+        public static bool SetterPrefix(Guid __0)
+        {
+            testValue = __0;
+            return true;
         }
 
         [Fact]

@@ -83,7 +83,7 @@ namespace NosePlug.Plugs
             base.Dispose();
         }
 
-        public static bool SetterPrefix(TProperty value, MethodBase __originalMethod)
+        public static bool SetterPrefix(MethodBase __originalMethod, TProperty __0)
         {
             bool gotSetter;
             PropertyPlug<TProperty>? plug;
@@ -95,14 +95,14 @@ namespace NosePlug.Plugs
             {
                 if (plug.Setter is { } setter)
                 {
-                    setter(value);
+                    setter(__0);
                 }
                 return plug.ShouldCallOriginal;
             }
             return true;
         }
 
-        public static bool GetterPrefix(ref TProperty __result, MethodBase __originalMethod)
+        public static bool GetterPrefix(MethodBase __originalMethod, ref TProperty __result)
         {
             bool gotGetter;
             PropertyPlug<TProperty>? plug;
