@@ -54,7 +54,6 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanReplacePrivatePropertySetter()
         {
-            HarmonyLib.Harmony.DEBUG = true;
             Guid testGuid = Guid.NewGuid();
             Guid passedGuid = Guid.Empty;
 
