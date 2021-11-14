@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <CompilerVisibleProperty Include="SourceGenerator_EnableDebug" />
+
     <PackageReference Include="Lib.Harmony" Version="2.1.1" />
 
     <ProjectReference Include="../NosePlug.Generators/NosePlug.Generators.csproj">
