@@ -1,8 +1,5 @@
-﻿using HarmonyLib;
-using NosePlug.Tests.TestClasses;
+﻿using NosePlug.Tests.TestClasses;
 using System;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -169,35 +166,6 @@ namespace NosePlug.Tests
             Assert.Equal(setValue, secondValue);
         }
 
-        
-        public static Guid Foo { get; set; }
-
-        static Guid testValue;
-        [Fact]
-        [MethodImpl(MethodImplOptions.NoOptimization)]
-        public void TestHarmony()
-        {
-            Guid setValue = Guid.NewGuid();
-
-            var prop = GetType().GetProperty("Foo");
-            var prefix = GetType().GetMethod(nameof(SetterPrefix));
-
-            var harmony = new Harmony("abc");
-            var processor = harmony.CreateProcessor(prop.SetMethod);
-            processor.AddPrefix(prefix);
-            processor.Patch();
-
-            Foo = setValue;
-
-            Assert.Equal(setValue, testValue);
-        }
-
-        public static bool SetterPrefix(Guid __0)
-        {
-            testValue = __0;
-            return true;
-        }
-
         [Fact]
         public void WhenPropertyIsReadOnly_CallingReplaceSetterErrors()
         {
@@ -230,6 +198,39 @@ namespace NosePlug.Tests
             HasFullProperty.Property = 42;
 
             Assert.Equal(42, HasFullProperty._field);
+        }
+
+        [Fact]
+        public async Task CanOverridePropertyGetterWithPropertyInfo()
+        {
+            var propertyInfo = typeof(HasPublicProperty).GetProperty(nameof(HasPublicProperty.Foo));
+            Guid testGuid = Guid.NewGuid();
+            Nasal mocker = new();
+            mocker.Property(propertyInfo)
+                  .Returns(() => testGuid);
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            Assert.Equal(testGuid, HasPublicProperty.Foo);
+        }
+
+        [Fact]
+        public async Task CanOverridePropertySetterWithPropertyInfo()
+        {
+            var propertyInfo = typeof(HasPublicProperty).GetProperty(nameof(HasPublicProperty.Foo));
+            Guid testGuid = Guid.NewGuid();
+            Guid passedGuid = Guid.Empty;
+
+            Nasal mocker = new();
+            mocker.Property(propertyInfo)
+                  .ReplaceSetter(x => passedGuid = (Guid)x);
+
+            using IDisposable _ = await mocker.ApplyAsync();
+
+            HasPublicProperty.Foo = testGuid;
+
+            Assert.Equal(testGuid, passedGuid);
+            Assert.NotEqual(testGuid, HasPublicProperty.Foo);
         }
     }
 }

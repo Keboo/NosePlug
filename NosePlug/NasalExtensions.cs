@@ -37,6 +37,9 @@ namespace NosePlug
             return nasal.Property<TProperty>(propertyInfo);
         }
 
+        public static INasalPropertyPlug<object> Property(this Nasal nasal, PropertyInfo property)
+            => nasal.Property<object>(property);
+
 
         public static INasalMethodPlug Method(this Nasal nasal, Expression<Action> methodExpression)
         {
