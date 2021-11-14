@@ -7,6 +7,10 @@
     <AllFrameworks>net472;net48;netcoreapp3.1;net5.0;net6.0</AllFrameworks>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="..\Images\Icon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+    
   <PropertyGroup>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
@@ -16,7 +20,7 @@
     <Description>A library for testing code that smells</Description>
     <Copyright>Copyright 2021</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageIcon>../Icons/icon.png</PackageIcon>
+    <PackageIcon>Icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/Keboo/NosePlug</RepositoryUrl>
     <Authors>Keboo</Authors>
   </PropertyGroup>

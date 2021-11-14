@@ -72,3 +72,14 @@ jobs:
     - name: Test
       timeout-minutes: 5
       run: dotnet test --no-build --verbosity normal --configuration ${{ env.configuration }} --logger "console"
+
+    - name: Pack
+      if: ${{ github.event_name != 'pull_request' }}
+      run: dotnet pack -p:PackageVersion=${{ env.nugetVersion }} --configuration ${{ env.configuration }} --no-build
+
+    - name: Upload Artifacts
+      if: ${{ github.event_name != 'pull_request' }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: NuGet
+        path: ${{ github.workspace }}\**\*.nupkg
