@@ -5,6 +5,19 @@ Sometimes you have to test code that smells. When using static methods it tightl
 This library's API is heavily influenced by Moq. 
 See the documentation for the full [getting started guide](docs/Getting-started.md).
 
+A simple example "mocking" `DateTime.Now`.
+```c#
+Nasal mocker = new();
+mocker.Property(() => DateTime.Now)
+      .Returns(() => new DateTime(1987, 4, 20));
+
+using IDisposable _ = await mocker.ApplyAsync();
+
+DateTime now = DateTime.Now;
+
+Assert.Equal(new DateTime(1987, 4, 20), now);
+```
+
 ## Limitations
 This library relies on [Harmony](https://harmony.pardeike.net/) to monkey patch methods. This library maintains all of the same [limitations of Harmony](https://harmony.pardeike.net/articles/patching-edgecases.html).
 The most common failure comes from inclining. This is most apparent when compiling in Release configuration (optimizations enabled).
