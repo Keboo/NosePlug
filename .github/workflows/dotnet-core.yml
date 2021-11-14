@@ -75,11 +75,15 @@ jobs:
 
     - name: Pack
       if: ${{ github.event_name != 'pull_request' }}
-      run: dotnet pack -p:PackageVersion=${{ env.nugetVersion }} --configuration ${{ env.configuration }} --no-build
+      run: dotnet pack -p:PackageVersion=${{ env.nugetVersion }} --configuration ${{ env.configuration }} --no-build --output ${{ github.workspace }}
 
     - name: Upload Artifacts
       if: ${{ github.event_name != 'pull_request' }}
       uses: actions/upload-artifact@v2
       with:
         name: NuGet
-        path: ${{ github.workspace }}\**\*.nupkg
+        path: ${{ github.workspace }}\*.nupkg
+
+    - name: Push NuGet
+      if: ${{ github.event_name != 'pull_request' }}
+      run: dotnet nuget push ${{ github.workspace }}\*.nupkg --source https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }} --skip-duplicate
