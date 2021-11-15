@@ -409,8 +409,8 @@ namespace NosePlug.Tests
             int invocationCount = 0;
             Nasal mocker = new();
             mocker.Method(() => HasPublicMethod.Overloaded(0))
-                  .ReplaceWith(() => invocationCount++)
-                  .CallOriginal();
+                    .ReplaceWith(() => invocationCount++)
+                    .CallOriginal();
 
             using IDisposable _ = await mocker.ApplyAsync();
             HasPublicMethod.OverloadedValue = 0;
@@ -427,7 +427,7 @@ namespace NosePlug.Tests
             int invocationCount = 0;
             Nasal mocker = new();
             mocker.Method(() => HasPublicMethod.ReturnValue())
-                  .Returns(() => 
+                  .Returns(() =>
                   {
                       invocationCount++;
                       return 3;

@@ -71,7 +71,7 @@ jobs:
     
     - name: Test
       timeout-minutes: 5
-      run: dotnet test --no-build --configuration ${{ env.configuration }} --collect:"XPlat Code Coverage" --logger trx --blame-hang --blame-hang-timeout 1m --blame-crash
+      run: dotnet test --no-build --configuration ${{ env.configuration }} --collect:"XPlat Code Coverage" --logger trx --blame-hang --blame-hang-timeout 2m --blame-crash
 
     - name: ReportGenerator
       uses: danielpalme/ReportGenerator-GitHub-Action@4.8.12
