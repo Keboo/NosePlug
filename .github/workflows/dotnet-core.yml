@@ -23,6 +23,71 @@ env:
   preRelease: true
 
 jobs:
+  build-mac:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    - name: Set Version
+      run: |
+        if ("${{ github.ref }}".startsWith("refs/tags/v")) {
+          $tagVersion = "${{ github.ref }}".substring(11)
+          echo "buildVersion=$tagVersion.${{ github.run_number }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "nugetVersion=$tagVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "preRelease=false" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        } else {
+          echo "buildVersion=${{ env.baseVersion }}.${{ github.run_number }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "nugetVersion=${{ env.baseVersion }}-ci${{ github.run_number }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        }
+    
+    - name: Setup .NET Core 3.1
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: "3.1.x"
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+    - name: Setup .NET 5.0
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: "5.0.x"
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+    - name: Setup .NET 6.0
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: "6.x"
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    
+    - name: Install dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build -p:Version=${{ env.buildVersion }} -p:ContinuousIntegrationBuild=True --configuration ${{ env.configuration }} --no-restore
+    
+    - name: Test
+      timeout-minutes: 5
+      run: dotnet test --no-build --configuration ${{ env.configuration }} --collect:"XPlat Code Coverage"
+
+    - name: ReportGenerator
+      uses: danielpalme/ReportGenerator-GitHub-Action@4.8.12
+      with:
+        reports: '**/coverage.cobertura.xml'
+        targetdir: 'coveragereport'
+        reporttypes: 'HtmlInline;Cobertura'
+        tag: '${{ github.run_number }}_${{ github.run_id }}'
+        
+    - name: Upload coverage report artifact
+      uses: actions/upload-artifact@v2.2.3
+      with:
+        name: CoverageReport
+        path: coveragereport
+
+
   build-linux:
     runs-on: ubuntu-latest
 
