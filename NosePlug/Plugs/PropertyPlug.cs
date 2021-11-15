@@ -16,8 +16,8 @@ namespace NosePlug.Plugs
             = typeof(PropertyPlug<TProperty>).GetMethod(nameof(SetterPrefix)) ?? throw new MissingMethodException();
 
         protected override InterceptorKey Key { get; }
-        private InterceptorKey GetterKey => InterceptorKey.FromMethod(Property.GetMethod);
-        private InterceptorKey SetterKey => InterceptorKey.FromMethod(Property.SetMethod);
+        private InterceptorKey GetterKey => InterceptorKey.FromMethod(Property.GetMethod!);
+        private InterceptorKey SetterKey => InterceptorKey.FromMethod(Property.SetMethod!);
         public PropertyInfo Property { get; }
 
         private PatchProcessor? GetterProcessor { get; set; }

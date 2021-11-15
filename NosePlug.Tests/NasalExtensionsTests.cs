@@ -53,7 +53,7 @@ namespace NosePlug.Tests
         [Fact]
         public void PropertyNonGeneric_WhenNasalIsNull_ThrowsException()
         {
-            PropertyInfo property = typeof(HasPublicProperty).GetProperty(nameof(HasPublicProperty.Foo));
+            PropertyInfo property = typeof(HasPublicProperty).GetProperty(nameof(HasPublicProperty.Foo))!;
             var ex = Assert.Throws<ArgumentNullException>(() => NasalExtensions.Property(null!, property));
             Assert.Equal("nasal", ex.ParamName);
         }
