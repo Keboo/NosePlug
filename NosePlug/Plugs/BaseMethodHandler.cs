@@ -13,6 +13,8 @@ namespace NosePlug.Plugs
 
         private InterceptorKey Key { get; }
 
+        public bool ShouldCallOriginal { get; set; }
+
         public BaseMethodHandler(InterceptorKey key)
         {
             Key = key;

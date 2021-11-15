@@ -13,6 +13,8 @@ namespace NosePlug.Plugs
         internal IMethodHandler? MethodHandler { get; set; }
         private MethodInfo Original { get; }
 
+        private bool ShouldCallOriginal { get; set; }
+
         public MethodPlug(MethodInfo original)
             : base($"noseplug.{original.FullDescription()}")
         {
@@ -24,7 +26,11 @@ namespace NosePlug.Plugs
         {
             var instance = new Harmony(Id);
             var processor = Processor = instance.CreateProcessor(Original);
-            MethodHandler?.Patch(processor);
+            if (MethodHandler is { } methodHandler)
+            {
+                methodHandler.ShouldCallOriginal = ShouldCallOriginal;
+                methodHandler.Patch(processor);
+            }
         }
 
         public override void Dispose()
@@ -37,29 +43,6 @@ namespace NosePlug.Plugs
 
             base.Dispose();
         }
-
-        //public INasalMethodPlug Returns<TReturn>(Func<TReturn> getReturnValue)
-        //{
-        //    if (Original.ReturnType == typeof(Task<TReturn>))
-        //    {
-        //        MethodHandler = new MethodHandler<Task<TReturn>>(Key, () => Task.FromResult(getReturnValue()));
-        //    }
-        //    else
-        //    {
-        //        MethodHandler = new MethodHandler<TReturn>(Key, getReturnValue);
-        //    }
-        //    return this;
-        //}
-
-        //public INasalMethodPlug Callback(Func<Task> callback)
-        //{
-        //    MethodHandler = new MethodHandler<Task>(Key, async () =>
-        //    {
-        //        await callback();
-        //    });
-
-        //    return this;
-        //}
 
         private static object? GetDefaultValue(Type type)
         {
@@ -86,6 +69,12 @@ namespace NosePlug.Plugs
                     .Invoke(null, new[] { taskDefaultValue });
             }
             return null;
+        }
+
+        public INasalMethodPlug CallOriginal(bool shouldCallOriginal = true)
+        {
+            ShouldCallOriginal = shouldCallOriginal;
+            return this;
         }
     }
 }

@@ -78,7 +78,7 @@ namespace NosePlug.Plugs
             if (TryGetHandler(__originalMethod, out VoidMethodHandler{genericTypes}? handler))
             {{
                 handler.Callback({string.Join(", ", GetCallbackParameters(numParameters))});
-                return false;
+                return handler.ShouldCallOriginal;
             }}
             return true;
         }}
@@ -103,7 +103,7 @@ namespace NosePlug.Plugs
             if (TryGetHandler(__originalMethod, out MethodHandler{genericTypesWithReturn}? handler))
             {{
                 __result = handler.Callback({string.Join(", ", GetCallbackParameters(numParameters))});
-                return false;
+                return handler.ShouldCallOriginal;
             }}
             return true;
         }}

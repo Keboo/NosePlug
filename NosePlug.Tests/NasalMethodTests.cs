@@ -30,7 +30,7 @@ namespace NosePlug.Tests
         {
             Nasal mocker = new();
             mocker.Method(() => Enumerable.Where(Enumerable.Empty<int>(), x => true))
-                  .ReturnsValue<IEnumerable<int>>(new[] {1, 2, 3});
+                  .ReturnsValue<IEnumerable<int>>(new[] { 1, 2, 3 });
 
             using IDisposable _ = await mocker.ApplyAsync();
 
@@ -189,9 +189,10 @@ namespace NosePlug.Tests
             int passedValue = 0;
             Nasal mocker = new();
             mocker.Method(() => HasPublicMethod.Overloaded("", 0))
-                .ReplaceWith((string foo, int value) => {
-                    passedString = foo;
-                    passedValue = value;
+                .ReplaceWith((string first, int second) =>
+                {
+                    passedString = first;
+                    passedValue = second;
                     invocationCount++;
                 });
 
@@ -371,7 +372,8 @@ namespace NosePlug.Tests
             Nasal mocker = new();
             HarmonyLib.Harmony.DEBUG = true;
             mocker.Method<HasPrivateMethod>("Overloaded", typeof(string), typeof(int))
-                .ReplaceWith((string foo, int value) => {
+                .ReplaceWith((string foo, int value) =>
+                {
                     passedString = foo;
                     passedValue = value;
                     invocationCount++;
@@ -400,5 +402,47 @@ namespace NosePlug.Tests
             Assert.Equal(42, value);
             Assert.Null(stringValue);
         }
+
+        [Fact]
+        public async Task CanInvokeOriginalVoidReturningMethod()
+        {
+            int invocationCount = 0;
+            Nasal mocker = new();
+            mocker.Method(() => HasPublicMethod.Overloaded(0))
+                  .ReplaceWith(() => invocationCount++)
+                  .CallOriginal();
+
+            using IDisposable _ = await mocker.ApplyAsync();
+            HasPublicMethod.OverloadedValue = 0;
+
+            HasPublicMethod.Overloaded(42);
+
+            Assert.Equal(1, invocationCount);
+            Assert.Equal(42, HasPublicMethod.OverloadedValue);
+        }
+
+        [Fact]
+        public async Task CanInvokeOriginalTypeReturningMethod()
+        {
+            int invocationCount = 0;
+            Nasal mocker = new();
+            mocker.Method(() => HasPublicMethod.ReturnValue())
+                  .Returns(() => 
+                  {
+                      invocationCount++;
+                      return 3;
+                  })
+                  .CallOriginal();
+
+            using IDisposable _ = await mocker.ApplyAsync();
+            HasPublicMethod.ReturnValueCalled = false;
+
+            int value = HasPublicMethod.ReturnValue();
+
+            Assert.Equal(1, invocationCount);
+            Assert.Equal(42, value);
+            Assert.True(HasPublicMethod.ReturnValueCalled);
+        }
+
     }
 }

@@ -13,7 +13,7 @@ namespace NosePlug.Tests
             Guid testGuid = Guid.NewGuid();
             Nasal mocker = new();
             mocker.Property(() => HasPublicProperty.Foo)
-                  .Returns(() => testGuid);
+                    .Returns(() => testGuid);
 
             using IDisposable _ = await mocker.ApplyAsync();
 
@@ -169,7 +169,7 @@ namespace NosePlug.Tests
         public void WhenPropertyIsReadOnly_CallingReplaceSetterErrors()
         {
             Nasal mocker = new();
-            Assert.Throws<NasalException>(() => 
+            Assert.Throws<NasalException>(() =>
                 mocker.Property(() => HasReadWriteOnlyProperty.ReadOnly)
                       .ReplaceSetter(_ => { })
             );

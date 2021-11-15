@@ -8,13 +8,29 @@ namespace NosePlug.Tests.TestClasses
     {
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void NoParameters() { }
+
+        public static int OverloadedValue 
+        {
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            get;
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            set;
+        }
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void Overloaded(int value) { }
+        public static void Overloaded(int value)
+        {
+            OverloadedValue = value;
+        }
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void Overloaded(string @string, int value) { }
 
+        public static bool ReturnValueCalled { get; set; }
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static int ReturnValue() => 42;
+        public static int ReturnValue()
+        {
+            ReturnValueCalled = true;
+            return 42;
+        }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         [MethodImpl(MethodImplOptions.NoInlining)]
