@@ -5,7 +5,6 @@ using Xunit;
 
 namespace NosePlug.Tests
 {
-    /*
     public class NasalPropertyTests
     {
         [Fact]
@@ -232,6 +231,5 @@ namespace NosePlug.Tests
             Assert.Equal(testGuid, passedGuid);
             Assert.NotEqual(testGuid, HasPublicProperty.Foo);
         }
-    }
-    */
+    }   
 }
