@@ -8,6 +8,7 @@ using Xunit;
 namespace NosePlug.Tests
 {
 
+/*
     public class NasalMethodTests
     {
         [Fact]
@@ -444,4 +445,5 @@ namespace NosePlug.Tests
         }
 
     }
+    */
 }
