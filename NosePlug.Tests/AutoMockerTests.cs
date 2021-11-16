@@ -6,7 +6,6 @@ using Xunit;
 
 namespace NosePlug.Tests
 {
-    /*
     public class AutoMockerTests
     {
         [Fact]
@@ -23,5 +22,4 @@ namespace NosePlug.Tests
             Assert.Equal(testGuid, HasPublicProperty.Foo);
         }
     }
-    */
 }
