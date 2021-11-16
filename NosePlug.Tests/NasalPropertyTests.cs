@@ -7,6 +7,7 @@ namespace NosePlug.Tests
 {
     public class NasalPropertyTests
     {
+        
         [Fact]
         public async Task CanReplacePublicPropertyGetter()
         {
@@ -68,6 +69,7 @@ namespace NosePlug.Tests
             Assert.Equal(testGuid, passedGuid);
             Assert.NotEqual(testGuid, HasPublicProperty.Foo);
         }
+        /*
 
         [Fact]
         public async Task CanReplaceAndUndoDateTimeNow()
@@ -231,5 +233,6 @@ namespace NosePlug.Tests
             Assert.Equal(testGuid, passedGuid);
             Assert.NotEqual(testGuid, HasPublicProperty.Foo);
         }
+        */
     }   
 }
