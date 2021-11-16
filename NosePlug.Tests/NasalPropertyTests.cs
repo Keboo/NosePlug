@@ -69,7 +69,7 @@ namespace NosePlug.Tests
             Assert.Equal(testGuid, passedGuid);
             Assert.NotEqual(testGuid, HasPublicProperty.Foo);
         }
-        /*
+        //Here
 
         [Fact]
         public async Task CanReplaceAndUndoDateTimeNow()
@@ -126,6 +126,7 @@ namespace NosePlug.Tests
             Assert.Equal(setValue, passedGuid);
             Assert.Equal(returnValue, receivedValue);
         }
+        /*
 
         [Fact]
         public async Task CanCallReturnsMultipleTimes()
