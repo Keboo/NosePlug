@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using Xunit;
+using using System.Runtime.CompilerServices;
 
 namespace NosePlug.Tests
 {
@@ -72,6 +73,7 @@ namespace NosePlug.Tests
 
 
         [Fact]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public async Task CanReplaceAndUndoDateTimeNow()
         {
             DateTime now = DateTime.Today;
