@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using Xunit;
-using using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 
 namespace NosePlug.Tests
 {
