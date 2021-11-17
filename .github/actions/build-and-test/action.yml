@@ -35,12 +35,15 @@ runs:
         NUGET_AUTH_TOKEN: ${{ inputs.nuget_token }}
     
     - name: Install dependencies
+      shell: pwsh
       run: dotnet restore
     
     - name: Build
+      shell: pwsh
       run: dotnet build -p:Version=${{ inputs.build_version }} -p:ContinuousIntegrationBuild=True --configuration ${{ inputs.configuration }} --no-restore
     
     - name: Test
+      shell: pwsh
       timeout-minutes: 5
       run: dotnet test --no-build --configuration ${{ inputs.configuration }} --collect:"XPlat Code Coverage"
 
