@@ -69,7 +69,25 @@ namespace NosePlug.Tests
             Assert.Equal(testGuid, passedGuid);
             Assert.NotEqual(testGuid, HasPublicProperty.Foo);
         }
-        //Here
+
+
+        [Fact]
+        public async Task CanReplaceAndUndoDateTimeNow()
+        {
+            DateTime now = DateTime.Today;
+
+            Nasal mocker = new();
+            mocker.Property(() => DateTime.Today)
+                  .Returns(() => new DateTime(1987, 4, 20));
+
+            using (await mocker.ApplyAsync())
+            {
+                Assert.Equal(new DateTime(1987, 4, 20), DateTime.Today);
+            }
+
+            Assert.NotEqual(new DateTime(1987, 4, 20), DateTime.Today);
+            Assert.Equal(now, DateTime.Today);
+        }
 
         /*
         [Fact]
@@ -89,8 +107,7 @@ namespace NosePlug.Tests
             Assert.NotEqual(new DateTime(1987, 4, 20), DateTime.Now);
             Assert.Equal(now.Date, DateTime.Now.Date);
         }
-*/
-        //FAIL HERE
+        */
 
         [Fact]
         public async Task CanReplacePrivateSetter()
@@ -129,8 +146,6 @@ namespace NosePlug.Tests
             Assert.Equal(setValue, passedGuid);
             Assert.Equal(returnValue, receivedValue);
         }
-        
-        //FAIL HERE
 
         [Fact]
         public async Task CanCallReturnsMultipleTimes()
