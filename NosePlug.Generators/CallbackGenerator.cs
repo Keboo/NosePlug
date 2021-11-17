@@ -59,6 +59,7 @@ namespace NosePlug.Plugs
                 }
 
                 handlerBuilder.AppendLine(@$"
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     internal sealed class VoidMethodHandler{genericTypes} : BaseMethodHandler
     {{
         protected override MethodInfo PrefixInfo {{ get; }}
@@ -77,12 +78,13 @@ namespace NosePlug.Plugs
             if (TryGetHandler(__originalMethod, out VoidMethodHandler{genericTypes}? handler))
             {{
                 handler.Callback({string.Join(", ", GetCallbackParameters(numParameters))});
-                return false;
+                return handler.ShouldCallOriginal;
             }}
             return true;
         }}
     }}");
                 handlerBuilder.AppendLine($@"
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     internal sealed class MethodHandler{genericTypesWithReturn} : BaseMethodHandler
     {{
         protected override MethodInfo PrefixInfo {{ get; }}
@@ -101,7 +103,7 @@ namespace NosePlug.Plugs
             if (TryGetHandler(__originalMethod, out MethodHandler{genericTypesWithReturn}? handler))
             {{
                 __result = handler.Callback({string.Join(", ", GetCallbackParameters(numParameters))});
-                return false;
+                return handler.ShouldCallOriginal;
             }}
             return true;
         }}
@@ -111,6 +113,7 @@ namespace NosePlug.Plugs
                 interfaceBuilder.AppendLine(@$"        INasalMethodPlug ReplaceWith{genericTypes}(Action{genericTypes} replacement);");
 
                 methodPlugBuilder.AppendLine($@"
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public INasalMethodPlug ReplaceWith{genericTypes}(Action{genericTypes} replacement)
         {{
             if (Original.ReturnType == typeof(void))
@@ -131,6 +134,7 @@ namespace NosePlug.Plugs
                 interfaceBuilder.AppendLine(@$"        INasalMethodPlug Returns{genericTypesWithReturn}(Func{genericTypesWithReturn} replacement);");
                 
                 methodPlugBuilder.AppendLine($@"
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public INasalMethodPlug Returns{genericTypesWithReturn}(Func{genericTypesWithReturn} replacement)
         {{
             MethodHandler = new MethodHandler{genericTypesWithReturn}(Key, replacement);

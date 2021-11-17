@@ -11,23 +11,34 @@ namespace NosePlug
     {
         public static INasalPropertyPlug<TProperty> Property<T, TProperty>(this Nasal nasal, string name)
         {
+            if (nasal is null)
+            {
+                throw new ArgumentNullException(nameof(nasal));
+            }
+
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace.", nameof(name));
             }
 
             var property = typeof(T).GetProperty(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.GetProperty)
-                ?? throw new ArgumentException($"Could not find property '{name}' on type '{typeof(T).FullName}'");
+                ?? throw new MissingMemberException($"Could not find property '{name}' on type '{typeof(T).FullName}'");
             return nasal.Property<TProperty>(property);
         }
 
         public static INasalPropertyPlug<TProperty> Property<TProperty>(this Nasal nasal, 
             Expression<Func<TProperty>> propertyExpression)
         {
+            if (nasal is null)
+            {
+                throw new ArgumentNullException(nameof(nasal));
+            }
+
             if (propertyExpression is null)
             {
                 throw new ArgumentNullException(nameof(propertyExpression));
             }
+
             if (!(propertyExpression.Body is MemberExpression memberExpression) ||
                 !(memberExpression.Member is PropertyInfo propertyInfo))
             {
@@ -38,29 +49,53 @@ namespace NosePlug
         }
 
         public static INasalPropertyPlug<object> Property(this Nasal nasal, PropertyInfo property)
-            => nasal.Property<object>(property);
+        {
+            if (nasal is null)
+            {
+                throw new ArgumentNullException(nameof(nasal));
+            }
 
+            return nasal.Property<object>(property);
+        }
 
         public static INasalMethodPlug Method(this Nasal nasal, Expression<Action> methodExpression)
         {
-            var methodCallExpression = methodExpression.Body as MethodCallExpression;
-            if (methodCallExpression is null)
+            if (nasal is null)
             {
-                throw new ArgumentException();
+                throw new ArgumentNullException(nameof(nasal));
             }
-            MethodInfo origianl = methodCallExpression.Method;
-            return nasal.Method(origianl);
+
+            if (methodExpression is null)
+            {
+                throw new ArgumentNullException(nameof(methodExpression));
+            }
+
+            if (methodExpression.Body is MethodCallExpression methodCallExpression)
+            {
+                MethodInfo origianl = methodCallExpression.Method;
+                return nasal.Method(origianl);
+            }
+            throw new ArgumentException("Expresion is not a method call expression");
         }
 
-        public static INasalMethodPlug Method(this Nasal nasal, Expression<Func<Task>> methodExpression)
+        public static INasalMethodPlug Method<TReturn>(this Nasal nasal, Expression<Func<TReturn>> methodExpression)
         {
-            var methodCallExpression = methodExpression.Body as MethodCallExpression;
-            if (methodCallExpression is null)
+            if (nasal is null)
             {
-                throw new ArgumentException();
+                throw new ArgumentNullException(nameof(nasal));
             }
-            MethodInfo origianl = methodCallExpression.Method;
-            return nasal.Method(origianl);
+
+            if (methodExpression is null)
+            {
+                throw new ArgumentNullException(nameof(methodExpression));
+            }
+
+            if (methodExpression.Body is MethodCallExpression methodCallExpression)
+            {
+                MethodInfo origianl = methodCallExpression.Method;
+                return nasal.Method(origianl);
+            }
+            throw new ArgumentException("Expresion is not a method call expression", nameof(methodExpression));
         }
 
         public static INasalMethodPlug Method<T>(this Nasal nasal, string methodName, params Type[] parameterTypes)
@@ -84,7 +119,7 @@ namespace NosePlug
 
             MethodInfo method = methods.Count switch
             {
-                0 => throw new MissingMethodException($"Could not find method '{methodName}' on '{typeof(T).FullName}'"),
+                0 => throw new MissingMethodException(typeof(T).FullName, methodName),
                 1 => methods[0],
                 _ => methods.FirstOrDefault(x => x.GetParameters().Select(p => p.ParameterType).SequenceEqual(parameterTypes))
                         ?? throw new MissingMethodException($"Could not find method '{methodName}' on '{typeof(T).FullName}' with parameter type(s) {string.Join(", ", parameterTypes.Select(x => x.FullName))}")

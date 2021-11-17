@@ -2,7 +2,7 @@
 
 namespace NosePlug
 {
-    public static class INasalPlugExtensions
+    public static class NasalMethodPlugExtensions
     {
         public static INasalMethodPlug ReturnsValue<TReturn>(this INasalMethodPlug plug, TReturn returnValue)
         {

@@ -13,7 +13,7 @@ namespace NosePlug.Tests
             Guid testGuid = Guid.NewGuid();
             Nasal mocker = new();
             mocker.Property(() => HasPublicProperty.Foo)
-                  .Returns(() => testGuid);
+                    .Returns(() => testGuid);
 
             using IDisposable _ = await mocker.ApplyAsync();
 
@@ -169,7 +169,7 @@ namespace NosePlug.Tests
         public void WhenPropertyIsReadOnly_CallingReplaceSetterErrors()
         {
             Nasal mocker = new();
-            Assert.Throws<NasalException>(() => 
+            Assert.Throws<NasalException>(() =>
                 mocker.Property(() => HasReadWriteOnlyProperty.ReadOnly)
                       .ReplaceSetter(_ => { })
             );
@@ -202,7 +202,7 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanOverridePropertyGetterWithPropertyInfo()
         {
-            var propertyInfo = typeof(HasPublicProperty).GetProperty(nameof(HasPublicProperty.Foo));
+            var propertyInfo = typeof(HasPublicProperty).GetProperty(nameof(HasPublicProperty.Foo))!;
             Guid testGuid = Guid.NewGuid();
             Nasal mocker = new();
             mocker.Property(propertyInfo)
@@ -216,7 +216,7 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanOverridePropertySetterWithPropertyInfo()
         {
-            var propertyInfo = typeof(HasPublicProperty).GetProperty(nameof(HasPublicProperty.Foo));
+            var propertyInfo = typeof(HasPublicProperty).GetProperty(nameof(HasPublicProperty.Foo))!;
             Guid testGuid = Guid.NewGuid();
             Guid passedGuid = Guid.Empty;
 
