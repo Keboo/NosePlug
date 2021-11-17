@@ -7,8 +7,6 @@ using Xunit;
 
 namespace NosePlug.Tests
 {
-
-/*
     public class NasalMethodTests
     {
         [Fact]
@@ -443,7 +441,5 @@ namespace NosePlug.Tests
             Assert.Equal(42, value);
             Assert.True(HasPublicMethod.ReturnValueCalled);
         }
-
     }
-    */
 }
