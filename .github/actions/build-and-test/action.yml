@@ -44,7 +44,7 @@ runs:
     
     - name: Test
       shell: pwsh
-      run: dotnet test --no-build --configuration ${{ inputs.configuration }} --collect:"XPlat Code Coverage"
+      run: dotnet test --no-build --configuration ${{ inputs.configuration }} --collect:"XPlat Code Coverage" -v d --blame-hang --blame-hang-timeout 30s
 
     - name: ReportGenerator
       uses: danielpalme/ReportGenerator-GitHub-Action@4.8.12
