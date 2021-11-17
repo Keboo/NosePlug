@@ -44,6 +44,7 @@ jobs:
     
     - name: Build and Test
       uses: ./.github/actions/build-and-test
+      timeout-minutes: 5
       with:
         suffix: mac
         configuration: ${{ env.configuration }}
@@ -71,6 +72,7 @@ jobs:
     
     - name: Build and Test
       uses: ./.github/actions/build-and-test
+      timeout-minutes: 5
       with:
         suffix: ubuntu
         configuration: ${{ env.configuration }}
@@ -98,6 +100,7 @@ jobs:
     
     - name: Build and Test
       uses: ./.github/actions/build-and-test
+      timeout-minutes: 10
       with:
         suffix: mac
         configuration: ${{ env.configuration }}

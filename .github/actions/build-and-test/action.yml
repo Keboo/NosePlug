@@ -44,7 +44,6 @@ runs:
     
     - name: Test
       shell: pwsh
-      timeout-minutes: 5
       run: dotnet test --no-build --configuration ${{ inputs.configuration }} --collect:"XPlat Code Coverage"
 
     - name: ReportGenerator
