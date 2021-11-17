@@ -76,19 +76,19 @@ namespace NosePlug.Tests
         [MethodImpl(MethodImplOptions.NoInlining)]
         public async Task CanReplaceAndUndoDateTimeNow()
         {
-            DateTime now = DateTime.Today;
+            DateTime now = DateTime.Now;
 
             Nasal mocker = new();
-            mocker.Property(() => DateTime.Today)
+            mocker.Property(() => DateTime.Now)
                   .Returns(() => new DateTime(1987, 4, 20));
 
             using (await mocker.ApplyAsync())
             {
-                Assert.Equal(new DateTime(1987, 4, 20), DateTime.Today);
+                Assert.Equal(new DateTime(1987, 4, 20), DateTime.Now);
             }
 
-            Assert.NotEqual(new DateTime(1987, 4, 20), DateTime.Today);
-            Assert.Equal(now, DateTime.Today);
+            Assert.NotEqual(new DateTime(1987, 4, 20), DateTime.Now);
+            Assert.Equal(now.Date, DateTime.Now.Date);
         }
 
         /*
