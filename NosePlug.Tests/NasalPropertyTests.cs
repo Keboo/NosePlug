@@ -89,7 +89,7 @@ namespace NosePlug.Tests
             Assert.NotEqual(new DateTime(1987, 4, 20), DateTime.Now);
             Assert.Equal(now.Date, DateTime.Now.Date);
         }
-
+*/
         //FAIL HERE
 
         [Fact]
@@ -238,6 +238,5 @@ namespace NosePlug.Tests
             Assert.Equal(testGuid, passedGuid);
             Assert.NotEqual(testGuid, HasPublicProperty.Foo);
         }
-        */
     }   
 }
