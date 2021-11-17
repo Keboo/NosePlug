@@ -58,4 +58,4 @@ runs:
       uses: actions/upload-artifact@v2.2.3
       with:
         name: CoverageReport-${{ inputs.suffix }}
-        path: coveragereport-${{ inputs.suffix }}
+        path: coveragereport
