@@ -7,6 +7,8 @@ namespace NosePlug.Plugs
 {
     internal abstract class BaseMethodHandler : IMethodHandler
     {
+        private bool _isDisposed;
+
         protected abstract MethodInfo PrefixInfo { get; }
 
         private static Dictionary<InterceptorKey, IMethodHandler> Callbacks { get; } = new();
@@ -30,14 +32,6 @@ namespace NosePlug.Plugs
             _ = processor.Patch();
         }
 
-        public void Dispose()
-        {
-            lock (Callbacks)
-            {
-                Callbacks.Remove(Key);
-            }
-        }
-
         protected static bool TryGetHandler<THandler>(MethodBase originalMethod,
             [NotNullWhen(true)] out THandler? handler)
             where THandler : IMethodHandler
@@ -55,6 +49,28 @@ namespace NosePlug.Plugs
             }
             handler = default;
             return false;
+        }
+
+        protected void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    lock (Callbacks)
+                    {
+                        Callbacks.Remove(Key);
+                    }
+                }
+                _isDisposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            System.GC.SuppressFinalize(this);
         }
     }
 }

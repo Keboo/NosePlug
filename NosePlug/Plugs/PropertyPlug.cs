@@ -62,25 +62,28 @@ namespace NosePlug.Plugs
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (GetterProcessor is { } getterProcessor)
+            if (disposing)
             {
-                lock (Callbacks)
+                if (GetterProcessor is { } getterProcessor)
                 {
-                    Callbacks.Remove(GetterKey);
+                    lock (Callbacks)
+                    {
+                        Callbacks.Remove(GetterKey);
+                    }
+                    getterProcessor.Unpatch(HarmonyPatchType.All, Id + "_get");
                 }
-                getterProcessor.Unpatch(HarmonyPatchType.All, Id + "_get");
-            }
-            if (SetterProcessor is { } setterProcessor)
-            {
-                lock (Callbacks)
+                if (SetterProcessor is { } setterProcessor)
                 {
-                    Callbacks.Remove(SetterKey);
+                    lock (Callbacks)
+                    {
+                        Callbacks.Remove(SetterKey);
+                    }
+                    setterProcessor.Unpatch(HarmonyPatchType.All, Id + "_set");
                 }
-                setterProcessor.Unpatch(HarmonyPatchType.All, Id + "_set");
             }
-            base.Dispose();
+            base.Dispose(disposing);
         }
 
         public static bool SetterPrefix(MethodBase __originalMethod, TProperty __0)

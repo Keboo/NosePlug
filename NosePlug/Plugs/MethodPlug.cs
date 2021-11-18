@@ -33,15 +33,17 @@ namespace NosePlug.Plugs
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (Processor is { } processor)
+            if (disposing)
             {
-                processor.Unpatch(HarmonyPatchType.All, Id);
+                if (Processor is { } processor)
+                {
+                    processor.Unpatch(HarmonyPatchType.All, Id);
+                }
+                MethodHandler?.Dispose();
             }
-            MethodHandler?.Dispose();
-
-            base.Dispose();
+            base.Dispose(disposing);
         }
 
         private static object? GetDefaultValue(Type type)
