@@ -102,7 +102,7 @@ jobs:
       uses: ./.github/actions/build-and-test
       timeout-minutes: 10
       with:
-        suffix: mac
+        suffix: windows
         configuration: ${{ env.configuration }}
         build_version: ${{ env.buildVersion }}
         nuget_token: ${{ secrets.GITHUB_TOKEN }}
