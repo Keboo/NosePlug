@@ -46,12 +46,12 @@ runs:
       shell: pwsh
       run: dotnet test NosePlug.Tests/NosePlug.Tests.csproj -p:BuildInParallel=false --no-build --configuration ${{ inputs.configuration }} --collect:"XPlat Code Coverage" -v d --blame-hang --blame-hang-timeout 30s --blame-hang-dump-type Full
 
-    - name: TestResults
-      if: always()
-      uses: actions/upload-artifact@v2.2.3
-      with:
-        name: TestResults-${{ inputs.suffix }}
-        path: NosePlug.Tests/TestResults
+    # - name: TestResults
+    #   if: always()
+    #   uses: actions/upload-artifact@v2.2.3
+    #   with:
+    #     name: TestResults-${{ inputs.suffix }}
+    #     path: NosePlug.Tests/TestResults
 
     - name: ReportGenerator
       uses: danielpalme/ReportGenerator-GitHub-Action@4.8.12
