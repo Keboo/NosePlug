@@ -10,6 +10,7 @@ namespace NosePlug
     public class Nasal
     {
         private List<IPlug> Plugs { get; } = new();
+        private List<IPlug> Patched { get; } = new();
 
         public INasalPropertyPlug<TProperty> Property<TProperty>(PropertyInfo property)
         {
@@ -44,6 +45,7 @@ namespace NosePlug
                 foreach (var plug in Plugs.OrderBy(x => x.Id))
                 {
                     plug.Patch();
+                    Patched.Add(plug);
                 }
             }
             catch(Exception)
@@ -71,7 +73,7 @@ namespace NosePlug
                 {
                     if (disposing)
                     {
-                        foreach (var plug in Nasal.Plugs.OrderByDescending(x => x.Id))
+                        foreach (var plug in Nasal.Patched.OrderByDescending(x => x.Id))
                         {
                             plug.Dispose();
                         }
