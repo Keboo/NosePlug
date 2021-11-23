@@ -10,6 +10,6 @@ namespace NosePlug.Tests.TestClasses
 #else
         public static Guid Foo { get; private set; }
 #endif
-        public static void SetPropety(Guid value) => Foo = value;
+        public static void SetProperty(Guid value) => Foo = value;
     }
 }

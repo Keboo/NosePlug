@@ -39,7 +39,7 @@ namespace NosePlug.Tests
         }
 
         [Fact]
-        public async Task GetReplacePrivarPropertyGetter()
+        public async Task CanReplacePrivatePropertyGetter()
         {
             Guid testGuid = Guid.NewGuid();
             Nasal mocker = new();
@@ -99,7 +99,7 @@ namespace NosePlug.Tests
 
             using IDisposable _ = await mocker.ApplyAsync();
 
-            HasPrivateSetter.SetPropety(setValue);
+            HasPrivateSetter.SetProperty(setValue);
 
             Assert.Equal(setValue, passedGuid);
         }

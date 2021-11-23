@@ -20,5 +20,5 @@ Assert.Equal(new DateTime(1987, 4, 20), now);
 
 ## Limitations
 This library relies on [Harmony](https://harmony.pardeike.net/) to monkey patch methods. This library maintains all of the same [limitations of Harmony](https://harmony.pardeike.net/articles/patching-edgecases.html).
-The most common failure comes from inclining. This is most apparent when compiling in Release configuration (optimizations enabled).
+The most common failure comes from inlining. This is most apparent when compiling in Release configuration (optimizations enabled).
 
