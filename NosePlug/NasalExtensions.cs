@@ -72,8 +72,8 @@ namespace NosePlug
 
             if (methodExpression.Body is MethodCallExpression methodCallExpression)
             {
-                MethodInfo origianl = methodCallExpression.Method;
-                return nasal.Method(origianl);
+                MethodInfo original = methodCallExpression.Method;
+                return nasal.Method(original);
             }
             throw new ArgumentException("Expresion is not a method call expression");
         }
@@ -92,8 +92,8 @@ namespace NosePlug
 
             if (methodExpression.Body is MethodCallExpression methodCallExpression)
             {
-                MethodInfo origianl = methodCallExpression.Method;
-                return nasal.Method(origianl);
+                MethodInfo original = methodCallExpression.Method;
+                return nasal.Method(original);
             }
             throw new ArgumentException("Expresion is not a method call expression", nameof(methodExpression));
         }

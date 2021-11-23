@@ -41,7 +41,7 @@ namespace NosePlug
 
             try
             {
-                //Ordering here not strictly neccisary since we have acquired all locks
+                //Ordering here not strictly necessary since we have acquired all locks
                 foreach (var plug in Plugs.OrderBy(x => x.Id))
                 {
                     plug.Patch();

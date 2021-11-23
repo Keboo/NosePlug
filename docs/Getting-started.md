@@ -1,6 +1,6 @@
 # Getting Started
 
-All of the methods start from the `NosePlug.Nasel` class. This class contains the methods needed to intercept static method calls. After setting up the needed interceptions invoke the `ApplyAsync()` method. This method will return a scope that is expected to be disposed when the static methods should no longer be invoked. Internally this method ensures that only a single scope is active and intercepting given static call at a time. Changes made after invoking this method will not take affect.
+All of the methods start from the `NosePlug.Nasal` class. This class contains the methods needed to intercept static method calls. After setting up the needed interceptions invoke the `ApplyAsync()` method. This method will return a scope that is expected to be disposed when the static methods should no longer be invoked. Internally this method ensures that only a single scope is active and intercepting given static call at a time. Changes made after invoking this method will not take affect.
 
 ## Methods
 
