@@ -50,14 +50,6 @@ namespace NosePlug.Tests
             Assert.Equal("Expresion is not a member expression to a property", ex.Message);
         }
 
-        [Fact]
-        public void PropertyNonGeneric_WhenNasalIsNull_ThrowsException()
-        {
-            PropertyInfo property = typeof(HasPublicProperty).GetProperty(nameof(HasPublicProperty.Foo))!;
-            var ex = Assert.Throws<ArgumentNullException>(() => NasalExtensions.Property(null!, property));
-            Assert.Equal("nasal", ex.ParamName);
-        }
-
 
         [Fact]
         public void MethodExpression_WhenNasalIsNull_ThrowsException()

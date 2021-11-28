@@ -12,16 +12,16 @@ namespace NosePlug;
 public static class NasalExtensions
 {
     /// <summary>
-    /// 
+    /// Creates a plug for a property
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <typeparam name="TProperty"></typeparam>
-    /// <param name="nasal"></param>
-    /// <param name="name"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="ArgumentException"></exception>
-    /// <exception cref="MissingMemberException"></exception>
+    /// <typeparam name="T">The type that contains the property</typeparam>
+    /// <typeparam name="TProperty">The type of the property</typeparam>
+    /// <param name="nasal">The <see cref="Nasal"/> instance to use to create the property plug</param>
+    /// <param name="name">The name of the property</param>
+    /// <returns>A new property plug</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the passed <see cref="Nasal"/> instance is <c>null</c></exception>
+    /// <exception cref="ArgumentException">Thrown when the passed string for the property name is <c>null</c> or whitespace</exception>
+    /// <exception cref="MissingMemberException">Thrown when the propery could not be found</exception>
     public static IPropertyPlug<TProperty> Property<T, TProperty>(this Nasal nasal, string name)
     {
         if (nasal is null)
@@ -39,6 +39,15 @@ public static class NasalExtensions
         return nasal.Property<TProperty>(property);
     }
 
+    /// <summary>
+    /// Creates a plug for a property
+    /// </summary>
+    /// <typeparam name="TProperty">The type of the property</typeparam>
+    /// <param name="nasal">The <see cref="Nasal"/> instance to use to create the property plug</param>
+    /// <param name="propertyExpression">An expression representing the property to create a plug for</param>
+    /// <returns>A new property plug</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the passed <see cref="Nasal"/> instance is <c>null</c></exception>
+    /// <exception cref="ArgumentException">Thrown when the passed expression is not a property expression</exception>
     public static IPropertyPlug<TProperty> Property<TProperty>(this Nasal nasal,
         Expression<Func<TProperty>> propertyExpression)
     {
@@ -52,23 +61,13 @@ public static class NasalExtensions
             throw new ArgumentNullException(nameof(propertyExpression));
         }
 
-        if (!(propertyExpression.Body is MemberExpression memberExpression) ||
-            !(memberExpression.Member is PropertyInfo propertyInfo))
+        if (propertyExpression.Body is not MemberExpression memberExpression ||
+            memberExpression.Member is not PropertyInfo propertyInfo)
         {
             throw new ArgumentException("Expresion is not a member expression to a property");
         }
 
         return nasal.Property<TProperty>(propertyInfo);
-    }
-
-    public static IPropertyPlug<object> Property(this Nasal nasal, PropertyInfo property)
-    {
-        if (nasal is null)
-        {
-            throw new ArgumentNullException(nameof(nasal));
-        }
-
-        return nasal.Property<object>(property);
     }
 
     public static IMethodPlug Method(this Nasal nasal, Expression<Action> methodExpression)

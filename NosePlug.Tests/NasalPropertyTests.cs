@@ -205,7 +205,7 @@ namespace NosePlug.Tests
             var propertyInfo = typeof(HasPublicProperty).GetProperty(nameof(HasPublicProperty.Foo))!;
             Guid testGuid = Guid.NewGuid();
             Nasal mocker = new();
-            mocker.Property(propertyInfo)
+            mocker.Property<Guid>(propertyInfo)
                   .Returns(() => testGuid);
 
             using IDisposable _ = await mocker.ApplyAsync();
@@ -221,7 +221,7 @@ namespace NosePlug.Tests
             Guid passedGuid = Guid.Empty;
 
             Nasal mocker = new();
-            mocker.Property(propertyInfo)
+            mocker.Property<Guid>(propertyInfo)
                   .Callback(x => passedGuid = (Guid)x);
 
             using IDisposable _ = await mocker.ApplyAsync();

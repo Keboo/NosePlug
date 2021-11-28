@@ -16,7 +16,7 @@ public class Nasal
     private List<IPlug> Patched { get; } = new();
 
     /// <summary>
-    /// Creates a plug for a property plug.
+    /// Creates a plug for a property
     /// </summary>
     /// <typeparam name="TProperty">The return type of the property</typeparam>
     /// <param name="property">The <see cref="PropertyInfo"/> to create a plug for</param>

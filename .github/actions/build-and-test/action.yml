@@ -15,18 +15,11 @@ inputs:
     required: false
 runs:
   using: "composite"
-  steps:    
-    - name: Setup .NET Core 3.1
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: "3.1.x"
-      env:
-        NUGET_AUTH_TOKEN: ${{ inputs.nuget_token }}
-
+  steps:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: "5.0.x,6.x"
+        dotnet-version: "3.1.x, 5.0.x, 6.x"
       env:
         NUGET_AUTH_TOKEN: ${{ inputs.nuget_token }}
         
