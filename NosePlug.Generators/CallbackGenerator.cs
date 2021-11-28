@@ -16,8 +16,10 @@ namespace NodePlug.Generators
         public void Execute(GeneratorExecutionContext context)
         {
             StringBuilder handlerBuilder = new();
-            StringBuilder interfaceBuilder = new();
+            StringBuilder voidInterfaceBuilder = new();
+            StringBuilder voidMethodPlugBuilder = new();
             StringBuilder methodPlugBuilder = new();
+            StringBuilder interfaceBuilder = new();
 
             handlerBuilder.AppendLine(@"
 #nullable enable
@@ -26,12 +28,29 @@ using System.Reflection;
 
 namespace NosePlug.Plugs
 {");
+            voidInterfaceBuilder.AppendLine(@$"
+using System;
+
+namespace NosePlug
+{{
+    partial interface IMethodPlug
+    {{");
+
+            voidMethodPlugBuilder.AppendLine($@"
+#nullable enable
+using System;
+
+namespace NosePlug.Plugs
+{{
+    partial class MethodPlug
+    {{");
+
             interfaceBuilder.AppendLine(@$"
 using System;
 
 namespace NosePlug
 {{
-    public partial interface INasalMethodPlug
+    partial interface IMethodPlug<TReturn>
     {{");
 
             methodPlugBuilder.AppendLine($@"
@@ -40,7 +59,7 @@ using System;
 
 namespace NosePlug.Plugs
 {{
-    internal partial class MethodPlug
+    partial class MethodPlug<TReturn>
     {{");
 
             for (int numParameters = 0; numParameters <= NumberOfParameters; numParameters++)
@@ -110,11 +129,11 @@ namespace NosePlug.Plugs
     }}");
 
 
-                interfaceBuilder.AppendLine(@$"        INasalMethodPlug ReplaceWith{genericTypes}(Action{genericTypes} replacement);");
+                voidInterfaceBuilder.AppendLine(@$"        IMethodPlug Callback{genericTypes}(Action{genericTypes} replacement);");
 
-                methodPlugBuilder.AppendLine($@"
+                voidMethodPlugBuilder.AppendLine($@"
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-        public INasalMethodPlug ReplaceWith{genericTypes}(Action{genericTypes} replacement)
+        public IMethodPlug Callback{genericTypes}(Action{genericTypes} replacement)
         {{
             if (Original.ReturnType == typeof(void))
             {{
@@ -131,11 +150,11 @@ namespace NosePlug.Plugs
             return this;
         }}");
 
-                interfaceBuilder.AppendLine(@$"        INasalMethodPlug Returns{genericTypesWithReturn}(Func{genericTypesWithReturn} replacement);");
+                interfaceBuilder.AppendLine(@$"        IMethodPlug<TReturn> Returns{genericTypes}(Func{genericTypesWithReturn} replacement);");
                 
                 methodPlugBuilder.AppendLine($@"
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-        public INasalMethodPlug Returns{genericTypesWithReturn}(Func{genericTypesWithReturn} replacement)
+        public IMethodPlug<TReturn> Returns{genericTypes}(Func{genericTypesWithReturn} replacement)
         {{
             MethodHandler = new MethodHandler{genericTypesWithReturn}(Key, replacement);
             return this;
@@ -144,6 +163,12 @@ namespace NosePlug.Plugs
 
             handlerBuilder.AppendLine("}");
 
+            voidInterfaceBuilder.AppendLine(@$"
+    }}
+}}");
+            voidMethodPlugBuilder.AppendLine(@$"
+    }}
+}}");
             interfaceBuilder.AppendLine(@$"
     }}
 }}");
@@ -152,8 +177,10 @@ namespace NosePlug.Plugs
 }}");
 
             context.AddSource("MethodHandler.g.cs", handlerBuilder.ToString());
-            context.AddSource("INasalMethodPlug.g.cs", interfaceBuilder.ToString());
-            context.AddSource("MethodPlug.g.cs", methodPlugBuilder.ToString());
+            context.AddSource("IMethodPlug.g.cs", voidInterfaceBuilder.ToString());
+            context.AddSource("MethodPlug.g.cs", voidMethodPlugBuilder.ToString());
+            context.AddSource("IMethodPlug{T}.g.cs", interfaceBuilder.ToString());
+            context.AddSource("MethodPlug{T}.g.cs", methodPlugBuilder.ToString());
 
 
             static IEnumerable<string> GetPrefixParameters(int numParamters)

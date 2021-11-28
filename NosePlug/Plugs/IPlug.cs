@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace NosePlug.Plugs
+namespace NosePlug.Plugs;
+
+internal interface IPlug : IDisposable
 {
-    internal interface IPlug : IDisposable
-    {
-        string Id { get; }
-        Task AcquireLockAsync();
-        void Patch();
-    }
+    string Id { get; }
+    Task AcquireLockAsync();
+    void Patch();
 }

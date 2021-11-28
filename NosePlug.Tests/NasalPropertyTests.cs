@@ -28,7 +28,7 @@ namespace NosePlug.Tests
 
             Nasal mocker = new();
             mocker.Property(() => HasPublicProperty.Foo)
-                  .ReplaceSetter(x => passedGuid = x);
+                  .Callback(x => passedGuid = x);
 
             using IDisposable _ = await mocker.ApplyAsync();
 
@@ -59,7 +59,7 @@ namespace NosePlug.Tests
 
             Nasal mocker = new();
             mocker.Property<HasPrivateProperty, Guid>("Foo")
-                  .ReplaceSetter(x => passedGuid = x);
+                  .Callback(x => passedGuid = x);
 
             using IDisposable _ = await mocker.ApplyAsync();
 
@@ -95,7 +95,7 @@ namespace NosePlug.Tests
 
             Nasal mocker = new();
             mocker.Property(() => HasPrivateSetter.Foo)
-                  .ReplaceSetter(x => passedGuid = x);
+                  .Callback(x => passedGuid = x);
 
             using IDisposable _ = await mocker.ApplyAsync();
 
@@ -113,8 +113,8 @@ namespace NosePlug.Tests
 
             Nasal mocker = new();
             mocker.Property(() => HasPublicProperty.Foo)
-                  .ReturnsValue(returnValue)
-                  .ReplaceSetter(x => passedGuid = x);
+                  .Returns(returnValue)
+                  .Callback(x => passedGuid = x);
 
             using IDisposable _ = await mocker.ApplyAsync();
 
@@ -134,9 +134,9 @@ namespace NosePlug.Tests
 
             Nasal mocker = new();
             mocker.Property(() => HasPublicProperty.Foo)
-                  .ReturnsValue(firstValue)
-                  .ReturnsValue(secondValue)
-                  .ReturnsValue(thirdValue);
+                  .Returns(firstValue)
+                  .Returns(secondValue)
+                  .Returns(thirdValue);
 
             using IDisposable _ = await mocker.ApplyAsync();
 
@@ -146,7 +146,7 @@ namespace NosePlug.Tests
         }
 
         [Fact]
-        public async Task CanCallReplaceSetterMultipleTimes()
+        public async Task CanCallCallbackMultipleTimes()
         {
             Guid firstValue = Guid.Empty;
             Guid secondValue = Guid.Empty;
@@ -154,8 +154,8 @@ namespace NosePlug.Tests
 
             Nasal mocker = new();
             mocker.Property(() => HasPublicProperty.Foo)
-                  .ReplaceSetter(x => firstValue = x)
-                  .ReplaceSetter(x => secondValue = x);
+                  .Callback(x => firstValue = x)
+                  .Callback(x => secondValue = x);
 
             using IDisposable _ = await mocker.ApplyAsync();
 
@@ -166,12 +166,12 @@ namespace NosePlug.Tests
         }
 
         [Fact]
-        public void WhenPropertyIsReadOnly_CallingReplaceSetterErrors()
+        public void WhenPropertyIsReadOnly_CallingCallbackErrors()
         {
             Nasal mocker = new();
             Assert.Throws<NasalException>(() =>
                 mocker.Property(() => HasReadWriteOnlyProperty.ReadOnly)
-                      .ReplaceSetter(_ => { })
+                      .Callback(_ => { })
             );
         }
 
@@ -222,7 +222,7 @@ namespace NosePlug.Tests
 
             Nasal mocker = new();
             mocker.Property(propertyInfo)
-                  .ReplaceSetter(x => passedGuid = (Guid)x);
+                  .Callback(x => passedGuid = (Guid)x);
 
             using IDisposable _ = await mocker.ApplyAsync();
 

@@ -3,74 +3,73 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-namespace NosePlug.Plugs
+namespace NosePlug.Plugs;
+
+internal abstract class BaseMethodHandler : IMethodHandler
 {
-    internal abstract class BaseMethodHandler : IMethodHandler
+    private bool _isDisposed;
+
+    protected abstract MethodInfo PrefixInfo { get; }
+
+    private static Dictionary<InterceptorKey, IMethodHandler> Callbacks { get; } = new();
+
+    private InterceptorKey Key { get; }
+
+    public bool ShouldCallOriginal { get; set; }
+
+    public BaseMethodHandler(InterceptorKey key)
     {
-        private bool _isDisposed;
+        Key = key;
+    }
 
-        protected abstract MethodInfo PrefixInfo { get; }
-
-        private static Dictionary<InterceptorKey, IMethodHandler> Callbacks { get; } = new();
-
-        private InterceptorKey Key { get; }
-
-        public bool ShouldCallOriginal { get; set; }
-
-        public BaseMethodHandler(InterceptorKey key)
+    public void Patch(PatchProcessor processor)
+    {
+        lock (Callbacks)
         {
-            Key = key;
+            Callbacks[Key] = this;
         }
+        processor.AddPrefix(PrefixInfo);
+        _ = processor.Patch();
+    }
 
-        public void Patch(PatchProcessor processor)
+    protected static bool TryGetHandler<THandler>(MethodBase originalMethod,
+        [NotNullWhen(true)] out THandler? handler)
+        where THandler : IMethodHandler
+    {
+        bool gotValue;
+        IMethodHandler? methodHandler;
+        lock (Callbacks)
         {
-            lock (Callbacks)
-            {
-                Callbacks[Key] = this;
-            }
-            processor.AddPrefix(PrefixInfo);
-            _ = processor.Patch();
+            gotValue = Callbacks.TryGetValue(InterceptorKey.FromMethod(originalMethod), out methodHandler);
         }
-
-        protected static bool TryGetHandler<THandler>(MethodBase originalMethod,
-            [NotNullWhen(true)] out THandler? handler)
-            where THandler : IMethodHandler
+        if (gotValue && methodHandler is THandler typedHandler)
         {
-            bool gotValue;
-            IMethodHandler? methodHandler;
-            lock (Callbacks)
-            {
-                gotValue = Callbacks.TryGetValue(InterceptorKey.FromMethod(originalMethod), out methodHandler);
-            }
-            if (gotValue && methodHandler is THandler typedHandler)
-            {
-                handler = typedHandler;
-                return true;
-            }
-            handler = default;
-            return false;
+            handler = typedHandler;
+            return true;
         }
+        handler = default;
+        return false;
+    }
 
-        protected void Dispose(bool disposing)
+    protected void Dispose(bool disposing)
+    {
+        if (!_isDisposed)
         {
-            if (!_isDisposed)
+            if (disposing)
             {
-                if (disposing)
+                lock (Callbacks)
                 {
-                    lock (Callbacks)
-                    {
-                        Callbacks.Remove(Key);
-                    }
+                    Callbacks.Remove(Key);
                 }
-                _isDisposed = true;
             }
+            _isDisposed = true;
         }
+    }
 
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            System.GC.SuppressFinalize(this);
-        }
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        System.GC.SuppressFinalize(this);
     }
 }
