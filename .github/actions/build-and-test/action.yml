@@ -19,7 +19,10 @@ runs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: "3.1.x, 5.0.x, 6.x"
+        dotnet-version: | 
+          3.1.x
+          5.x
+          6.x
       env:
         NUGET_AUTH_TOKEN: ${{ inputs.nuget_token }}
         
