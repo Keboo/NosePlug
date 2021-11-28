@@ -32,7 +32,7 @@ runs:
     
     - name: Build
       shell: pwsh
-      run: dotnet build -p:Version=${{ inputs.build_version }} -p:ContinuousIntegrationBuild=True --configuration ${{ inputs.configuration }} --no-restore -p:WarningsAsErrors=True
+      run: dotnet build -p:Version=${{ inputs.build_version }} -p:ContinuousIntegrationBuild=True --configuration ${{ inputs.configuration }} --no-restore -p:TreatWarningsAsErrors=True
     
     - name: Test
       shell: pwsh
