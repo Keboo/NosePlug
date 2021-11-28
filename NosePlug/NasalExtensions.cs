@@ -6,8 +6,22 @@ using System.Reflection;
 
 namespace NosePlug;
 
+/// <summary>
+/// Contains convenience extension methods for the <see cref="Nasal"/> class.
+/// </summary>
 public static class NasalExtensions
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TProperty"></typeparam>
+    /// <param name="nasal"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="MissingMemberException"></exception>
     public static IPropertyPlug<TProperty> Property<T, TProperty>(this Nasal nasal, string name)
     {
         if (nasal is null)

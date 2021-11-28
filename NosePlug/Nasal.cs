@@ -7,11 +7,21 @@ using System.Threading.Tasks;
 
 namespace NosePlug;
 
+/// <summary>
+/// The main entry point for creating plugs.
+/// </summary>
 public class Nasal
 {
     private List<IPlug> Plugs { get; } = new();
     private List<IPlug> Patched { get; } = new();
 
+    /// <summary>
+    /// Creates a plug for a property plug.
+    /// </summary>
+    /// <typeparam name="TProperty">The return type of the property</typeparam>
+    /// <param name="property">The <see cref="PropertyInfo"/> to create a plug for</param>
+    /// <returns>A new property plug</returns>
+    /// <exception cref="ArgumentNullException">When the passed in <see cref="PropertyInfo"/> is <c>null</c></exception>
     public IPropertyPlug<TProperty> Property<TProperty>(PropertyInfo property)
     {
         if (property is null)
@@ -24,6 +34,12 @@ public class Nasal
         return plug;
     }
 
+    /// <summary>
+    /// Create a method plug for a void returning method
+    /// </summary>
+    /// <param name="method">The <see cref="MethodInfo"/> to create a plug for</param>
+    /// <returns>A new method plug</returns>
+    /// <exception cref="ArgumentNullException">When the passed in <see cref="MethodInfo"/> is <c>null</c></exception>
     public IMethodPlug Method(MethodInfo method)
     {
         if (method is null)
@@ -36,6 +52,13 @@ public class Nasal
         return plug;
     }
 
+    /// <summary>
+    /// Create a method plug for a method with a return value
+    /// </summary>
+    /// <typeparam name="TReturn">The return type of the method</typeparam>
+    /// <param name="method">The <see cref="MethodInfo"/> to create a plug for</param>
+    /// <returns>A new method plug</returns>
+    /// <exception cref="ArgumentNullException">When the passed in <see cref="MethodInfo"/> is <c>null</c></exception>
     public IMethodPlug<TReturn> Method<TReturn>(MethodInfo method)
     {
         if (method is null)
@@ -48,6 +71,14 @@ public class Nasal
         return plug;
     }
 
+    /// <summary>
+    /// Applies all plugs and returns a disposable scope.
+    /// This scope should be disposed when the plugs are no longer needed (typically at the end of a test).
+    /// Only a single Nasel instance can be applied at a time. 
+    /// If multiple calls to ApplyAsync occur, subsequent ones will block until a 
+    /// lock on all plugged methods and properties can be obtained.
+    /// </summary>
+    /// <returns>A disposable scope.</returns>
     public async Task<IDisposable> ApplyAsync()
     {
         var rv = new NoseCleaner(this);

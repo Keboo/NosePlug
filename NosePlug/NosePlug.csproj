@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(AllFrameworks)</TargetFrameworks>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
