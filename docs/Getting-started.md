@@ -4,9 +4,14 @@ All of the methods start from the `NosePlug.Nasal` class. This class contains th
 
 ## Methods
 
-To intercept a method simply use the `Method` method on a `Nasal` instance. The `INasalMethodPlug` instance that can be used to specify a delegate to be invoked instead of the static method using the `ReplaceWith` method. This can be used to validate that a method was invoked. If the method is invoked multiple times, only the last delegate is invoked.
+To intercept a method simply use the `Method` method on a `Nasal` instance. The `IMethodPlug` instance that can be used to specify a delegate to be invoked instead of the static method using the `Callback` method. This can be used to validate that a method was invoked. If the method is invoked multiple times, only the last delegate is invoked.
 
 ```C#
+public class HasPublicMethod
+{
+    public static void NoParameters() { ... }
+}
+
 [Fact]
 public async Task ExampleTest()
 {
@@ -15,7 +20,7 @@ public async Task ExampleTest()
 
     Nasal mocker = new();
     mocker.Method(() => HasPublicMethod.NoParameters())
-          .ReplaceWith(() => invocationCount++);
+          .Callback(() => invocationCount++);
 
     using IDisposable _ = await mocker.ApplyAsync();
 
@@ -27,11 +32,17 @@ public async Task ExampleTest()
 }
 ```
 
-To specify a method that contains parameters, simply specify any value for each of the parameters. The values for these parameters are ignored, and only used to determine with method overload to replace. The delegate passed to `ReplaceWith` can be used to validate the parameters that were passed to the method.
+To specify a method that contains parameters, simply specify any value for each of the parameters. The values for these parameters are ignored, and only used to determine with method overload to replace. The delegate passed to `Callback` can be used to validate the parameters that were passed to the method.
 
 If the method has a return value, a default value based on the return type will be automatically be returned.
 
 ```C#
+public class HasPublicMethod
+{
+    public static void Overloaded(int value) { ... }
+    public static void Overloaded(string @string, int value) { ... }
+}
+
 [Fact]
 public async Task ExampleTest()
 {
@@ -41,7 +52,7 @@ public async Task ExampleTest()
     int passedValue = 0;
     Nasal mocker = new();
     mocker.Method(() => HasPublicMethod.Overloaded("", 0))
-        .ReplaceWith((string first, int second) => {
+        .Callback((string first, int second) => {
             passedString = first;
             passedValue = second;
             invocationCount++;
@@ -59,9 +70,14 @@ public async Task ExampleTest()
 }
 ```
 
-For methods that return values, you can use the `Returns` method instead of the `ReplaceWith` method. This method allows for returning an alternate value. For async methods that return a Tasks, you **must** use this method and return a `Task` instance. Not returning a `Task` instance will result in a `null` value being returned, causing any called awaiting the `Task` to throw a `NullReferenceException`. 
+For methods that return values, you can use the `Returns` method instead of the `Callback` method. This method allows for returning an alternate value. For async methods that return a `Task`, you **must** return a `Task` instance. Not returning a `Task` instance will result in a `null` value being returned, causing any called awaiting the `Task` to throw a `NullReferenceException`. 
 
 ```C#
+public class HasPublicMethod
+{
+    public static async Task<int> AsyncMethodWithReturn() { ... }
+}
+
 [Fact]
 public async Task ExampleTest()
 {
@@ -82,9 +98,14 @@ public async Task ExampleTest()
 
 ## Properties
 
-To intercept a method simply use the `Property` method on a `Nasal` instance. The `INasalPropertyPlug<T>` instance that can be used to specify delegates to be invoked instead of the getter and/or setter methods for the property. To intercept the getter use the `Returns` method.  
+To intercept a method simply use the `Property` method on a `Nasal` instance. The `IPropertyPlug<T>` instance that can be used to specify delegates to be invoked instead of the getter and/or setter methods for the property. To intercept the getter use the `Returns` method.  
 
 ```C#
+public class HasPublicProperty
+{
+    public static Guid Foo { get; set; }
+}
+
 [Fact]
 public async Task ExampleTest()
 {
@@ -104,9 +125,14 @@ public async Task ExampleTest()
 }
 ```
 
-To intercept the setter use the `ReplaceSetter` method to specify a delegate to be invoked instead of the original setter. If this method is called multiple times, only the last delegate will be invoked.
+To intercept the setter use the `Callback` method to specify a delegate to be invoked *instead* of the original setter. If this method is called multiple times, only the last delegate will be invoked.
 
 ```C#
+public class HasPublicProperty
+{
+    public static Guid Foo { get; set; }
+}
+
 [Fact]
 public async Task ExampleTest()
 {
@@ -116,7 +142,7 @@ public async Task ExampleTest()
 
     Nasal mocker = new();
     mocker.Property(() => HasPublicProperty.Foo)
-          .ReplaceSetter(x => passedGuid = x);
+          .Callback(x => passedGuid = x);
 
     using IDisposable _ = await mocker.ApplyAsync();
 
@@ -134,6 +160,16 @@ public async Task ExampleTest()
 There may be cases where invoking the original method, in addition to the replacement delegate, is desired. For both properties and methods, this can be done using the `CallOriginal` method. Optionally you can specify a boolean indicating if the original method should be invoked. If this method is invoked multiple times, only the last value specified will be used. If the method specifies a return value, the original return value will be used.
 
 ```C#
+public class HasPublicMethod
+{
+    public static int OverloadedValue { get; set; }
+
+    public static void Overloaded(int value)
+    {
+        OverloadedValue = value;
+    }
+}
+
 [Fact]
 public async Task ExampleTest()
 {
@@ -141,7 +177,7 @@ public async Task ExampleTest()
     int invocationCount = 0;
     Nasal mocker = new();
     mocker.Method(() => HasPublicMethod.Overloaded(0))
-          .ReplaceWith(() => invocationCount++)
+          .Callback(() => invocationCount++)
           .CallOriginal();
 
     using IDisposable _ = await mocker.ApplyAsync();

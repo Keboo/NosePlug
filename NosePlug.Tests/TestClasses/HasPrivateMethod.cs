@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -25,7 +24,7 @@ namespace NosePlug.Tests.TestClasses
 
         public static async Task InvokeAsyncMethod() => await AsyncMethod();
         public static async Task InvokeAsyncMethod(int value) => await AsyncMethod(value);
-        public static async Task InvokeAsyncMethod(string @string, int value) => await AsyncMethod(@string, value);
+        public static async Task<double> InvokeAsyncMethod(string @string, int value) => await AsyncMethod(@string, value);
         public static async Task<int> InvokeAsyncMethodWithReturn() => await AsyncMethodWithReturn();
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         [MethodImpl(MethodImplOptions.NoInlining)]
