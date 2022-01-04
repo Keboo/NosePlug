@@ -6,8 +6,19 @@ using System.Threading.Tasks;
 
 namespace Moq.AutoMock;
 
+/// <summary>
+/// A set of extension methods for adding Nasal plugs to an AutoMocker instance.
+/// </summary>
 public static partial class AutoMockerExtensions
 {
+    /// <summary>
+    /// Add a plug to the AutoMocker instance. 
+    /// </summary>
+    /// <typeparam name="TPlug">The type of plug to add.</typeparam>
+    /// <param name="mocker">The AutoMocker instance.</param>
+    /// <param name="plug">The plug instance to add.</param>
+    /// <returns>The original passed in plug.</returns>
+    /// <exception cref="ArgumentNullException">If either the AutoMocker or plug instances are <c>null</c></exception>
     public static TPlug WithPlug<TPlug>(this AutoMocker mocker, TPlug plug)
         where TPlug : IPlug
     {
