@@ -1,17 +1,21 @@
-﻿namespace NosePlug;
+﻿using System;
+
+namespace NosePlug;
 
 /// <summary>
-/// The base interface for method plugs
+/// The base interface for plugs
 /// </summary>
-public interface IBaseMethodPlug
+
+public interface IPlug
 {
 
 }
 
+
 /// <summary>
 /// A method plug for a void returning method.
 /// </summary>
-public partial interface IMethodPlug : IBaseMethodPlug
+public partial interface IMethodPlug : IPlug
 {
     /// <summary>
     /// Indicates if the original plugged static method should be called.
@@ -25,7 +29,7 @@ public partial interface IMethodPlug : IBaseMethodPlug
 /// A method plug for a method with a return value.
 /// </summary>
 /// <typeparam name="TReturn"></typeparam>
-public partial interface IMethodPlug<TReturn> : IBaseMethodPlug
+public partial interface IMethodPlug<TReturn> : IPlug
 {
     /// <summary>
     /// Indicates if the original plugged static method should be called.

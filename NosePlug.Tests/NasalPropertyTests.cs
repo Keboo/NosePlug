@@ -1,5 +1,6 @@
 ﻿using NosePlug.Tests.TestClasses;
 using System;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -11,11 +12,10 @@ namespace NosePlug.Tests
         public async Task CanReplacePublicPropertyGetter()
         {
             Guid testGuid = Guid.NewGuid();
-            Nasal mocker = new();
-            mocker.Property(() => HasPublicProperty.Foo)
+            var fooPlug = Nasal.Property(() => HasPublicProperty.Foo)
                     .Returns(() => testGuid);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(fooPlug);
 
             Assert.Equal(testGuid, HasPublicProperty.Foo);
         }
@@ -26,11 +26,10 @@ namespace NosePlug.Tests
             Guid testGuid = Guid.NewGuid();
             Guid passedGuid = Guid.Empty;
 
-            Nasal mocker = new();
-            mocker.Property(() => HasPublicProperty.Foo)
+            var fooPlug = Nasal.Property(() => HasPublicProperty.Foo)
                   .Callback(x => passedGuid = x);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(fooPlug);
 
             HasPublicProperty.Foo = testGuid;
 
@@ -42,11 +41,10 @@ namespace NosePlug.Tests
         public async Task CanReplacePrivatePropertyGetter()
         {
             Guid testGuid = Guid.NewGuid();
-            Nasal mocker = new();
-            mocker.Property<HasPrivateProperty, Guid>("Foo")
+            var fooPlug = Nasal.Property<HasPrivateProperty, Guid>("Foo")
                   .Returns(() => testGuid);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(fooPlug);
 
             Assert.Equal(testGuid, HasPrivateProperty.ReadPrivateProperty());
         }
@@ -57,11 +55,10 @@ namespace NosePlug.Tests
             Guid testGuid = Guid.NewGuid();
             Guid passedGuid = Guid.Empty;
 
-            Nasal mocker = new();
-            mocker.Property<HasPrivateProperty, Guid>("Foo")
+            var fooPlug = Nasal.Property<HasPrivateProperty, Guid>("Foo")
                   .Callback(x => passedGuid = x);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(fooPlug);
 
             HasPrivateProperty.WritePrivateProperty(testGuid);
 
@@ -74,11 +71,10 @@ namespace NosePlug.Tests
         {
             DateTime now = DateTime.Now;
 
-            Nasal mocker = new();
-            mocker.Property(() => DateTime.Now)
+            var nowPlug = Nasal.Property(() => DateTime.Now)
                   .Returns(() => new DateTime(1987, 4, 20));
 
-            using (await mocker.ApplyAsync())
+            using (await Nasal.ApplyAsync(nowPlug))
             {
                 Assert.Equal(new DateTime(1987, 4, 20), DateTime.Now);
             }
@@ -93,11 +89,10 @@ namespace NosePlug.Tests
             Guid passedGuid = Guid.Empty;
             Guid setValue = Guid.NewGuid();
 
-            Nasal mocker = new();
-            mocker.Property(() => HasPrivateSetter.Foo)
+            var fooPlug = Nasal.Property(() => HasPrivateSetter.Foo)
                   .Callback(x => passedGuid = x);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(fooPlug);
 
             HasPrivateSetter.SetProperty(setValue);
 
@@ -111,12 +106,11 @@ namespace NosePlug.Tests
             Guid returnValue = Guid.NewGuid();
             Guid setValue = Guid.NewGuid();
 
-            Nasal mocker = new();
-            mocker.Property(() => HasPublicProperty.Foo)
+            var fooPlug = Nasal.Property(() => HasPublicProperty.Foo)
                   .Returns(returnValue)
                   .Callback(x => passedGuid = x);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(fooPlug);
 
             HasPublicProperty.Foo = setValue;
             Guid receivedValue = HasPublicProperty.Foo;
@@ -132,13 +126,12 @@ namespace NosePlug.Tests
             Guid secondValue = Guid.NewGuid();
             Guid thirdValue = Guid.NewGuid();
 
-            Nasal mocker = new();
-            mocker.Property(() => HasPublicProperty.Foo)
+            var fooPlug = Nasal.Property(() => HasPublicProperty.Foo)
                   .Returns(firstValue)
                   .Returns(secondValue)
                   .Returns(thirdValue);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(fooPlug);
 
             Guid receivedValue = HasPublicProperty.Foo;
 
@@ -152,12 +145,11 @@ namespace NosePlug.Tests
             Guid secondValue = Guid.Empty;
             Guid setValue = Guid.NewGuid();
 
-            Nasal mocker = new();
-            mocker.Property(() => HasPublicProperty.Foo)
+            var fooPlug = Nasal.Property(() => HasPublicProperty.Foo)
                   .Callback(x => firstValue = x)
                   .Callback(x => secondValue = x);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(fooPlug);
 
             HasPublicProperty.Foo = setValue;
 
@@ -168,9 +160,8 @@ namespace NosePlug.Tests
         [Fact]
         public void WhenPropertyIsReadOnly_CallingCallbackErrors()
         {
-            Nasal mocker = new();
             Assert.Throws<NasalException>(() =>
-                mocker.Property(() => HasReadWriteOnlyProperty.ReadOnly)
+                Nasal.Property(() => HasReadWriteOnlyProperty.ReadOnly)
                       .Callback(_ => { })
             );
         }
@@ -178,9 +169,8 @@ namespace NosePlug.Tests
         [Fact]
         public void WhenPropertyIsWriteOnly_CallingReturnsErrors()
         {
-            Nasal mocker = new();
             Assert.Throws<NasalException>(() =>
-                mocker.Property<HasReadWriteOnlyProperty, Guid>(nameof(HasReadWriteOnlyProperty.WriteOnly))
+                Nasal.Property<HasReadWriteOnlyProperty, Guid>(nameof(HasReadWriteOnlyProperty.WriteOnly))
                       .Returns(() => Guid.NewGuid())
             );
         }
@@ -188,11 +178,10 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanCallOriginalProperty()
         {
-            Nasal mocker = new();
-            mocker.Property(() => HasFullProperty.Property)
+            var propertyPlug = Nasal.Property(() => HasFullProperty.Property)
                   .CallOriginal();
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(propertyPlug);
 
             HasFullProperty.Property = 42;
 
@@ -204,11 +193,10 @@ namespace NosePlug.Tests
         {
             var propertyInfo = typeof(HasPublicProperty).GetProperty(nameof(HasPublicProperty.Foo))!;
             Guid testGuid = Guid.NewGuid();
-            Nasal mocker = new();
-            mocker.Property<Guid>(propertyInfo)
+            var fooPlug = Nasal.Property<Guid>(propertyInfo)
                   .Returns(() => testGuid);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(fooPlug);
 
             Assert.Equal(testGuid, HasPublicProperty.Foo);
         }
@@ -220,16 +208,42 @@ namespace NosePlug.Tests
             Guid testGuid = Guid.NewGuid();
             Guid passedGuid = Guid.Empty;
 
-            Nasal mocker = new();
-            mocker.Property<Guid>(propertyInfo)
-                  .Callback(x => passedGuid = (Guid)x);
+            var fooPlug = Nasal.Property<Guid>(propertyInfo)
+                  .Callback(x => passedGuid = x);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(fooPlug);
 
             HasPublicProperty.Foo = testGuid;
 
             Assert.Equal(testGuid, passedGuid);
             Assert.NotEqual(testGuid, HasPublicProperty.Foo);
+        }
+
+        [Fact]
+        public void Property_WhenNameIsNull_ThrowsException()
+        {
+            Assert.Throws<ArgumentException>(() => Nasal.Property<HasPublicProperty, Guid>(null!));
+        }
+
+        [Fact]
+        public void Property_WhenPropertyNameIsNotFound_ThrowsException()
+        {
+            var ex = Assert.Throws<MissingMemberException>(() => Nasal.Property<HasPublicProperty, Guid>("DoesNotExist"));
+            Assert.Contains("Could not find property 'DoesNotExist'", ex.Message);
+        }
+
+        [Fact]
+        public void PropertyExpression_WhenExpressionIsNull_ThrowsException()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => Nasal.Property((Expression<Func<Guid>>)null!));
+            Assert.Equal("propertyExpression", ex.ParamName);
+        }
+
+        [Fact]
+        public void PropertyExpression_WhenExpressionIsNotAPropertyExpression_ThrowsException()
+        {
+            var ex = Assert.Throws<ArgumentException>(() => Nasal.Property(() => Guid.NewGuid()));
+            Assert.Equal("Expresion is not a member expression to a property", ex.Message);
         }
     }
 }

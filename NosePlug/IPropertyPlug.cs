@@ -6,7 +6,7 @@ namespace NosePlug;
 /// A plug for a property.
 /// </summary>
 /// <typeparam name="TProperty"></typeparam>
-public interface IPropertyPlug<TProperty>
+public interface IPropertyPlug<TProperty> : IPlug
 {
     /// <summary>
     /// Replace the getter of the property with an alternate delegate that can return a different value.

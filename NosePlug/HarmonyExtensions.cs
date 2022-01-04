@@ -15,7 +15,7 @@ internal static class HarmonyExtensions
         }
 
         Type returnedType = member.PropertyType;
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new();
         if (member.GetMethod?.IsStatic == true ||
             member.SetMethod?.IsStatic == true)
         {
