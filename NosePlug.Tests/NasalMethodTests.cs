@@ -449,5 +449,14 @@ namespace NosePlug.Tests
             Assert.Contains("HasPublicMethod", ex.Message);
             Assert.Contains("DoesNotExist", ex.Message);
         }
+
+        [Fact]
+        public async Task Method_SignatureMismatch_ThrowsException()
+        {
+            IMethodPlug<int> methodPlug = Nasal.Method(() => HasPublicMethod.ReturnValue())
+                .Returns((string _, int _) => 42);
+            var ex = await Assert.ThrowsAsync<NasalException>(() => Nasal.ApplyAsync(methodPlug));
+            Assert.Equal("Plug for NosePlug.Tests.TestClasses.HasPublicMethod.ReturnValue has callback parameters (System.String, System.Int32) that do not match original method parameters (<empty>)", ex.Message);
+        }
     }
 }

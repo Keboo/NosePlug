@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 
 namespace NosePlug.Plugs;
@@ -28,8 +30,43 @@ internal abstract class BaseMethodHandler : IMethodHandler
         {
             Callbacks[Key] = this;
         }
+
         processor.AddPrefix(PrefixInfo);
         _ = processor.Patch();
+    }
+
+    public void AssertMatches(MethodInfo original)
+    {
+        var originalParameters = original.GetParameters();
+        var parameters = Key.ParameterTypes.ToArray();
+
+        bool matches = true;
+        if (originalParameters.Length == parameters.Length)
+        {
+            for (int i = 0; i < parameters.Length && matches; i++)
+            {
+                matches = originalParameters[i].ParameterType == parameters[i] ||
+                    originalParameters[i].ParameterType.IsSubclassOf(parameters[i]);
+            }
+        }
+        else
+        {
+            matches = false;
+        }
+
+        if (!matches)
+        {
+            throw new NasalException($"Plug for {original.DeclaringType.FullName}.{original.Name} has callback parameters ({GetTypeDisplay(parameters)}) that do not match original method parameters ({GetParametersDisplay(originalParameters)})");
+        }
+
+        static string GetParametersDisplay(ParameterInfo[] parameters)
+            => GetTypeDisplay(parameters.Select(x => x.ParameterType));
+
+        static string GetTypeDisplay(IEnumerable<Type> types)
+        {
+            var rv = string.Join(", ", types.Select(x => x.FullName));
+            return rv.Length == 0 ? "<empty>" : rv;
+        }
     }
 
     protected static bool TryGetHandler<THandler>(MethodBase originalMethod,
