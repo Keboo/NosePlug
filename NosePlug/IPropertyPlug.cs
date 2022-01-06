@@ -22,6 +22,7 @@ public interface IPropertyPlug<TProperty> : IPlug
     IPropertyPlug<TProperty> Callback(Action<TProperty> newSetter);
     /// <summary>
     /// Indicates if the original plugged property's get/set methods should be called.
+    /// If any callback is registered it will be invoked before calling the original method.
     /// </summary>
     /// <param name="shouldCallOriginal">A flag indicating if the original property should be called. Defaults <c>true</c></param>
     /// <returns>The original property plug instance</returns>

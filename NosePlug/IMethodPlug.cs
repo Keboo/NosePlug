@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NosePlug;
+﻿namespace NosePlug;
 
 /// <summary>
 /// The base interface for plugs
@@ -8,7 +6,6 @@ namespace NosePlug;
 
 public interface IPlug
 {
-
 }
 
 
@@ -19,6 +16,7 @@ public partial interface IMethodPlug : IPlug
 {
     /// <summary>
     /// Indicates if the original plugged static method should be called.
+    /// If any callback is registered it will be invoked before calling the original method.
     /// </summary>
     /// <param name="shouldCallOriginal">A flag indicating if the original method should be called. Defaults <c>true</c></param>
     /// <returns>The original method plug instance</returns>
@@ -33,6 +31,7 @@ public partial interface IMethodPlug<TReturn> : IPlug
 {
     /// <summary>
     /// Indicates if the original plugged static method should be called.
+    /// If any callback is registered it will be invoked before calling the original method.
     /// </summary>
     /// <param name="shouldCallOriginal">A flag indicating if the original method should be called. Defaults <c>true</c></param>
     /// <returns>The original method plug instance</returns>

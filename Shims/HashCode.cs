@@ -1,7 +1,7 @@
 
 namespace System;
 
-public struct HashCode
+internal struct HashCode
 {
     public static int Combine<T1, T2>(T1 value1, T2 value2)
     {

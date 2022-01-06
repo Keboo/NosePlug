@@ -15,10 +15,10 @@ namespace NosePlug;
 public static class Nasal
 {
     /// <summary>
-    /// Creates a plug for a property
+    /// Creates a plug for a property.
     /// </summary>
     /// <typeparam name="TProperty">The return type of the property</typeparam>
-    /// <param name="property">The <see cref="PropertyInfo"/> to create a plug for</param>
+    /// <param name="property">The <see cref="PropertyInfo"/> to create a plug for.</param>
     /// <returns>A new property plug</returns>
     /// <exception cref="ArgumentNullException">When the passed in <see cref="PropertyInfo"/> is <c>null</c></exception>
     public static IPropertyPlug<TProperty> Property<TProperty>(PropertyInfo property)
@@ -97,19 +97,26 @@ public static class Nasal
     /// Create a method plug for a method with a return value
     /// </summary>
     /// <typeparam name="TReturn">The return type of the method</typeparam>
-    /// <param name="method">The <see cref="MethodInfo"/> to create a plug for</param>
+    /// <param name="methodInfo">The <see cref="MethodInfo"/> to create a plug for</param>
     /// <returns>A new method plug</returns>
     /// <exception cref="ArgumentNullException">When the passed in <see cref="MethodInfo"/> is <c>null</c></exception>
-    public static IMethodPlug<TReturn> Method<TReturn>(MethodInfo method)
+    public static IMethodPlug<TReturn> Method<TReturn>(MethodInfo methodInfo)
     {
-        if (method is null)
+        if (methodInfo is null)
         {
-            throw new ArgumentNullException(nameof(method));
+            throw new ArgumentNullException(nameof(methodInfo));
         }
 
-        return new MethodPlug<TReturn>(method);
+        return new MethodPlug<TReturn>(methodInfo);
     }
 
+    /// <summary>
+    /// Create a method plug for a void returning method
+    /// </summary>
+    /// <param name="methodExpression">An expression referencing a method. The paramters passed in the expression, are ignored.</param>
+    /// <returns>A new method plug.</returns>
+    /// <exception cref="ArgumentNullException">When the passed in <see cref="Expression&lt;Action&gt;"/> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentException">When the passed in <see cref="Expression&lt;Action&gt;"/> is not a <see cref="MethodCallExpression"/>.</exception>
     public static IMethodPlug Method(Expression<Action> methodExpression)
     {
         if (methodExpression is null)
@@ -125,6 +132,14 @@ public static class Nasal
         throw new ArgumentException("Expresion is not a method call expression");
     }
 
+    /// <summary>
+    /// Create a method plug for a method with a return value
+    /// </summary>
+    /// <typeparam name="TReturn">The return type of the method</typeparam>
+    /// <param name="methodExpression">An expression referencing a method with a return value. The paramters passed in the expression, are ignored.</param>
+    /// <returns>A new method plug.</returns>
+    /// <exception cref="ArgumentNullException">When the passed in expression is <c>null</c>.</exception>
+    /// <exception cref="ArgumentException">When the passed in expression is not a <see cref="MethodCallExpression"/>.</exception>
     public static IMethodPlug<TReturn> Method<TReturn>(Expression<Func<TReturn>> methodExpression)
     {
         if (methodExpression is null)
@@ -140,12 +155,34 @@ public static class Nasal
         throw new ArgumentException("Expresion is not a method call expression", nameof(methodExpression));
     }
 
+    /// <summary>
+    /// Create a method plug for a method given its name and parameters.
+    /// </summary>
+    /// <param name="methodName">The name of the method.</param>
+    /// <param name="parameterTypes">A collection of types matching the parameters for the method.</param>
+    /// <returns>A new method plug.</returns>
+    /// <exception cref="ArgumentException">When the method name is null or whitespace.</exception>
     public static IMethodPlug Method<TContainingType>(string methodName, params Type[] parameterTypes)
         => Method<TContainingType>(methodName, null, parameterTypes);
 
+    /// <summary>
+    /// Create a method plug for a method with a return value given its name and parameters.
+    /// </summary>
+    /// <param name="methodName">The name of the method.</param>
+    /// <param name="parameterTypes">A collection of types matching the parameters for the method.</param>
+    /// <returns>A new method plug.</returns>
+    /// <exception cref="ArgumentException">When the method name is null or whitespace.</exception>
     public static IMethodPlug<TReturn> Method<TContainingType, TReturn>(string methodName, params Type[] parameterTypes)
         => Method<TContainingType, TReturn>(methodName, null, parameterTypes);
 
+    /// <summary>
+    /// Create a method plug for a method given its name and parameters.
+    /// </summary>
+    /// <param name="methodName">The name of the method.</param>
+    /// <param name="genericTypeParameters">The generic type parameters for the method.</param>
+    /// <param name="parameterTypes">A collection of types matching the parameters for the method.</param>
+    /// <returns>A new method plug.</returns>
+    /// <exception cref="ArgumentException">When the method name is null or whitespace.</exception>
     public static IMethodPlug Method<TContainingType>(string methodName, Type[]? genericTypeParameters, Type[] parameterTypes)
     {
         if (string.IsNullOrWhiteSpace(methodName))
@@ -173,6 +210,14 @@ public static class Nasal
         return Method(method);
     }
 
+    /// <summary>
+    /// Create a method plug for a method with a return value given its name and parameters.
+    /// </summary>
+    /// <param name="methodName">The name of the method.</param>
+    /// <param name="genericTypeParameters">The generic type parameters for the method.</param>
+    /// <param name="parameterTypes">A collection of types matching the parameters for the method.</param>
+    /// <returns>A new method plug.</returns>
+    /// <exception cref="ArgumentException">When the method name is null or whitespace.</exception>
     public static IMethodPlug<TReturn> Method<TContainingType, TReturn>(string methodName, Type[]? genericTypeParameters, Type[] parameterTypes)
     {
         if (string.IsNullOrWhiteSpace(methodName))
@@ -203,7 +248,6 @@ public static class Nasal
     /// <summary>
     /// Applies all plugs and returns a disposable scope.
     /// This scope should be disposed when the plugs are no longer needed (typically at the end of a test).
-    /// Only a single Nasel instance can be applied at a time. 
     /// If multiple calls to ApplyAsync occur, subsequent ones will block until a 
     /// lock on all plugged methods and properties can be obtained.
     /// </summary>
