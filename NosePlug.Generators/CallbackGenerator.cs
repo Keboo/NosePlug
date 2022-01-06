@@ -129,9 +129,20 @@ namespace NosePlug.Plugs
     }}");
 
 
+                voidInterfaceBuilder.AppendLine("        /// <summary>");
+                voidInterfaceBuilder.AppendLine("        /// Add a callback that will be invoked instead of the original static method.");
+                voidInterfaceBuilder.AppendLine("        /// </summary>");
+                for(int i = 0; i < numParameters; i++)
+                {
+                    voidInterfaceBuilder.AppendLine($"        /// <typeparam name=\"T{i + 1}\"></typeparam>");
+
+                }
+                voidInterfaceBuilder.AppendLine("        /// <param name=\"replacement\">The replacement delegate to invoke.</param>");
+                voidInterfaceBuilder.AppendLine("        /// <returns>The original method plug.</returns>");
                 voidInterfaceBuilder.AppendLine(@$"        IMethodPlug Callback{genericTypes}(Action{genericTypes} replacement);");
 
                 voidMethodPlugBuilder.AppendLine($@"
+        /// <inheritdoc />
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public IMethodPlug Callback{genericTypes}(Action{genericTypes} replacement)
         {{
@@ -149,6 +160,16 @@ namespace NosePlug.Plugs
             }}
             return this;
         }}");
+                interfaceBuilder.AppendLine("        /// <summary>");
+                interfaceBuilder.AppendLine("        /// Add a callback that will be invoked instead of the original static method and returns a value.");
+                interfaceBuilder.AppendLine("        /// </summary>");
+                for (int i = 0; i < numParameters; i++)
+                {
+                    interfaceBuilder.AppendLine($"        /// <typeparam name=\"T{i + 1}\"></typeparam>");
+
+                }
+                interfaceBuilder.AppendLine("        /// <param name=\"replacement\">The replacement delegate to invoke.</param>");
+                interfaceBuilder.AppendLine("        /// <returns>The original method plug.</returns>");
 
                 interfaceBuilder.AppendLine(@$"        IMethodPlug<TReturn> Returns{genericTypes}(Func{genericTypesWithReturn} replacement);");
                 

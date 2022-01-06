@@ -1,8 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using NosePlug.Tests.TestClasses;
+using System;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace NosePlug.Tests
@@ -13,11 +13,10 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanReplaceAndUndoTaskRun()
         {
-            Nasal mocker = new();
-            mocker.Method(() => Task.Run((Func<int>)null!))
+            var taskRunPlug = Nasal.Method(() => Task.Run((Func<int>)null!))
                   .Returns(() => Task.FromResult(42));
 
-            using (await mocker.ApplyAsync())
+            using (await Nasal.ApplyAsync(taskRunPlug))
             {
                 Assert.Equal(42, await Task.Run(() => 21));
             }
@@ -28,11 +27,10 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanReplaceLinqWhereMethod()
         {
-            Nasal mocker = new();
-            mocker.Method(() => Enumerable.Where(Enumerable.Empty<int>(), x => true))
+            var enumerablePlug = Nasal.Method(() => Enumerable.Where(Enumerable.Empty<int>(), x => true))
                   .Returns(new[] { 1, 2, 3 });
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(enumerablePlug);
 
             var rv = Enumerable.Range(1, 10).Where(x => x > 5).ToArray();
 
@@ -42,13 +40,12 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanReplacePublicMethod()
         {
-            Nasal mocker = new();
             int invocationCount = 0;
 
-            mocker.Method(() => HasPublicMethod.NoParameters())
+            var noParamsPlug = Nasal.Method(() => HasPublicMethod.NoParameters())
                 .Callback(() => invocationCount++);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(noParamsPlug);
 
             HasPublicMethod.NoParameters();
 
@@ -58,12 +55,10 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanReplacePublicMethodWithReturnValue()
         {
-            Nasal mocker = new();
-
-            mocker.Method(() => HasPublicMethod.ReturnValue())
+            var returnValuePlug = Nasal.Method(() => HasPublicMethod.ReturnValue())
                 .Returns(4);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(returnValuePlug);
 
             Assert.Equal(4, HasPublicMethod.ReturnValue());
         }
@@ -72,15 +67,15 @@ namespace NosePlug.Tests
         public async Task CanReplacePublicAsyncMethodWithAsyncCallback()
         {
             int invocationCount = 0;
-            Nasal mocker = new();
-            mocker.Method(() => HasPublicMethod.AsyncMethod())
+             
+            var asyncPlug = Nasal.Method(() => HasPublicMethod.AsyncMethod())
                 .Returns(async () =>
                 {
                     await Task.Yield();
                     invocationCount++;
                 });
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(asyncPlug);
 
             await HasPublicMethod.AsyncMethod();
             Assert.Equal(1, invocationCount);
@@ -91,8 +86,7 @@ namespace NosePlug.Tests
         {
             int invocationCount = 0;
             int passedValue = 0;
-            Nasal mocker = new();
-            mocker.Method(() => HasPublicMethod.AsyncMethod(0))
+            var asyncPlug = Nasal.Method(() => HasPublicMethod.AsyncMethod(0))
                 .Returns((int value) =>
                 {
                     invocationCount++;
@@ -100,7 +94,7 @@ namespace NosePlug.Tests
                     return Task.CompletedTask;
                 });
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(asyncPlug);
 
             await HasPublicMethod.AsyncMethod(42);
             Assert.Equal(1, invocationCount);
@@ -113,8 +107,7 @@ namespace NosePlug.Tests
             int invocationCount = 0;
             string passString = "";
             int passedValue = 0;
-            Nasal mocker = new();
-            mocker.Method(() => HasPublicMethod.AsyncMethod("", 0))
+            var asyncPlug = Nasal.Method(() => HasPublicMethod.AsyncMethod("", 0))
                 .Returns((string @string, int value) =>
                 {
                     invocationCount++;
@@ -123,7 +116,7 @@ namespace NosePlug.Tests
                     return Task.FromResult(0.0);
                 });
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(asyncPlug);
 
             await HasPublicMethod.AsyncMethod("Test", 42);
             Assert.Equal(1, invocationCount);
@@ -134,11 +127,10 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanReplacePublicAsyncMethodWithReturnValueDelegateCallback()
         {
-            Nasal mocker = new();
-            mocker.Method(() => HasPublicMethod.AsyncMethodWithReturn())
+            var asyncPlug = Nasal.Method(() => HasPublicMethod.AsyncMethodWithReturn())
                 .Returns(() => Task.FromResult(4));
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(asyncPlug);
 
             Assert.Equal(4, await HasPublicMethod.AsyncMethodWithReturn());
         }
@@ -146,11 +138,10 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanReplacePublicAsyncMethodWithReturnValueCallback()
         {
-            Nasal mocker = new();
-            mocker.Method(() => HasPublicMethod.AsyncMethodWithReturn())
+            var asyncPlug = Nasal.Method(() => HasPublicMethod.AsyncMethodWithReturn())
                 .Returns(Task.FromResult(4));
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(asyncPlug);
 
             Assert.Equal(4, await HasPublicMethod.AsyncMethodWithReturn());
         }
@@ -159,11 +150,10 @@ namespace NosePlug.Tests
         public async Task CanReplacePublicMethodWithOverride()
         {
             int invocationCount = 0;
-            Nasal mocker = new();
-            mocker.Method(() => HasPublicMethod.Overloaded(0))
+            var overloadedPlug = Nasal.Method(() => HasPublicMethod.Overloaded(0))
                 .Callback(() => invocationCount++);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(overloadedPlug);
 
             HasPublicMethod.Overloaded(42);
             Assert.Equal(1, invocationCount);
@@ -175,8 +165,7 @@ namespace NosePlug.Tests
             int invocationCount = 0;
             string? passedString = null;
             int passedValue = 0;
-            Nasal mocker = new();
-            mocker.Method(() => HasPublicMethod.Overloaded("", 0))
+            var overloadedPlug = Nasal.Method(() => HasPublicMethod.Overloaded("", 0))
                 .Callback((string first, int second) =>
                 {
                     passedString = first;
@@ -184,7 +173,7 @@ namespace NosePlug.Tests
                     invocationCount++;
                 });
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(overloadedPlug);
 
             HasPublicMethod.Overloaded("Foo", 42);
             Assert.Equal(1, invocationCount);
@@ -195,11 +184,10 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanReplacePublicGenericMethods()
         {
-            Nasal mocker = new();
-            mocker.Method(() => HasPublicMethod.GenericMethod<int>())
+            var genericPlug = Nasal.Method(() => HasPublicMethod.GenericMethod<int>())
                 .Returns(42);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(genericPlug);
 
             int value = HasPublicMethod.GenericMethod<int>();
             string? stringValue = HasPublicMethod.GenericMethod<string>();
@@ -212,13 +200,12 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanReplacePrivateMethod()
         {
-            Nasal mocker = new();
             int invocationCount = 0;
 
-            mocker.Method<HasPrivateMethod>("NoParameters")
+            var noParamsPlug = Nasal.Method<HasPrivateMethod>("NoParameters")
                 .Callback(() => invocationCount++);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(noParamsPlug);
 
             HasPrivateMethod.InvokeNoParameters();
 
@@ -228,12 +215,10 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanReplacePrivateMethodWithReturnValue()
         {
-            Nasal mocker = new();
-
-            mocker.Method<HasPrivateMethod, int>("ReturnValue")
+            var returnPlug = Nasal.Method<HasPrivateMethod, int>("ReturnValue")
                 .Returns(4);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(returnPlug);
 
             Assert.Equal(4, HasPrivateMethod.InvokeReturnValue());
         }
@@ -242,15 +227,14 @@ namespace NosePlug.Tests
         public async Task CanReplacePrivateAsyncMethodWithActionCallback()
         {
             int invocationCount = 0;
-            Nasal mocker = new();
-            mocker.Method<HasPrivateMethod, Task>("AsyncMethod")
+            var asyncPlug = Nasal.Method<HasPrivateMethod, Task>("AsyncMethod")
                 .Returns(() => 
                 {
                     invocationCount++;
                     return Task.CompletedTask;
                 });
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(asyncPlug);
 
             await HasPrivateMethod.InvokeAsyncMethod();
             Assert.Equal(1, invocationCount);
@@ -260,15 +244,15 @@ namespace NosePlug.Tests
         public async Task CanReplacePrivateAsyncMethodWithAsyncCallback()
         {
             int invocationCount = 0;
-            Nasal mocker = new();
-            mocker.Method<HasPrivateMethod, Task>("AsyncMethod")
+            var asyncPlug = Nasal.Method<HasPrivateMethod, Task>("AsyncMethod")
                 .Returns(async () =>
                 {
                     await Task.Yield();
                     invocationCount++;
                 });
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(asyncPlug
+                );
 
             await HasPrivateMethod.InvokeAsyncMethod();
             Assert.Equal(1, invocationCount);
@@ -279,8 +263,7 @@ namespace NosePlug.Tests
         {
             int invocationCount = 0;
             int passedValue = 0;
-            Nasal mocker = new();
-            mocker.Method<HasPrivateMethod, Task>("AsyncMethod", typeof(int))
+            var asyncPlug = Nasal.Method<HasPrivateMethod, Task>("AsyncMethod", typeof(int))
                 .Returns((int value) =>
                 {
                     invocationCount++;
@@ -288,7 +271,7 @@ namespace NosePlug.Tests
                     return Task.CompletedTask;
                 });
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(asyncPlug);
 
             await HasPrivateMethod.InvokeAsyncMethod(42);
             Assert.Equal(1, invocationCount);
@@ -301,8 +284,7 @@ namespace NosePlug.Tests
             int invocationCount = 0;
             string passString = "";
             int passedValue = 0;
-            Nasal mocker = new();
-            mocker.Method<HasPrivateMethod, Task<double>>("AsyncMethod", typeof(string), typeof(int))
+            var asyncPlug = Nasal.Method<HasPrivateMethod, Task<double>>("AsyncMethod", typeof(string), typeof(int))
                 .Returns((string @string, int value) =>
                 {
                     invocationCount++;
@@ -311,7 +293,7 @@ namespace NosePlug.Tests
                     return Task.FromResult(2.3);
                 });
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(asyncPlug);
 
             double rv = await HasPrivateMethod.InvokeAsyncMethod("Test", 42);
             Assert.Equal(2.3, rv);
@@ -323,11 +305,10 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanReplacePrivateAsyncMethodWithReturnValueDelegateCallback()
         {
-            Nasal mocker = new();
-            mocker.Method<HasPrivateMethod, Task<int>>("AsyncMethodWithReturn")
+            var asyncPlug = Nasal.Method<HasPrivateMethod, Task<int>>("AsyncMethodWithReturn")
                 .Returns(() => Task.FromResult(4));
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(asyncPlug);
 
             Assert.Equal(4, await HasPrivateMethod.InvokeAsyncMethodWithReturn());
         }
@@ -335,11 +316,10 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanReplacePrivateAsyncMethodWithReturnValueCallback()
         {
-            Nasal mocker = new();
-            mocker.Method<HasPrivateMethod, Task<int>>("AsyncMethodWithReturn")
+            var asyncPlug = Nasal.Method<HasPrivateMethod, Task<int>>("AsyncMethodWithReturn")
                 .Returns(Task.FromResult(4));
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(asyncPlug);
 
             Assert.Equal(4, await HasPrivateMethod.InvokeAsyncMethodWithReturn());
         }
@@ -348,11 +328,10 @@ namespace NosePlug.Tests
         public async Task CanReplacePrivateMethodWithOverride()
         {
             int invocationCount = 0;
-            Nasal mocker = new();
-            mocker.Method<HasPrivateMethod>("Overloaded", typeof(int))
+            var overloadedPlug = Nasal.Method<HasPrivateMethod>("Overloaded", typeof(int))
                 .Callback(() => invocationCount++);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(overloadedPlug);
 
             HasPrivateMethod.InvokeOverloaded(42);
             Assert.Equal(1, invocationCount);
@@ -364,8 +343,7 @@ namespace NosePlug.Tests
             int invocationCount = 0;
             string? passedString = null;
             int passedValue = 0;
-            Nasal mocker = new();
-            mocker.Method<HasPrivateMethod>("Overloaded", typeof(string), typeof(int))
+            var overloadedPlug = Nasal.Method<HasPrivateMethod>("Overloaded", typeof(string), typeof(int))
                 .Callback((string foo, int value) =>
                 {
                     passedString = foo;
@@ -373,7 +351,7 @@ namespace NosePlug.Tests
                     invocationCount++;
                 });
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(overloadedPlug);
 
             HasPrivateMethod.InvokeOverloaded("Foo", 42);
             Assert.Equal(1, invocationCount);
@@ -384,11 +362,10 @@ namespace NosePlug.Tests
         [Fact]
         public async Task CanReplacePrivateGenericMethods()
         {
-            Nasal mocker = new();
-            mocker.Method<HasPrivateMethod, int>("GenericMethod", new Type[] { typeof(int) }, Array.Empty<Type>())
+            var genericPlug = Nasal.Method<HasPrivateMethod, int>("GenericMethod", new Type[] { typeof(int) }, Array.Empty<Type>())
                 .Returns(42);
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(genericPlug);
 
             int value = HasPrivateMethod.InvokeGenericMethod<int>();
             string? stringValue = HasPrivateMethod.InvokeGenericMethod<string>();
@@ -401,12 +378,11 @@ namespace NosePlug.Tests
         public async Task CanInvokeOriginalVoidReturningMethod()
         {
             int invocationCount = 0;
-            Nasal mocker = new();
-            mocker.Method(() => HasPublicMethod.Overloaded(0))
+            var overloadedPlug = Nasal.Method(() => HasPublicMethod.Overloaded(0))
                     .Callback(() => invocationCount++)
                     .CallOriginal();
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(overloadedPlug);
             HasPublicMethod.OverloadedValue = 0;
 
             HasPublicMethod.Overloaded(42);
@@ -419,8 +395,7 @@ namespace NosePlug.Tests
         public async Task CanInvokeOriginalTypeReturningMethod()
         {
             int invocationCount = 0;
-            Nasal mocker = new();
-            mocker.Method(() => HasPublicMethod.ReturnValue())
+            var returnPlug = Nasal.Method(() => HasPublicMethod.ReturnValue())
                   .Returns(() =>
                   {
                       invocationCount++;
@@ -428,7 +403,7 @@ namespace NosePlug.Tests
                   })
                   .CallOriginal();
 
-            using IDisposable _ = await mocker.ApplyAsync();
+            using IDisposable _ = await Nasal.ApplyAsync(returnPlug);
             HasPublicMethod.ReturnValueCalled = false;
 
             int value = HasPublicMethod.ReturnValue();
@@ -438,5 +413,41 @@ namespace NosePlug.Tests
             Assert.True(HasPublicMethod.ReturnValueCalled);
         }
 
+        [Fact]
+        public void MethodExpression_WhenExpressionIsNull_ThrowsException()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => Nasal.Method((Expression<Action>)null!));
+            Assert.Equal("methodExpression", ex.ParamName);
+        }
+
+        [Fact]
+        public void MethodExpressionGeneric_WhenExpressionIsNull_ThrowsException()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => Nasal.Method((Expression<Func<int>>)null!));
+            Assert.Equal("methodExpression", ex.ParamName);
+        }
+
+        [Fact]
+        public void MethodExpressionGeneric_WhenExpressionIsNotAMethodCall_ThrowsException()
+        {
+            var ex = Assert.Throws<ArgumentException>(() => Nasal.Method(() => HasPublicProperty.Foo));
+            Assert.Equal("methodExpression", ex.ParamName);
+            Assert.Contains("Expresion is not a method call expression", ex.Message);
+        }
+
+        [Fact]
+        public void MethodGeneric_WhenMethodNameIsNull_ThrowsException()
+        {
+            var ex = Assert.Throws<ArgumentException>(() => Nasal.Method<HasPublicMethod>((string)null!));
+            Assert.Equal("methodName", ex.ParamName);
+        }
+
+        [Fact]
+        public void MethodGeneric_WhenMethodNameIsNotFound_ThrowsException()
+        {
+            var ex = Assert.Throws<MissingMethodException>(() => Nasal.Method<HasPublicMethod>("DoesNotExist"));
+            Assert.Contains("HasPublicMethod", ex.Message);
+            Assert.Contains("DoesNotExist", ex.Message);
+        }
     }
 }

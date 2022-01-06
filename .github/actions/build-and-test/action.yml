@@ -6,41 +6,33 @@ inputs:
     required : true
   configuration:
     description: The configuration to build.
+    required: true
   build_version:
     description: The version number to apply to the build.
+    required: true
   nuget_token:
     description: The token to setup with the NUGET_AUTH_TOKEN.
+    required: false
 runs:
   using: "composite"
-  steps:    
-    - name: Setup .NET Core 3.1
+  steps:
+    - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: "3.1.x"
+        dotnet-version: | 
+          3.1.x
+          5.x
+          6.x
       env:
         NUGET_AUTH_TOKEN: ${{ inputs.nuget_token }}
-
-    - name: Setup .NET 5.0
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: "5.0.x"
-      env:
-        NUGET_AUTH_TOKEN: ${{ inputs.nuget_token }}
-
-    - name: Setup .NET 6.0
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: "6.x"
-      env:
-        NUGET_AUTH_TOKEN: ${{ inputs.nuget_token }}
-    
+        
     - name: Install dependencies
       shell: pwsh
       run: dotnet restore
     
     - name: Build
       shell: pwsh
-      run: dotnet build -p:Version=${{ inputs.build_version }} -p:ContinuousIntegrationBuild=True --configuration ${{ inputs.configuration }} --no-restore
+      run: dotnet build -p:Version=${{ inputs.build_version }} -p:ContinuousIntegrationBuild=True --configuration ${{ inputs.configuration }} --no-restore -p:TreatWarningsAsErrors=True
     
     - name: Test
       shell: pwsh

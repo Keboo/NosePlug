@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace NosePlug.Plugs;
 
-internal interface IPlug : IDisposable
+internal interface IPlug : NosePlug.IPlug, IDisposable
 {
     string Id { get; }
     Task AcquireLockAsync();
