@@ -491,16 +491,16 @@ namespace NosePlug.Tests
             Assert.Equal(expected, service);
         }
 
-        //[Fact]
-        //public async Task Method_InterfaceReturnValue_ReturnsValue()
-        //{
-        //    IService expected = new TestService();
-        //    IMethodPlug<IService> methodPlug = Nasal.Method<IService>(() => HasPublicMethod.HasServiceReturnValue())
-        //        .Returns(() => expected);
-        //    using var _ = await Nasal.ApplyAsync(methodPlug);
+        [Fact]
+        public async Task Method_InterfaceReturnValue_ReturnsValue()
+        {
+            IService expected = new TestService();
+            IMethodPlug<IService> methodPlug = Nasal.Method<IService>(() => HasPublicMethod.HasServiceReturnValue())
+                .Returns(() => expected);
+            using var _ = await Nasal.ApplyAsync(methodPlug);
 
-        //    TestService actual = HasPublicMethod.HasServiceReturnValue();
-        //    Assert.Equal(expected, actual);
-        //}
+            TestService actual = HasPublicMethod.HasServiceReturnValue();
+            Assert.Equal(expected, actual);
+        }
     }
 }
