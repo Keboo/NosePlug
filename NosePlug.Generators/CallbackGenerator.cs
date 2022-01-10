@@ -84,6 +84,8 @@ namespace NosePlug.Plugs
         protected override MethodInfo PrefixInfo {{ get; }}
             = typeof(VoidMethodHandler{genericTypes}).GetMethod(nameof(PrefixMethod)) ?? throw new MissingMethodException();
 
+        protected override Type ReturnType {{ get; }} = typeof(void);
+
         private Action{genericTypes} Callback {{ get; }}
 
         public VoidMethodHandler(InterceptorKey key, Action{genericTypes} callback)
@@ -108,6 +110,8 @@ namespace NosePlug.Plugs
     {{
         protected override MethodInfo PrefixInfo {{ get; }}
             = typeof(MethodHandler{genericTypesWithReturn}).GetMethod(nameof(MethodWithReturnPrefix)) ?? throw new MissingMethodException();
+
+        protected override Type ReturnType {{ get; }} = typeof(TReturn);
 
         private Func{genericTypesWithReturn} Callback {{ get; }}
 

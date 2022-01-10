@@ -11,6 +11,8 @@ internal abstract class BaseMethodHandler : IMethodHandler
 {
     private bool _isDisposed;
 
+    protected abstract Type ReturnType { get; }
+
     protected abstract MethodInfo PrefixInfo { get; }
 
     private static Dictionary<InterceptorKey, IMethodHandler> Callbacks { get; } = new();
@@ -47,7 +49,7 @@ internal abstract class BaseMethodHandler : IMethodHandler
             for (int i = 0; i < parameters.Length && matches; i++)
             {
                 matches = originalParameters[i].ParameterType == parameters[i] ||
-                    originalParameters[i].ParameterType.IsSubclassOf(parameters[i]);
+                    parameters[i].IsAssignableFrom(originalParameters[i].ParameterType);
             }
         }
         else
@@ -58,6 +60,12 @@ internal abstract class BaseMethodHandler : IMethodHandler
         if (!matches)
         {
             throw new NasalException($"Plug for {original.DeclaringType.FullName}.{original.Name} has callback parameters ({GetTypeDisplay(parameters)}) that do not match original method parameters ({GetParametersDisplay(originalParameters)})");
+        }
+
+        if (original.ReturnType != ReturnType &&
+            !ReturnType.IsAssignableFrom(original.ReturnType))
+        {
+            throw new NasalException($"Plug for {original.DeclaringType.FullName}.{original.Name} has return type ({ReturnType.FullName}) that do not match original method return type ({original.ReturnType.FullName})");
         }
 
         static string GetParametersDisplay(ParameterInfo[] parameters)
