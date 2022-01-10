@@ -38,10 +38,11 @@ internal abstract class BaseMethodHandler : IMethodHandler
     public void AssertMatches(MethodInfo original)
     {
         var originalParameters = original.GetParameters();
-        var parameters = Key.ParameterTypes.ToArray();
+        var parameters = PrefixInfo.GetParameters().Where(x => x.Name != "__originalMethod" && x.Name != "__result")
+            .Select(x => x.ParameterType).ToArray();
 
         bool matches = true;
-        if (originalParameters.Length == parameters.Length)
+        if (originalParameters.Length == parameters.Length || parameters.Length == 0)
         {
             for (int i = 0; i < parameters.Length && matches; i++)
             {
