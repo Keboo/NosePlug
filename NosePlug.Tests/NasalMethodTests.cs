@@ -477,19 +477,19 @@ namespace NosePlug.Tests
             Assert.Equal("Plug for NosePlug.Tests.TestClasses.HasPublicMethod.Overloaded has callback parameters (System.Int32, System.String) that do not match original method parameters (System.String, System.Int32)", ex.Message);
         }
 
-        //[Fact]
-        //public async Task Method_CallbackWithInterfaceForParameterTypes_ReceivedCallback()
-        //{
-        //    IService? service = null;
-        //    IMethodPlug methodPlug = Nasal.Method(() => HasPublicMethod.HasServiceParameter(null!))
-        //        .Callback((IService s) => service = s);
-        //    using var _ = await Nasal.ApplyAsync(methodPlug);
+        [Fact]
+        public async Task Method_CallbackWithInterfaceForParameterTypes_ReceivedCallback()
+        {
+            IService? service = null;
+            IMethodPlug methodPlug = Nasal.Method(() => HasPublicMethod.HasServiceParameter(null!))
+                .Callback((IService s) => service = s);
+            using var _ = await Nasal.ApplyAsync(methodPlug);
 
-        //    TestService expected = new();
-        //    HasPublicMethod.HasServiceParameter(expected);
+            TestService expected = new();
+            HasPublicMethod.HasServiceParameter(expected);
 
-        //    Assert.Equal(expected, service);
-        //}
+            Assert.Equal(expected, service);
+        }
 
         //[Fact]
         //public async Task Method_InterfaceReturnValue_ReturnsValue()
