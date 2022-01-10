@@ -59,13 +59,13 @@ internal abstract class BaseMethodHandler : IMethodHandler
 
         if (!matches)
         {
-            throw new NasalException($"Plug for {original.DeclaringType.FullName}.{original.Name} has callback parameters ({GetTypeDisplay(parameters)}) that do not match original method parameters ({GetParametersDisplay(originalParameters)})");
+            throw new NasalException($"Plug for {original.DeclaringType?.FullName}.{original.Name} has callback parameters ({GetTypeDisplay(parameters)}) that do not match original method parameters ({GetParametersDisplay(originalParameters)})");
         }
 
         if (original.ReturnType != ReturnType &&
             !ReturnType.IsAssignableFrom(original.ReturnType))
         {
-            throw new NasalException($"Plug for {original.DeclaringType.FullName}.{original.Name} has return type ({ReturnType.FullName}) that do not match original method return type ({original.ReturnType.FullName})");
+            throw new NasalException($"Plug for {original.DeclaringType?.FullName}.{original.Name} has return type ({ReturnType.FullName}) that do not match original method return type ({original.ReturnType.FullName})");
         }
 
         static string GetParametersDisplay(ParameterInfo[] parameters)
