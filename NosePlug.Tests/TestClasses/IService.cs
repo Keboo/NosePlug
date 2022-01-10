@@ -1,6 +1,6 @@
 ﻿namespace NosePlug.Tests.TestClasses
 {
-    internal interface IService
+    public interface IService
     {
 
     }

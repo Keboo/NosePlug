@@ -15,7 +15,7 @@ internal class InterceptorKey : IEquatable<InterceptorKey?>
 
     private string Name { get; }
     private Type? DelcaringType { get; }
-    public IReadOnlyList<Type> ParameterTypes { get; }
+    private IReadOnlyList<Type> ParameterTypes { get; }
     // Not possible in C# but IL allows methods to differ by return type
     private Type? ReturnType { get; }
 
