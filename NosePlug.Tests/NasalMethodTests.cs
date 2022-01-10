@@ -450,57 +450,57 @@ namespace NosePlug.Tests
             Assert.Contains("DoesNotExist", ex.Message);
         }
 
-        [Fact]
-        public async Task Method_WrongNumberOfParameters_ThrowsException()
-        {
-            IMethodPlug<int> methodPlug = Nasal.Method(() => HasPublicMethod.ReturnValue())
-                .Returns((string _, int _) => 42);
-            var ex = await Assert.ThrowsAsync<NasalException>(() => Nasal.ApplyAsync(methodPlug));
-            Assert.Equal("Plug for NosePlug.Tests.TestClasses.HasPublicMethod.ReturnValue has callback parameters (System.String, System.Int32) that do not match original method parameters (<empty>)", ex.Message);
-        }
+        //[Fact]
+        //public async Task Method_WrongNumberOfParameters_ThrowsException()
+        //{
+        //    IMethodPlug<int> methodPlug = Nasal.Method(() => HasPublicMethod.ReturnValue())
+        //        .Returns((string _, int _) => 42);
+        //    var ex = await Assert.ThrowsAsync<NasalException>(() => Nasal.ApplyAsync(methodPlug));
+        //    Assert.Equal("Plug for NosePlug.Tests.TestClasses.HasPublicMethod.ReturnValue has callback parameters (System.String, System.Int32) that do not match original method parameters (<empty>)", ex.Message);
+        //}
 
-        [Fact]
-        public async Task Method_WrongReturnValue_ThrowsException()
-        {
-            IMethodPlug<string> methodPlug = Nasal.Method<HasPublicMethod, string>(nameof(HasPublicMethod.ReturnValue))
-                .Returns(() => "42");
-            var ex = await Assert.ThrowsAsync<NasalException>(() => Nasal.ApplyAsync(methodPlug));
-            Assert.Equal("Plug for NosePlug.Tests.TestClasses.HasPublicMethod.ReturnValue has return type (System.String) that do not match original method return type (System.Int32)", ex.Message);
-        }
+        //[Fact]
+        //public async Task Method_WrongReturnValue_ThrowsException()
+        //{
+        //    IMethodPlug<string> methodPlug = Nasal.Method<HasPublicMethod, string>(nameof(HasPublicMethod.ReturnValue))
+        //        .Returns(() => "42");
+        //    var ex = await Assert.ThrowsAsync<NasalException>(() => Nasal.ApplyAsync(methodPlug));
+        //    Assert.Equal("Plug for NosePlug.Tests.TestClasses.HasPublicMethod.ReturnValue has return type (System.String) that do not match original method return type (System.Int32)", ex.Message);
+        //}
 
-        [Fact]
-        public async Task Method_WrongParameterTypes_ThrowsException()
-        {
-            IMethodPlug methodPlug = Nasal.Method(() => HasPublicMethod.Overloaded("", 0))
-                .Callback((int _, string _) => { });
-            var ex = await Assert.ThrowsAsync<NasalException>(() => Nasal.ApplyAsync(methodPlug));
-            Assert.Equal("Plug for NosePlug.Tests.TestClasses.HasPublicMethod.Overloaded has callback parameters (System.Int32, System.String) that do not match original method parameters (System.String, System.Int32)", ex.Message);
-        }
+        //[Fact]
+        //public async Task Method_WrongParameterTypes_ThrowsException()
+        //{
+        //    IMethodPlug methodPlug = Nasal.Method(() => HasPublicMethod.Overloaded("", 0))
+        //        .Callback((int _, string _) => { });
+        //    var ex = await Assert.ThrowsAsync<NasalException>(() => Nasal.ApplyAsync(methodPlug));
+        //    Assert.Equal("Plug for NosePlug.Tests.TestClasses.HasPublicMethod.Overloaded has callback parameters (System.Int32, System.String) that do not match original method parameters (System.String, System.Int32)", ex.Message);
+        //}
 
-        [Fact]
-        public async Task Method_CallbackWithInterfaceForParameterTypes_ReceivedCallback()
-        {
-            IService? service = null;
-            IMethodPlug methodPlug = Nasal.Method(() => HasPublicMethod.HasServiceParameter(null!))
-                .Callback((IService s) => service = s);
-            using var _ = await Nasal.ApplyAsync(methodPlug);
+        //[Fact]
+        //public async Task Method_CallbackWithInterfaceForParameterTypes_ReceivedCallback()
+        //{
+        //    IService? service = null;
+        //    IMethodPlug methodPlug = Nasal.Method(() => HasPublicMethod.HasServiceParameter(null!))
+        //        .Callback((IService s) => service = s);
+        //    using var _ = await Nasal.ApplyAsync(methodPlug);
 
-            TestService expected = new();
-            HasPublicMethod.HasServiceParameter(expected);
+        //    TestService expected = new();
+        //    HasPublicMethod.HasServiceParameter(expected);
 
-            Assert.Equal(expected, service);
-        }
+        //    Assert.Equal(expected, service);
+        //}
 
-        [Fact]
-        public async Task Method_InterfaceReturnValue_ReturnsValue()
-        {
-            IService expected = new TestService();
-            IMethodPlug<IService> methodPlug = Nasal.Method<IService>(() => HasPublicMethod.HasServiceReturnValue())
-                .Returns(() => expected);
-            using var _ = await Nasal.ApplyAsync(methodPlug);
+        //[Fact]
+        //public async Task Method_InterfaceReturnValue_ReturnsValue()
+        //{
+        //    IService expected = new TestService();
+        //    IMethodPlug<IService> methodPlug = Nasal.Method<IService>(() => HasPublicMethod.HasServiceReturnValue())
+        //        .Returns(() => expected);
+        //    using var _ = await Nasal.ApplyAsync(methodPlug);
 
-            TestService actual = HasPublicMethod.HasServiceReturnValue();
-            Assert.Equal(expected, actual);
-        }
+        //    TestService actual = HasPublicMethod.HasServiceReturnValue();
+        //    Assert.Equal(expected, actual);
+        //}
     }
 }
