@@ -46,5 +46,11 @@ namespace NosePlug.Tests.TestClasses
         [MethodImpl(MethodImplOptions.NoInlining)]
         [return:MaybeNull]
         public static T GenericMethod<T>() { return default; }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void HasServiceParameter(TestService service) { }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static TestService HasServiceReturnValue() => new();
     }
 }

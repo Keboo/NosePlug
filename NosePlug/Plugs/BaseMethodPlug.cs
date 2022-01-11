@@ -24,10 +24,11 @@ internal class BaseMethodPlug : Plug
 
     public override void Patch()
     {
-        var instance = new Harmony(Id);
-        var processor = Processor = instance.CreateProcessor(Original);
         if (MethodHandler is { } methodHandler)
         {
+            methodHandler.AssertMatches(Original);
+            var instance = new Harmony(Id);
+            var processor = Processor = instance.CreateProcessor(Original);
             methodHandler.ShouldCallOriginal = ShouldCallOriginal;
             methodHandler.Patch(processor);
         }

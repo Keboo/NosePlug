@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 
 namespace NosePlug.Plugs;
@@ -8,6 +10,8 @@ namespace NosePlug.Plugs;
 internal abstract class BaseMethodHandler : IMethodHandler
 {
     private bool _isDisposed;
+
+    protected abstract Type ReturnType { get; }
 
     protected abstract MethodInfo PrefixInfo { get; }
 
@@ -28,8 +32,50 @@ internal abstract class BaseMethodHandler : IMethodHandler
         {
             Callbacks[Key] = this;
         }
+
         processor.AddPrefix(PrefixInfo);
         _ = processor.Patch();
+    }
+
+    public void AssertMatches(MethodInfo original)
+    {
+        var originalParameters = original.GetParameters();
+        var parameters = PrefixInfo.GetParameters().Where(x => x.Name != "__originalMethod" && x.Name != "__result")
+            .Select(x => x.ParameterType).ToArray();
+
+        bool matches = true;
+        if (originalParameters.Length == parameters.Length || parameters.Length == 0)
+        {
+            for (int i = 0; i < parameters.Length && matches; i++)
+            {
+                matches = originalParameters[i].ParameterType == parameters[i] ||
+                    parameters[i].IsAssignableFrom(originalParameters[i].ParameterType);
+            }
+        }
+        else
+        {
+            matches = false;
+        }
+
+        if (!matches)
+        {
+            throw new NasalException($"Plug for {original.DeclaringType?.FullName}.{original.Name} has callback parameters ({GetTypeDisplay(parameters)}) that do not match original method parameters ({GetParametersDisplay(originalParameters)})");
+        }
+
+        if (original.ReturnType != ReturnType &&
+            !ReturnType.IsAssignableFrom(original.ReturnType))
+        {
+            throw new NasalException($"Plug for {original.DeclaringType?.FullName}.{original.Name} has return type ({ReturnType.FullName}) that do not match original method return type ({original.ReturnType.FullName})");
+        }
+
+        static string GetParametersDisplay(ParameterInfo[] parameters)
+            => GetTypeDisplay(parameters.Select(x => x.ParameterType));
+
+        static string GetTypeDisplay(IEnumerable<Type> types)
+        {
+            var rv = string.Join(", ", types.Select(x => x.FullName));
+            return rv.Length == 0 ? "<empty>" : rv;
+        }
     }
 
     protected static bool TryGetHandler<THandler>(MethodBase originalMethod,
