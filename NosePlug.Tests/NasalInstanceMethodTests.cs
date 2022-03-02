@@ -93,10 +93,22 @@ public class NasalInstanceMethodTests
     }
 
     [Fact]
-    public async Task CanDoHorribleHorribleThings()
+    public async Task InstanceMethod_WithReturnValue_CanBePlugged()
     {
         HasInstanceMethods sut = new();
 
+        IInstanceMethodPlug<int> getIntValuePlug = Nasal.InstanceMethod<HasInstanceMethods, int>(x => x.GetIntegerValue())
+            .Returns((HasInstanceMethods _) => 2);
+
+
+        using IDisposable _ = await Nasal.ApplyAsync(getIntValuePlug);
+
+        Assert.Equal(2, sut.GetIntegerValue());
+    }
+
+    [Fact]
+    public async Task CanDoHorribleHorribleThings()
+    {
         //IInstanceMethodPlug noParamsPlug = Nasal.InstanceMethod<string>(s => s.ToString())
         //    .Returns((string _) => "someone stop me");
 

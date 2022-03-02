@@ -14,3 +14,16 @@ internal partial class InstanceMethodPlug : BaseMethodPlug, IInstanceMethodPlug
         return this;
     }
 }
+
+internal partial class InstanceMethodPlug<TReturn> : BaseMethodPlug, IInstanceMethodPlug<TReturn>
+{
+    public InstanceMethodPlug(MethodInfo original) : base(original)
+    {
+    }
+
+    IInstanceMethodPlug<TReturn> IInstanceMethodPlug<TReturn>.CallOriginal(bool shouldCallOriginal)
+    {
+        ShouldCallOriginal = shouldCallOriginal;
+        return this;
+    }
+}

@@ -84,8 +84,8 @@ partial class Nasal
 
         if (method.IsStatic)
         {
-            throw new NasalException($"'{methodName}' on '{typeof(TContainingType).FullName}' is static. Use {nameof(Nasal)}.{nameof(Method)} to plug it.")
-        }    
+            throw new NasalException($"'{methodName}' on '{typeof(TContainingType).FullName}' is static. Use {nameof(Nasal)}.{nameof(Method)} to plug it.");
+        }
 
         if (genericTypeParameters is not null)
         {
@@ -102,25 +102,26 @@ partial class Nasal
     /// <param name="methodInfo">The <see cref="MethodInfo"/> to create a plug for</param>
     /// <returns>A new method plug</returns>
     /// <exception cref="ArgumentNullException">When the passed in <see cref="MethodInfo"/> is <c>null</c></exception>
-    public static IMethodPlug<TReturn> InstanceMethod<TReturn>(MethodInfo methodInfo)
+    public static IInstanceMethodPlug<TReturn> InstanceMethod<TReturn>(MethodInfo methodInfo)
     {
         if (methodInfo is null)
         {
             throw new ArgumentNullException(nameof(methodInfo));
         }
 
-        return new MethodPlug<TReturn>(methodInfo);
+        return new InstanceMethodPlug<TReturn>(methodInfo);
     }
 
     /// <summary>
     /// Create a method plug for a method with a return value
     /// </summary>
+    /// <typeparam name="TInstance">The type that contains the method to plug</typeparam>
     /// <typeparam name="TReturn">The return type of the method</typeparam>
     /// <param name="methodExpression">An expression referencing a method with a return value. The paramters passed in the expression, are ignored.</param>
     /// <returns>A new method plug.</returns>
     /// <exception cref="ArgumentNullException">When the passed in expression is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">When the passed in expression is not a <see cref="MethodCallExpression"/>.</exception>
-    public static IMethodPlug<TReturn> InstanceMethod<TReturn>(Expression<Func<TReturn>> methodExpression)
+    public static IInstanceMethodPlug<TReturn> InstanceMethod<TInstance, TReturn>(Expression<Func<TInstance, TReturn>> methodExpression)
     {
         if (methodExpression is null)
         {
@@ -130,22 +131,7 @@ partial class Nasal
         if (methodExpression.Body is MethodCallExpression methodCallExpression)
         {
             MethodInfo original = methodCallExpression.Method;
-            return Method<TReturn>(original);
-        }
-        throw new ArgumentException("Expresion is not a method call expression", nameof(methodExpression));
-    }
-
-    public static IMethodPlug<TReturn> InstanceMethod<T, TReturn>(Expression<Func<T, TReturn>> methodExpression)
-    {
-        if (methodExpression is null)
-        {
-            throw new ArgumentNullException(nameof(methodExpression));
-        }
-
-        if (methodExpression.Body is MethodCallExpression methodCallExpression)
-        {
-            MethodInfo original = methodCallExpression.Method;
-            return Method<TReturn>(original);
+            return InstanceMethod<TReturn>(original);
         }
         throw new ArgumentException("Expresion is not a method call expression", nameof(methodExpression));
     }

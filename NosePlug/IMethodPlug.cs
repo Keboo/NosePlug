@@ -23,11 +23,6 @@ public partial interface IMethodPlug : IPlug
     IMethodPlug CallOriginal(bool shouldCallOriginal = true);
 }
 
-public partial interface IInstanceMethodPlug: IPlug
-{
-    IInstanceMethodPlug CallOriginal(bool shouldCallOriginal = true);
-}
-
 /// <summary>
 /// A method plug for a method with a return value.
 /// </summary>
@@ -41,4 +36,14 @@ public partial interface IMethodPlug<TReturn> : IPlug
     /// <param name="shouldCallOriginal">A flag indicating if the original method should be called. Defaults <c>true</c></param>
     /// <returns>The original method plug instance</returns>
     IMethodPlug<TReturn> CallOriginal(bool shouldCallOriginal = true);
+}
+
+public partial interface IInstanceMethodPlug : IPlug
+{
+    IInstanceMethodPlug CallOriginal(bool shouldCallOriginal = true);
+}
+
+public partial interface IInstanceMethodPlug<TReturn> : IPlug
+{
+    IInstanceMethodPlug<TReturn> CallOriginal(bool shouldCallOriginal = true);
 }

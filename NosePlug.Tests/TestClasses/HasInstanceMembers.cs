@@ -13,6 +13,8 @@ namespace NosePlug.Tests.TestClasses
 
         }
 
+        public int GetIntegerValue() => 42;
+
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void NoParameters() { }
         public void InvokeNoParameters() => NoParameters();

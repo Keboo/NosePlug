@@ -20,8 +20,10 @@ namespace NodePlug.Generators
             StringBuilder voidInstanceInterfaceBuilder = new();
             StringBuilder voidStaticMethodPlugBuilder = new();
             StringBuilder voidInstanceMethodPlugBuilder = new();
-            StringBuilder methodPlugBuilder = new();
-            StringBuilder interfaceBuilder = new();
+            StringBuilder staticMethodPlugBuilder = new();
+            StringBuilder instanceMethodPlugBuilder = new();
+            StringBuilder staticInterfaceBuilder = new();
+            StringBuilder instanceInterfaceBuilder = new();
 
             handlerBuilder.AppendLine(@"
 #nullable enable
@@ -49,12 +51,20 @@ namespace NosePlug.Plugs;
 partial class InstanceMethodPlug
 {{");
 
-            interfaceBuilder.AppendLine(@$"
+            staticInterfaceBuilder.AppendLine(@$"
 using System;
 
 namespace NosePlug;
 
 partial interface IMethodPlug<TReturn>
+{{");
+
+            instanceInterfaceBuilder.AppendLine(@$"
+using System;
+
+namespace NosePlug;
+
+partial interface IInstanceMethodPlug<TReturn>
 {{");
 
             voidStaticInterfaceBuilder.AppendLine(@$"
@@ -73,13 +83,22 @@ namespace NosePlug;
 partial interface IInstanceMethodPlug
 {{");
 
-            methodPlugBuilder.AppendLine($@"
+            staticMethodPlugBuilder.AppendLine($@"
 #nullable enable
 using System;
 
 namespace NosePlug.Plugs;
 
 partial class MethodPlug<TReturn>
+{{");
+
+            instanceMethodPlugBuilder.AppendLine($@"
+#nullable enable
+using System;
+
+namespace NosePlug.Plugs;
+
+partial class InstanceMethodPlug<TReturn>
 {{");
 
             for (int numParameters = 0; numParameters <= NumberOfParameters; numParameters++)
@@ -292,26 +311,50 @@ internal sealed class InstanceMethodHandler{instanceGenericTypesWithReturn} : Ba
     }}");
                 }
 
-                interfaceBuilder.AppendLine("    /// <summary>");
-                interfaceBuilder.AppendLine("    /// Add a callback that will be invoked instead of the original static method and returns a value.");
-                interfaceBuilder.AppendLine("    /// </summary>");
+                staticInterfaceBuilder.AppendLine("    /// <summary>");
+                staticInterfaceBuilder.AppendLine("    /// Add a callback that will be invoked instead of the original static method and returns a value.");
+                staticInterfaceBuilder.AppendLine("    /// </summary>");
                 for (int i = 0; i < numParameters; i++)
                 {
-                    interfaceBuilder.AppendLine($"    /// <typeparam name=\"T{i + 1}\"></typeparam>");
+                    staticInterfaceBuilder.AppendLine($"    /// <typeparam name=\"T{i + 1}\"></typeparam>");
 
                 }
-                interfaceBuilder.AppendLine("    /// <param name=\"replacement\">The replacement delegate to invoke.</param>");
-                interfaceBuilder.AppendLine("    /// <returns>The original method plug.</returns>");
+                staticInterfaceBuilder.AppendLine("    /// <param name=\"replacement\">The replacement delegate to invoke.</param>");
+                staticInterfaceBuilder.AppendLine("    /// <returns>The original method plug.</returns>");
 
-                interfaceBuilder.AppendLine(@$"    IMethodPlug<TReturn> Returns{genericTypes}(Func{genericTypesWithReturn} replacement);");
+                staticInterfaceBuilder.AppendLine(@$"    IMethodPlug<TReturn> Returns{genericTypes}(Func{genericTypesWithReturn} replacement);");
 
-                methodPlugBuilder.AppendLine($@"
+                staticMethodPlugBuilder.AppendLine($@"
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public IMethodPlug<TReturn> Returns{genericTypes}(Func{genericTypesWithReturn} replacement)
     {{
         MethodHandler = new MethodHandler{genericTypesWithReturn}(Key, replacement);
         return this;
     }}");
+                if (numParameters <= 14)
+                {
+                    instanceInterfaceBuilder.AppendLine("    /// <summary>");
+                    instanceInterfaceBuilder.AppendLine("    /// Add a callback that will be invoked instead of the original instance method and returns a value.");
+                    instanceInterfaceBuilder.AppendLine("    /// </summary>");
+                    for (int i = 0; i < numParameters; i++)
+                    {
+                        instanceInterfaceBuilder.AppendLine($"    /// <typeparam name=\"T{i + 1}\"></typeparam>");
+
+                    }
+                    instanceInterfaceBuilder.AppendLine("    /// <param name=\"replacement\">The replacement delegate to invoke.</param>");
+                    instanceInterfaceBuilder.AppendLine("    /// <returns>The original method plug.</returns>");
+
+                    instanceInterfaceBuilder.AppendLine(@$"    IInstanceMethodPlug<TReturn> Returns{instanceGenericTypes}(Func{instanceGenericTypesWithReturn} replacement);");
+
+
+                    instanceMethodPlugBuilder.AppendLine($@"
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public IInstanceMethodPlug<TReturn> Returns{instanceGenericTypes}(Func{instanceGenericTypesWithReturn} replacement)
+    {{
+        MethodHandler = new InstanceMethodHandler{instanceGenericTypesWithReturn}(Key, replacement);
+        return this;
+    }}");
+                }
             }
 
 
@@ -323,9 +366,13 @@ internal sealed class InstanceMethodHandler{instanceGenericTypesWithReturn} : Ba
 }}");
             voidInstanceMethodPlugBuilder.AppendLine(@$"
 }}");
-            interfaceBuilder.AppendLine(@$"
+            staticInterfaceBuilder.AppendLine(@$"
 }}");
-            methodPlugBuilder.AppendLine(@$"
+            instanceInterfaceBuilder.AppendLine(@$"
+}}");
+            staticMethodPlugBuilder.AppendLine(@$"
+}}");
+            instanceMethodPlugBuilder.AppendLine(@$"
 }}");
 
             context.AddSource("MethodHandler.g.cs", handlerBuilder.ToString());
@@ -333,8 +380,10 @@ internal sealed class InstanceMethodHandler{instanceGenericTypesWithReturn} : Ba
             context.AddSource("IInstanceMethodPlug.g.cs", voidInstanceInterfaceBuilder.ToString());
             context.AddSource("StaticMethodPlug.g.cs", voidStaticMethodPlugBuilder.ToString());
             context.AddSource("InstanceMethodPlug.g.cs", voidInstanceMethodPlugBuilder.ToString());
-            context.AddSource("IMethodPlug{T}.g.cs", interfaceBuilder.ToString());
-            context.AddSource("MethodPlug{T}.g.cs", methodPlugBuilder.ToString());
+            context.AddSource("IMethodPlug{T}.g.cs", staticInterfaceBuilder.ToString());
+            context.AddSource("IInstanceMethodPlug{T}.g.cs", instanceInterfaceBuilder.ToString());
+            context.AddSource("MethodPlug{T}.g.cs", staticMethodPlugBuilder.ToString());
+            context.AddSource("InstanceMethodPlug{T}.g.cs", instanceMethodPlugBuilder.ToString());
 
 
             static IEnumerable<string> GetPrefixParameters(int numParamters)
