@@ -1,6 +1,7 @@
 ﻿namespace NosePlug.Tests.TestClasses
 {
-    internal class HasFullProperty
+
+    internal static class HasFullProperty
     {
         public static int _field;
 

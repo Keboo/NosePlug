@@ -23,6 +23,11 @@ public partial interface IMethodPlug : IPlug
     IMethodPlug CallOriginal(bool shouldCallOriginal = true);
 }
 
+public partial interface IInstanceMethodPlug: IPlug
+{
+    IInstanceMethodPlug CallOriginal(bool shouldCallOriginal = true);
+}
+
 /// <summary>
 /// A method plug for a method with a return value.
 /// </summary>
