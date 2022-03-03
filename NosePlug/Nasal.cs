@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace NosePlug;
+﻿namespace NosePlug;
 
 /// <summary>
 /// The main entry point for creating plugs.
@@ -23,9 +18,9 @@ public static partial class Nasal
         {
             throw new ArgumentException("At least one plug must be specified", nameof(plugs));
         }
-        
+
         List<Plugs.IPlug> internalPlugs = new(plugs.Length);
-        foreach(var plug in plugs)
+        foreach (var plug in plugs)
         {
             if (plug is Plugs.IPlug internalPlug)
             {

@@ -85,21 +85,6 @@ partial class Nasal
         throw new ArgumentException("Expresion is not a method call expression", nameof(methodExpression));
     }
 
-    public static IMethodPlug<TReturn> Method<T, TReturn>(Expression<Func<T, TReturn>> methodExpression)
-    {
-        if (methodExpression is null)
-        {
-            throw new ArgumentNullException(nameof(methodExpression));
-        }
-
-        if (methodExpression.Body is MethodCallExpression methodCallExpression)
-        {
-            MethodInfo original = methodCallExpression.Method;
-            return Method<TReturn>(original);
-        }
-        throw new ArgumentException("Expresion is not a method call expression", nameof(methodExpression));
-    }
-
     /// <summary>
     /// Create a method plug for a static method given its name and parameters.
     /// </summary>
