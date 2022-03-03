@@ -1,15 +1,13 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
-namespace NosePlug.Tests.TestClasses
+namespace NosePlug.Tests.TestClasses;
+
+internal class HasPrivateSetter
 {
-    internal class HasPrivateSetter
-    {
 #if NET472 || NET48
-        public static Guid Foo { get; [MethodImpl(MethodImplOptions.NoInlining)] private set; }
+    public static Guid Foo { get; [MethodImpl(MethodImplOptions.NoInlining)] private set; }
 #else
-        public static Guid Foo { get; private set; }
+    public static Guid Foo { get; private set; }
 #endif
-        public static void SetProperty(Guid value) => Foo = value;
-    }
+    public static void SetProperty(Guid value) => Foo = value;
 }

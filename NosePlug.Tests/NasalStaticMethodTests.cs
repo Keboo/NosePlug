@@ -1,8 +1,5 @@
 using NosePlug.Tests.TestClasses;
-using System;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace NosePlug.Tests;
@@ -454,7 +451,7 @@ public class NasalStaticMethodTests
         IMethodPlug<int> methodPlug = Nasal.Method(() => HasPublicMethod.ReturnValue())
             .Returns((string _, int _) => 42);
         var ex = await Assert.ThrowsAsync<NasalException>(() => Nasal.ApplyAsync(methodPlug));
-        Assert.Equal("Plug for NosePlug.Tests.TestClasses.HasPublicMethod.ReturnValue has callback parameters (System.String, System.Int32) that do not match original method parameters (<empty>)", ex.Message);
+        Assert.Equal("Plug for NosePlug.Tests.TestClasses.HasPublicMethod.ReturnValue has parameters (System.String, System.Int32) that do not match original method parameters (<empty>)", ex.Message);
     }
 
     [Fact]
@@ -472,7 +469,7 @@ public class NasalStaticMethodTests
         IMethodPlug methodPlug = Nasal.Method(() => HasPublicMethod.Overloaded("", 0))
             .Callback((int _, string _) => { });
         var ex = await Assert.ThrowsAsync<NasalException>(() => Nasal.ApplyAsync(methodPlug));
-        Assert.Equal("Plug for NosePlug.Tests.TestClasses.HasPublicMethod.Overloaded has callback parameters (System.Int32, System.String) that do not match original method parameters (System.String, System.Int32)", ex.Message);
+        Assert.Equal("Plug for NosePlug.Tests.TestClasses.HasPublicMethod.Overloaded has parameters (System.Int32, System.String) that do not match original method parameters (System.String, System.Int32)", ex.Message);
     }
 
     [Fact]

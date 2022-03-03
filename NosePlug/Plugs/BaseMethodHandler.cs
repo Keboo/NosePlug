@@ -1,8 +1,5 @@
 ﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
 
 namespace NosePlug.Plugs;
@@ -45,7 +42,7 @@ internal abstract class BaseMethodHandler : IMethodHandler
 
         bool useThis = !original.IsStatic && originalParameters.Length + 1 == parameters.Length;
         bool matches = true;
-        if (originalParameters.Length == parameters.Length || 
+        if (originalParameters.Length == parameters.Length ||
             originalParameters.Length + 1 == parameters.Length || //Instance methods accessing 'this'
             parameters.Length == 0)
         {
@@ -53,8 +50,8 @@ internal abstract class BaseMethodHandler : IMethodHandler
             if (useThis)
             {
                 //Check for 'this' parameter match
-                //TODO: Allow for base type
-                matches = parameters[0] == original.DeclaringType;
+                matches = parameters[0] == original.DeclaringType ||
+                    parameters[0].IsAssignableFrom(original.DeclaringType);
                 parameterOffset = 1;
             }
 
@@ -74,7 +71,7 @@ internal abstract class BaseMethodHandler : IMethodHandler
         if (!matches)
         {
             Type? thisType = useThis ? original.DeclaringType : null;
-            throw new NasalException($"{GetPlugTypeDisplay()} has callback parameters ({GetTypeDisplay(parameters)}) that do not match original method parameters ({GetParametersDisplay(originalParameters, thisType)})");
+            throw new NasalException($"{GetPlugTypeDisplay()} has parameters ({GetTypeDisplay(parameters)}) that do not match original method parameters ({GetParametersDisplay(originalParameters, thisType)})");
         }
 
         if (original.ReturnType != ReturnType &&
@@ -100,7 +97,7 @@ internal abstract class BaseMethodHandler : IMethodHandler
                 {
                     yield return $"{thisType.FullName} this";
                 }
-                foreach(var type in types)
+                foreach (var type in types)
                 {
                     yield return type.FullName;
                 }
