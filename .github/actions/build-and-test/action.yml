@@ -13,6 +13,7 @@ inputs:
   nuget_token:
     description: The token to setup with the NUGET_AUTH_TOKEN.
     required: false
+
 runs:
   using: "composite"
   steps:
@@ -32,11 +33,11 @@ runs:
     
     - name: Build
       shell: pwsh
-      run: dotnet build -p:Version=${{ inputs.build_version }} -p:ContinuousIntegrationBuild=True --configuration ${{ inputs.configuration }} --no-restore -p:TreatWarningsAsErrors=True
+      run: dotnet build -p:Version=${{ inputs.build_version }} -p:ContinuousIntegrationBuild=True --configuration ${{ inputs.configuration }} --no-restore -p:TreatWarningsAsErrors=True --verbosity normal
     
     - name: Test
       shell: pwsh
-      run: dotnet test NosePlug.Tests/NosePlug.Tests.csproj -p:BuildInParallel=false --no-build --configuration ${{ inputs.configuration }} --collect:"XPlat Code Coverage" -v d --blame-hang --blame-hang-timeout 30s --blame-hang-dump-type Full
+      run: dotnet test NosePlug.Tests/NosePlug.Tests.csproj -p:BuildInParallel=false --no-build --configuration ${{ inputs.configuration }} --collect:"XPlat Code Coverage" -v d --blame-hang --blame-hang-timeout 30s --blame-hang-dump-type Full --verbosity normal
 
     - name: TestResults
       if: always()
