@@ -10,7 +10,6 @@ internal class HasInstanceMethods
     [MethodImpl(MethodImplOptions.NoInlining)]
     public void VoidMethodWithParameter(string myParameter) { }
 
-    //[MethodImpl(MethodImplOptions.NoInlining)]
     public void HasParameter(TestService service) { }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
