@@ -99,7 +99,7 @@ internal abstract class BaseMethodHandler : IMethodHandler
                 }
                 foreach (var type in types)
                 {
-                    yield return type.FullName;
+                    yield return type.FullName ?? "";
                 }
             }
         }

@@ -159,7 +159,7 @@ public class NasalInstanceMethodTests
         Assert.NotNull(parameterType);
 
         IInstanceMethodPlug<string> getIntValuePlug =
-            Nasal.InstanceMethod<HasInstanceMethods, string>("HasHiddenType", parameterType)
+            Nasal.InstanceMethod<HasInstanceMethods, string>("HasHiddenType", parameterType!)
             .Returns((HasInstanceMethods @this, object hiddenType) =>
             {
                 passedValue = hiddenType;

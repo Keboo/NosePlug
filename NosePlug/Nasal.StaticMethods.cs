@@ -23,7 +23,6 @@ partial class Nasal
         return new MethodPlug(method);
     }
 
-
     /// <summary>
     /// Create a method plug for a method with a return value
     /// </summary>
@@ -41,11 +40,10 @@ partial class Nasal
         return new MethodPlug<TReturn>(methodInfo);
     }
 
-
     /// <summary>
     /// Create a method plug for a void returning method
     /// </summary>
-    /// <param name="methodExpression">An expression referencing a method. The paramters passed in the expression, are ignored.</param>
+    /// <param name="methodExpression">An expression referencing a method. The parameter values passed in the expression, are ignored.</param>
     /// <returns>A new method plug.</returns>
     /// <exception cref="ArgumentNullException">When the passed in <see cref="Expression&lt;Action&gt;"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">When the passed in <see cref="Expression&lt;Action&gt;"/> is not a <see cref="MethodCallExpression"/>.</exception>
