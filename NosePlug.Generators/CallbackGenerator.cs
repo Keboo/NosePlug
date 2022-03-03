@@ -1,6 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace NodePlug.Generators
@@ -280,7 +278,7 @@ internal sealed class InstanceMethodHandler{instanceGenericTypesWithReturn} : Ba
                     voidInstanceInterfaceBuilder.AppendLine("    /// <summary>");
                     voidInstanceInterfaceBuilder.AppendLine("    /// Add a callback that will be invoked instead of the original instance method.");
                     voidInstanceInterfaceBuilder.AppendLine("    /// </summary>");
-                    voidInstanceInterfaceBuilder.AppendLine($"    /// <typeparam name=\"TInstance\"></typeparam>");
+                    voidInstanceInterfaceBuilder.AppendLine($"    /// <typeparam name=\"TInstance\">The declaring type of the method</typeparam>");
                     for (int i = 0; i < numParameters; i++)
                     {
                         voidInstanceInterfaceBuilder.AppendLine($"    /// <typeparam name=\"T{i + 1}\"></typeparam>");
@@ -336,6 +334,8 @@ internal sealed class InstanceMethodHandler{instanceGenericTypesWithReturn} : Ba
                     instanceInterfaceBuilder.AppendLine("    /// <summary>");
                     instanceInterfaceBuilder.AppendLine("    /// Add a callback that will be invoked instead of the original instance method and returns a value.");
                     instanceInterfaceBuilder.AppendLine("    /// </summary>");
+                    instanceInterfaceBuilder.AppendLine($"    /// <typeparam name=\"TInstance\">The declaring type of the method</typeparam>");
+
                     for (int i = 0; i < numParameters; i++)
                     {
                         instanceInterfaceBuilder.AppendLine($"    /// <typeparam name=\"T{i + 1}\"></typeparam>");
