@@ -1,11 +1,12 @@
-﻿using NosePlug.Tests.TestClasses;
-using System.Reflection;
+﻿using System.Reflection;
+using NosePlug.Tests.TestClasses;
 using Xunit;
 
 namespace NosePlug.Tests;
 
 public class NasalInstanceMethodTests
 {
+    /*
     [Fact]
     public async Task InstanceMethod_WithVoidMethod_CanAccessThis()
     {
@@ -90,7 +91,7 @@ public class NasalInstanceMethodTests
 
         Assert.Equal(1, invocationCount);
     }
-
+    */
     [Fact]
     public async Task InstanceMethod_WithReturnValue_CanBePlugged()
     {

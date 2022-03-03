@@ -1,7 +1,5 @@
 ﻿using Moq.AutoMock;
 using NosePlug.Tests.TestClasses;
-using System;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace NosePlug.Tests
