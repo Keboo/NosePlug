@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using NosePlug.Tests.TestClasses;
+﻿using NosePlug.Tests.TestClasses;
 using Xunit;
 
 namespace NosePlug.Tests;
@@ -50,7 +49,7 @@ public class NasalInstanceMethodTests
         Assert.True(wasCalled);
         Assert.Equal("foo", parameter);
     }
-    */
+    
     [Fact]
     public async Task InstanceMethod_WithIncorrectThisParameter_ThrowsExpectedException()
     {
@@ -74,6 +73,7 @@ public class NasalInstanceMethodTests
         var ex = await Assert.ThrowsAsync<NasalException>(() => Nasal.ApplyAsync(methodPlug));
         Assert.Equal("Plug for NosePlug.Tests.TestClasses.HasInstanceMethods.VoidMethodWithParameter has parameters (System.String, System.String) that do not match original method parameters (NosePlug.Tests.TestClasses.HasInstanceMethods this, System.String)", ex.Message);
     }
+    */
 
     [Fact]
     public async Task InstanceMethod_WithPrivateMethod_CanBePlugged()
@@ -92,6 +92,7 @@ public class NasalInstanceMethodTests
         Assert.Equal(1, invocationCount);
     }
 
+    /*
     [Fact]
     public async Task InstanceMethod_WithReturnValue_CanBePlugged()
     {
@@ -194,4 +195,5 @@ public class NasalInstanceMethodTests
 
         Assert.True(wasCalled);
     }
+    */
 }
