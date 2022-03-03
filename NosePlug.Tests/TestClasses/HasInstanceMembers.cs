@@ -4,19 +4,14 @@ namespace NosePlug.Tests.TestClasses;
 
 internal class HasInstanceMethods
 {
-    public void VoidMethod()
-    {
-    }
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public void VoidMethod() { }
 
-    public void VoidMethodWithParameter(string myParameter)
-    {
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public void VoidMethodWithParameter(string myParameter) { }
 
-    }
-
-    public void HasParameter(TestService service)
-    {
-
-    }
+    //[MethodImpl(MethodImplOptions.NoInlining)]
+    public void HasParameter(TestService service) { }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     private string HasHiddenType(HiddenType hiddenType)
@@ -25,6 +20,7 @@ internal class HasInstanceMethods
     public string InvokeHasHiddenType()
         => HasHiddenType(new HiddenType());
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public int GetIntegerValue() => 42;
 
     [MethodImpl(MethodImplOptions.NoInlining)]
