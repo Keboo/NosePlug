@@ -1,7 +1,4 @@
-﻿using NosePlug.Tests.TestClasses;
-using Xunit;
-
-namespace NosePlug.Tests;
+﻿namespace NosePlug.Tests;
 
 public class NasalInstanceMethodTests
 {
@@ -75,22 +72,22 @@ public class NasalInstanceMethodTests
     }
     */
 
-    [Fact]
-    public async Task InstanceMethod_WithPrivateMethod_CanBePlugged()
-    {
-        int invocationCount = 0;
+    //[Fact]
+    //public async Task InstanceMethod_WithPrivateMethod_CanBePlugged()
+    //{
+    //    int invocationCount = 0;
 
-        HasInstanceMethods sut = new();
+    //    HasInstanceMethods sut = new();
 
-        IInstanceMethodPlug noParamsPlug = Nasal.InstanceMethod<HasInstanceMethods>("NoParameters")
-            .Callback((HasInstanceMethods _) => invocationCount++);
+    //    IInstanceMethodPlug noParamsPlug = Nasal.InstanceMethod<HasInstanceMethods>("NoParameters")
+    //        .Callback((HasInstanceMethods _) => invocationCount++);
 
-        using IDisposable _ = await Nasal.ApplyAsync(noParamsPlug);
+    //    using IDisposable _ = await Nasal.ApplyAsync(noParamsPlug);
 
-        sut.InvokeNoParameters();
+    //    sut.InvokeNoParameters();
 
-        Assert.Equal(1, invocationCount);
-    }
+    //    Assert.Equal(1, invocationCount);
+    //}
 
     /*
     [Fact]
