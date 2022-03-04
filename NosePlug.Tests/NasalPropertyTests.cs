@@ -65,6 +65,8 @@ public class NasalPropertyTests
         Assert.NotEqual(testGuid, HasPublicProperty.Foo);
     }
 
+#if !NETFRAMEWORK
+    //https://github.com/pardeike/Harmony/issues/72
     [Fact]
     public async Task CanReplaceAndUndoDateTimeNow()
     {
@@ -81,6 +83,7 @@ public class NasalPropertyTests
         Assert.NotEqual(new DateTime(1987, 4, 20), DateTime.Now);
         Assert.Equal(now.Date, DateTime.Now.Date);
     }
+#endif
 
     [Fact]
     public async Task CanReplacePrivateSetter()
