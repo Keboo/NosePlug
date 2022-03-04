@@ -144,6 +144,8 @@ jobs:
     #Needed so that the release step can view git history
     - name: Checkout
       uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
 
     - uses: actions/download-artifact@v3
       with:
