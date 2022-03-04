@@ -1,22 +1,20 @@
-﻿using System;
-using Xunit;
+﻿using Xunit;
 
-namespace NosePlug.Tests
+namespace NosePlug.Tests;
+
+public class PlugExtensionsTests
 {
-    public class PlugExtensionsTests
+    [Fact]
+    public void Returns_WithNullMethodPlug_ThrowsException()
     {
-        [Fact]
-        public void Returns_WithNullMethodPlug_ThrowsException()
-        {
-            var ex = Assert.Throws<ArgumentNullException>(() => PlugExtensions.Returns((IMethodPlug<int>)null!, 0));
-            Assert.Equal("plug", ex.ParamName);
-        }
+        var ex = Assert.Throws<ArgumentNullException>(() => PlugExtensions.Returns((IMethodPlug<int>)null!, 0));
+        Assert.Equal("plug", ex.ParamName);
+    }
 
-        [Fact]
-        public void Returns_WithNullPropertyPlug_ThrowsException()
-        {
-            var ex = Assert.Throws<ArgumentNullException>(() => PlugExtensions.Returns((IPropertyPlug<int>)null!, 0));
-            Assert.Equal("plug", ex.ParamName);
-        }
+    [Fact]
+    public void Returns_WithNullPropertyPlug_ThrowsException()
+    {
+        var ex = Assert.Throws<ArgumentNullException>(() => PlugExtensions.Returns((IPropertyPlug<int>)null!, 0));
+        Assert.Equal("plug", ex.ParamName);
     }
 }
