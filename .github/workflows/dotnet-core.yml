@@ -146,10 +146,22 @@ jobs:
         name: NuGet
 
     - name: Install NuGetPackageWrench
+      shell: pwsh
       run: dotnet tool install --global nupkgwrench
 
     - name: Install NuGetPackageWrench
       run: nupkgwrench release
 
-    - name: Push NuGet
-      run: dotnet nuget push ${{ github.workspace }}/*nupkg --source https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+    - name: Update Releases File
+      shell: pwsh
+      run: |
+        $releaseFile = "${{ github.workspace }}/.github/RELEASE.yaml"
+        (Get-Content $releaseFile) -replace "tag: v[\d\.]+","tag: v${{ env.baseVersion }}" | Out-File $releaseFile 
+
+    - uses: pipe-cd/actions-gh-release@v2.2.0
+      with:
+        release_file: '**/RELEASE.yaml'
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    #- name: Push NuGet
+    #  run: dotnet nuget push ${{ github.workspace }}/*nupkg --source https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }} --skip-duplicate
