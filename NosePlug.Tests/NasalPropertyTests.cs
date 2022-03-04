@@ -65,22 +65,22 @@ public class NasalPropertyTests
         Assert.NotEqual(testGuid, HasPublicProperty.Foo);
     }
 
-    [Fact]
-    public async Task CanReplaceAndUndoDateTimeNow()
-    {
-        DateTime now = DateTime.Now;
+    //[Fact]
+    //public async Task CanReplaceAndUndoDateTimeNow()
+    //{
+    //    DateTime now = DateTime.Now;
 
-        var nowPlug = Nasal.Property(() => DateTime.Now)
-              .Returns(() => new DateTime(1987, 4, 20));
+    //    var nowPlug = Nasal.Property(() => DateTime.Now)
+    //          .Returns(() => new DateTime(1987, 4, 20));
 
-        using (await Nasal.ApplyAsync(nowPlug))
-        {
-            Assert.Equal(new DateTime(1987, 4, 20), DateTime.Now);
-        }
+    //    using (await Nasal.ApplyAsync(nowPlug))
+    //    {
+    //        Assert.Equal(new DateTime(1987, 4, 20), DateTime.Now);
+    //    }
 
-        Assert.NotEqual(new DateTime(1987, 4, 20), DateTime.Now);
-        Assert.Equal(now.Date, DateTime.Now.Date);
-    }
+    //    Assert.NotEqual(new DateTime(1987, 4, 20), DateTime.Now);
+    //    Assert.Equal(now.Date, DateTime.Now.Date);
+    //}
 
     [Fact]
     public async Task CanReplacePrivateSetter()
