@@ -30,7 +30,7 @@ runs:
     # Hack fix for https://github.com/NuGet/Home/issues/7503
     - name: Install dotnet tools
       shell: pwsh
-      run: dotnet tool restore
+      run: dotnet nuget list source
 
     - name: Install dependencies
       shell: pwsh
