@@ -81,6 +81,17 @@ jobs:
         build_version: ${{ env.buildVersion }}
         nuget_token: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Pack
+      if: ${{ github.event_name != 'pull_request' }}
+      run: dotnet pack -p:PackageVersion=${{ env.nugetVersion }} --configuration ${{ env.configuration }} --output ${{ github.workspace }}
+
+    - name: Upload Artifacts
+      if: ${{ github.event_name != 'pull_request' }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: NuGet
+        path: ${{ github.workspace }}\*.nupkg
+
   build-windows:
     runs-on: windows-2022
 
@@ -109,17 +120,29 @@ jobs:
         build_version: ${{ env.buildVersion }}
         nuget_token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Pack
-      if: ${{ github.event_name != 'pull_request' }}
-      run: dotnet pack -p:PackageVersion=${{ env.nugetVersion }} --configuration ${{ env.configuration }} --no-build --output ${{ github.workspace }}
 
-    - name: Upload Artifacts
-      if: ${{ github.event_name != 'pull_request' }}
-      uses: actions/upload-artifact@v2
+  ci-deployment:
+    needs: [build-windows, build-linux, build-mac]
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment: CI
+    steps:
+    - uses: actions/download-artifact@v3
       with:
         name: NuGet
-        path: ${{ github.workspace }}\*.nupkg
 
     - name: Push NuGet
-      if: ${{ github.event_name != 'pull_request' }}
+      run: dotnet nuget push ${{ github.workspace }}\*.nupkg --source https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+
+  release-deployment:
+    needs: ci-deployment
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment: Release
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: NuGet
+
+    - name: Push NuGet
       run: dotnet nuget push ${{ github.workspace }}\*.nupkg --source https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }} --skip-duplicate

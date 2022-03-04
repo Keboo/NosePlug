@@ -7,8 +7,12 @@
              Condition="$(TargetFramework) == 'net472' Or $(TargetFramework) == 'net48' "/>
   </ItemGroup>
 
+  <ItemGroup>
+    <Using Remove="System.Net.Http" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(IsPackable)' != 'false' ">
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>

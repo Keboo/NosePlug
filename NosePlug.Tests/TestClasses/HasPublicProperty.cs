@@ -1,14 +1,12 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
-namespace NosePlug.Tests.TestClasses
+namespace NosePlug.Tests.TestClasses;
+
+internal class HasPublicProperty
 {
-    internal class HasPublicProperty
-    {
 #if NET472 || NET48
-        public static Guid Foo { get; [MethodImpl(MethodImplOptions.NoInlining)] set; }
+    public static Guid Foo { get; [MethodImpl(MethodImplOptions.NoInlining)] set; }
 #else
-        public static Guid Foo { get; set; }
+    public static Guid Foo { get; set; }
 #endif
-    }
 }

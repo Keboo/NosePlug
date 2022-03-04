@@ -1,8 +1,5 @@
 ﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
 
 namespace NosePlug.Plugs;
@@ -43,13 +40,27 @@ internal abstract class BaseMethodHandler : IMethodHandler
         var parameters = PrefixInfo.GetParameters().Where(x => x.Name != "__originalMethod" && x.Name != "__result")
             .Select(x => x.ParameterType).ToArray();
 
+        bool useThis = !original.IsStatic && originalParameters.Length + 1 == parameters.Length;
         bool matches = true;
-        if (originalParameters.Length == parameters.Length || parameters.Length == 0)
+        if (originalParameters.Length == parameters.Length ||
+            originalParameters.Length + 1 == parameters.Length || //Instance methods accessing 'this'
+            parameters.Length == 0)
         {
-            for (int i = 0; i < parameters.Length && matches; i++)
+            int parameterOffset = 0;
+            if (useThis)
             {
-                matches = originalParameters[i].ParameterType == parameters[i] ||
-                    parameters[i].IsAssignableFrom(originalParameters[i].ParameterType);
+                //Check for 'this' parameter match
+                matches = parameters[0] == original.DeclaringType ||
+                    parameters[0].IsAssignableFrom(original.DeclaringType);
+                parameterOffset = 1;
+            }
+
+            for (int i = 0; matches && i < parameters.Length - parameterOffset && matches && i < originalParameters.Length; i++)
+            {
+                ParameterInfo originalParameter = originalParameters[i];
+                Type parameterType = parameters[parameterOffset + i];
+                matches = originalParameter.ParameterType == parameterType ||
+                    parameterType.IsAssignableFrom(originalParameter.ParameterType);
             }
         }
         else
@@ -59,22 +70,38 @@ internal abstract class BaseMethodHandler : IMethodHandler
 
         if (!matches)
         {
-            throw new NasalException($"Plug for {original.DeclaringType?.FullName}.{original.Name} has callback parameters ({GetTypeDisplay(parameters)}) that do not match original method parameters ({GetParametersDisplay(originalParameters)})");
+            Type? thisType = useThis ? original.DeclaringType : null;
+            throw new NasalException($"{GetPlugTypeDisplay()} has parameters ({GetTypeDisplay(parameters)}) that do not match original method parameters ({GetParametersDisplay(originalParameters, thisType)})");
         }
 
         if (original.ReturnType != ReturnType &&
             !ReturnType.IsAssignableFrom(original.ReturnType))
         {
-            throw new NasalException($"Plug for {original.DeclaringType?.FullName}.{original.Name} has return type ({ReturnType.FullName}) that do not match original method return type ({original.ReturnType.FullName})");
+            throw new NasalException($"{GetPlugTypeDisplay()} has return type ({ReturnType.FullName}) that do not match original method return type ({original.ReturnType.FullName})");
         }
 
-        static string GetParametersDisplay(ParameterInfo[] parameters)
-            => GetTypeDisplay(parameters.Select(x => x.ParameterType));
+        string GetPlugTypeDisplay()
+            => $"Plug for {original.DeclaringType?.FullName}.{original.Name}";
 
-        static string GetTypeDisplay(IEnumerable<Type> types)
+        static string GetParametersDisplay(ParameterInfo[] parameters, Type? thisType)
+            => GetTypeDisplay(parameters.Select(x => x.ParameterType), thisType);
+
+        static string GetTypeDisplay(IEnumerable<Type> types, Type? thisType = null)
         {
-            var rv = string.Join(", ", types.Select(x => x.FullName));
+            var rv = string.Join(", ", GetParts());
             return rv.Length == 0 ? "<empty>" : rv;
+
+            IEnumerable<string> GetParts()
+            {
+                if (thisType is not null)
+                {
+                    yield return $"{thisType.FullName} this";
+                }
+                foreach (var type in types)
+                {
+                    yield return type.FullName ?? "";
+                }
+            }
         }
     }
 

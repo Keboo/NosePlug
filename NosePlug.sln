@@ -13,12 +13,20 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NosePlug.Generators", "Nose
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AD7C4780-C9E1-4701-87E7-C781F19C9CBD}"
 	ProjectSection(SolutionItems) = preProject
-		.github\actions\build-and-test\action.yml = .github\actions\build-and-test\action.yml
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
-		.github\workflows\dotnet-core.yml = .github\workflows\dotnet-core.yml
 		Shims\HashCode.cs = Shims\HashCode.cs
 		Shims\System.Diagnostics.CodeAnalysis.cs = Shims\System.Diagnostics.CodeAnalysis.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{7082241A-9D8B-4A38-9419-1A18435E6EA9}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\dotnet-core.yml = .github\workflows\dotnet-core.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build-and-test", "build-and-test", "{A26EB5C0-6B24-458A-9492-75FF04D8930E}"
+	ProjectSection(SolutionItems) = preProject
+		.github\actions\build-and-test\action.yml = .github\actions\build-and-test\action.yml
 	EndProjectSection
 EndProject
 Global
@@ -46,6 +54,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7082241A-9D8B-4A38-9419-1A18435E6EA9} = {AD7C4780-C9E1-4701-87E7-C781F19C9CBD}
+		{A26EB5C0-6B24-458A-9492-75FF04D8930E} = {7082241A-9D8B-4A38-9419-1A18435E6EA9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {989202AF-7026-4B52-9DAD-2C3CCA881CB9}

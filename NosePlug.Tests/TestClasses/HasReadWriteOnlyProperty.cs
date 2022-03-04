@@ -1,10 +1,7 @@
-﻿using System;
+﻿namespace NosePlug.Tests.TestClasses;
 
-namespace NosePlug.Tests.TestClasses
+internal class HasReadWriteOnlyProperty
 {
-    internal class HasReadWriteOnlyProperty
-    {
-        public static Guid ReadOnly { get; }
-        public static Guid WriteOnly { set { } }
-    }
+    public static Guid ReadOnly { get; }
+    public static Guid WriteOnly { set { } }
 }

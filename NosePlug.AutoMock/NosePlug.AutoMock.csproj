@@ -6,11 +6,15 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Moq.AutoMock" Version="3.1.0" />
+    <PackageReference Include="Moq.AutoMock" Version="3.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\NosePlug\NosePlug.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
   </ItemGroup>
 
 </Project>

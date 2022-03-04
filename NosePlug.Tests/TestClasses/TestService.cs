@@ -1,7 +1,6 @@
-﻿namespace NosePlug.Tests.TestClasses
-{
-    public class TestService : IService
-    {
+﻿namespace NosePlug.Tests.TestClasses;
 
-    }
+public class TestService : IService
+{
+
 }
