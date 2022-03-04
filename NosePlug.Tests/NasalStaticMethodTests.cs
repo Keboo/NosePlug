@@ -1,3 +1,7 @@
+using System.Linq.Expressions;
+using NosePlug.Tests.TestClasses;
+using Xunit;
+
 namespace NosePlug.Tests;
 
 public class NasalStaticMethodTests
