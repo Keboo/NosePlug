@@ -93,6 +93,21 @@ jobs:
         path: ${{ github.workspace }}/*nupkg
         if-no-files-found: error
 
+    - name: Update Release File
+      if: ${{ github.event_name != 'pull_request' }}
+      shell: pwsh
+      run: |
+        $releaseFile = "${{ github.workspace }}/.github/RELEASE.yaml"
+        (Get-Content $releaseFile) -replace "tag: v[\d\.]+","tag: v${{ env.baseVersion }}" | Out-File $releaseFile
+
+    - name: Upload Artifacts
+      if: ${{ github.event_name != 'pull_request' }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: Release
+        path: ${{ github.workspace }}/.github/RELEASE.yaml
+        if-no-files-found: error
+
   build-windows:
     runs-on: windows-2022
 
@@ -144,19 +159,16 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: NuGet
+    
+    - uses: actions/download-artifact@v3
+      with:
+        name: Release
 
     - name: Install NuGetPackageWrench
       shell: pwsh
-      run: dotnet tool install --global nupkgwrench
-
-    - name: Install NuGetPackageWrench
-      run: nupkgwrench release
-
-    - name: Update Releases File
-      shell: pwsh
-      run: |
-        $releaseFile = "${{ github.workspace }}/.github/RELEASE.yaml"
-        (Get-Content $releaseFile) -replace "tag: v[\d\.]+","tag: v${{ env.baseVersion }}" | Out-File $releaseFile 
+      run: | 
+        dotnet tool install --global nupkgwrench
+        nupkgwrench release
 
     - uses: pipe-cd/actions-gh-release@v2.2.0
       with:
