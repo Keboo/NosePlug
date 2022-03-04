@@ -1,8 +1,12 @@
-﻿namespace NosePlug.Tests;
+﻿using System.Linq.Expressions;
+using NosePlug.Tests.TestClasses;
+using Xunit;
+
+namespace NosePlug.Tests;
 
 public class NasalPropertyTests
 {
-    /*
+
     [Fact]
     public async Task CanReplacePublicPropertyGetter()
     {
@@ -240,5 +244,4 @@ public class NasalPropertyTests
         var ex = Assert.Throws<ArgumentException>(() => Nasal.Property(() => Guid.NewGuid()));
         Assert.Equal("Expresion is not a member expression to a property", ex.Message);
     }
-    */
 }
