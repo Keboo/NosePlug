@@ -2,7 +2,7 @@ namespace NosePlug.Tests;
 
 public class NasalStaticMethodTests
 {
-    /*
+
     [Fact]
     public async Task CanReplaceAndUndoTaskRun()
     {
@@ -494,5 +494,4 @@ public class NasalStaticMethodTests
         TestService actual = HasPublicMethod.HasServiceReturnValue();
         Assert.Equal(expected, actual);
     }
-    */
 }
