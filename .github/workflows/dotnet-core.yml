@@ -18,7 +18,7 @@ defaults:
 
 env:
   configuration: Release
-  baseVersion: 0.0.1
+  baseVersion: 1.0.0
 
 jobs:
   build-mac:
