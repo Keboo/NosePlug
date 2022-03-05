@@ -157,16 +157,28 @@ jobs:
         dotnet tool install --global nupkgwrench
         nupkgwrench release
 
-    - name: Update Release File
-      shell: pwsh
-      run: |
-        $releaseFile = "${{ github.workspace }}/.github/RELEASE.yaml"
-        (Get-Content $releaseFile) -replace "tag: v[\d\.]+","tag: v${{ env.baseVersion }}" | Out-File $releaseFile
 
-    - uses: pipe-cd/actions-gh-release@v2.2.0
+    - name: Release
+      uses: softprops/action-gh-release@v1
       with:
-        release_file: '**/RELEASE.yaml'
+        files: ${{ github.workspace }}/*nupkg
+        generate_release_notes: true
+        name: Release ${{ env.baseVersion }}
+        tag_name: v${{ env.baseVersion }}
+        fail_on_unmatched_files: true
         token: ${{ secrets.GITHUB_TOKEN }}
+      env:
+        GITHUB_REPOSITORY: my_gh_org/my_gh_repo
+    #- name: Update Release File
+    #  shell: pwsh
+    #  run: |
+    #    $releaseFile = "${{ github.workspace }}/.github/RELEASE.yaml"
+    #    (Get-Content $releaseFile) -replace "tag: v[\d\.]+","tag: v${{ env.baseVersion }}" | Out-File $releaseFile
+
+    #- uses: pipe-cd/actions-gh-release@v2.2.0
+    #  with:
+    #    release_file: '**/RELEASE.yaml'
+    #    token: ${{ secrets.GITHUB_TOKEN }}
 
     #- name: Push NuGet
     #  run: dotnet nuget push ${{ github.workspace }}/*nupkg --source https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }} --skip-duplicate
