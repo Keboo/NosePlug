@@ -1,6 +1,6 @@
 # Getting Started
 
-All of the methods start from the `NosePlug.Nasal` class. This class contains the methods needed to intercept static method calls. After setting up the needed interceptions invoke the `ApplyAsync()` method. This method will return a scope that is expected to be disposed when the static methods should no longer be invoked. Internally this method ensures that only a single scope is active and intercepting given static call at a time. Changes made after invoking this method will not take affect.
+All of the methods start from the `NosePlug.Nasal` class. This class contains the methods needed to create method plugs that intercept method calls. After creating the needed plugs invoke the `ApplyAsync()` method passing all plugs to be applied. This method will return a scope that is expected to be disposed when the plugs should no longer be applied. Internally this method ensures that only a single plugs is active and intercepting a given static call at a time. Changes made after invoking this method will not take affect.
 
 ## Methods
 
@@ -18,11 +18,10 @@ public async Task ExampleTest()
     //Arrange
     int invocationCount = 0;
 
-    Nasal mocker = new();
-    mocker.Method(() => HasPublicMethod.NoParameters())
-          .Callback(() => invocationCount++);
+    var plug = Nasal.Method(() => HasPublicMethod.NoParameters())
+                    .Callback(() => invocationCount++);
 
-    using IDisposable _ = await mocker.ApplyAsync();
+    using IDisposable _ = await mocker.ApplyAsync(plug);
 
     //Act
     HasPublicMethod.NoParameters();
@@ -32,7 +31,7 @@ public async Task ExampleTest()
 }
 ```
 
-To specify a method that contains parameters, simply specify any value for each of the parameters. The values for these parameters are ignored, and only used to determine with method overload to replace. The delegate passed to `Callback` can be used to validate the parameters that were passed to the method.
+To create a plug for a method that contains parameters, simply specify any value for each of the parameters. The values for these parameters are ignored, and only used to determine with method overload to replace. The delegate passed to `Callback` can be used to validate the parameters that were passed to the method.
 
 If the method has a return value, a default value based on the return type will be automatically be returned.
 
@@ -50,15 +49,15 @@ public async Task ExampleTest()
     int invocationCount = 0;
     string? passedString = null;
     int passedValue = 0;
-    Nasal mocker = new();
-    mocker.Method(() => HasPublicMethod.Overloaded("", 0))
+
+    var plug = Nasal.Method(() => HasPublicMethod.Overloaded("", 0))
         .Callback((string first, int second) => {
             passedString = first;
             passedValue = second;
             invocationCount++;
         });
 
-    using IDisposable _ = await mocker.ApplyAsync();
+    using IDisposable _ = await mocker.ApplyAsync(plug);
 
     //Act
     HasPublicMethod.Overloaded("Foo", 42);
@@ -82,11 +81,10 @@ public class HasPublicMethod
 public async Task ExampleTest()
 {
     //Arrange
-    Nasal mocker = new();
-    mocker.Method(() => HasPublicMethod.AsyncMethodWithReturn())
-          .Returns(() => Task.FromResult(42));
+    var plug = Nasal.Method(() => HasPublicMethod.AsyncMethodWithReturn())
+                    .Returns(() => Task.FromResult(42));
 
-    using IDisposable _ = await mocker.ApplyAsync();
+    using IDisposable _ = await mocker.ApplyAsync(plug);
 
     //Act
     int value = await HasPublicMethod.AsyncMethodWithReturn();
@@ -98,7 +96,7 @@ public async Task ExampleTest()
 
 ## Properties
 
-To intercept a method simply use the `Property` method on a `Nasal` instance. The `IPropertyPlug<T>` instance that can be used to specify delegates to be invoked instead of the getter and/or setter methods for the property. To intercept the getter use the `Returns` method.  
+To intercept a method simply use the `Property` method on the `Nasal` class. The `IPropertyPlug<T>` instance that can be used to specify delegates to be invoked instead of the getter and/or setter methods for the property. To intercept the getter use the `Returns` method.  
 
 ```C#
 public class HasPublicProperty
@@ -111,11 +109,10 @@ public async Task ExampleTest()
 {
     //Arrange
     Guid testGuid = Guid.NewGuid();
-    Nasal mocker = new();
-    mocker.Property(() => HasPublicProperty.Foo)
-          .Returns(() => testGuid);
+    var plug = Nasal.Property(() => HasPublicProperty.Foo)
+                    .Returns(() => testGuid);
 
-    using IDisposable _ = await mocker.ApplyAsync();
+    using IDisposable _ = await mocker.ApplyAsync(plug);
 
     //Act
     Guid value = HasPublicProperty.Foo;
@@ -140,11 +137,10 @@ public async Task ExampleTest()
     Guid testGuid = Guid.NewGuid();
     Guid passedGuid = Guid.Empty;
 
-    Nasal mocker = new();
-    mocker.Property(() => HasPublicProperty.Foo)
-          .Callback(x => passedGuid = x);
+    var plug = Nasal.Property(() => HasPublicProperty.Foo)
+                    .Callback(x => passedGuid = x);
 
-    using IDisposable _ = await mocker.ApplyAsync();
+    using IDisposable _ = await mocker.ApplyAsync(plug);
 
     //Act
     HasPublicProperty.Foo = testGuid;
@@ -157,7 +153,7 @@ public async Task ExampleTest()
 
 ## Invoke Original
 
-There may be cases where invoking the original method, in addition to the replacement delegate, is desired. For both properties and methods, this can be done using the `CallOriginal` method. Optionally you can specify a boolean indicating if the original method should be invoked. If this method is invoked multiple times, only the last value specified will be used. If the method specifies a return value, the original return value will be used.
+There may be cases where invoking the original method, in addition to the replacement delegate, is desired. For both properties and methods, this can be done using the `CallOriginal` method. Optionally you can specify a boolean indicating if the original method should be invoked. If this method is invoked multiple times, only the last value specified will be used. If the plugged method specifies a return value, the original return value will be used.
 
 ```C#
 public class HasPublicMethod
@@ -175,12 +171,11 @@ public async Task ExampleTest()
 {
     //Arrange
     int invocationCount = 0;
-    Nasal mocker = new();
-    mocker.Method(() => HasPublicMethod.Overloaded(0))
-          .Callback(() => invocationCount++)
-          .CallOriginal();
+    var plug = Nasal.Method(() => HasPublicMethod.Overloaded(0))
+                    .Callback(() => invocationCount++)
+                    .CallOriginal();
 
-    using IDisposable _ = await mocker.ApplyAsync();
+    using IDisposable _ = await mocker.ApplyAsync(plug);
     HasPublicMethod.OverloadedValue = 0;
 
     //Act

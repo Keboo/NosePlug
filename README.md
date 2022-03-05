@@ -7,15 +7,13 @@ See the documentation for the full [getting started guide](docs/Getting-started.
 
 A simple example "mocking" `DateTime.Now`.
 ```c#
-Nasal mocker = new();
-mocker.Property(() => DateTime.Now)
+var nowPlug = Nasal.Property(() => DateTime.Now)
       .Returns(() => new DateTime(1987, 4, 20));
 
-using IDisposable _ = await mocker.ApplyAsync();
-
-DateTime now = DateTime.Now;
-
-Assert.Equal(new DateTime(1987, 4, 20), now);
+using (await Nasal.ApplyAsync(nowPlug))
+{
+      Assert.Equal(new DateTime(1987, 4, 20), DateTime.Now);
+}
 ```
 
 ## Limitations
