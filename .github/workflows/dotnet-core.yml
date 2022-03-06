@@ -124,6 +124,12 @@ jobs:
       shell: pwsh
       run: | 
         dotnet tool install --global nupkgwrench
+
+        New-Item -Type Directory SymbolPackages
+        Move-Item *.snupkg ./SymbolPackages/
+        nupkgwrench release *.snupkg
+        Get-ChildItem *.nupkg | Rename-Item -NewName {[System.IO.Path]::ChangeExtension($_.Name, ".snupkg")}
+        
         nupkgwrench release
 
     - name: Release
