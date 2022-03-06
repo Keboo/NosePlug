@@ -18,7 +18,7 @@ defaults:
 
 env:
   configuration: Release
-  baseVersion: 1.0.2
+  baseVersion: 1.0.3
 
 jobs:
   build-mac:
@@ -91,7 +91,7 @@ jobs:
 
     - name: Pack
       if: ${{ github.event_name != 'pull_request' }}
-      run: dotnet pack -p:PackageVersion=${{ env.nugetVersion }} --configuration ${{ env.configuration }} --output ${{ github.workspace }}/NuGetRelease
+      run: dotnet pack -p:PackageVersion=${{ env.baseVersion }} --configuration ${{ env.configuration }} --output ${{ github.workspace }}/NuGetRelease
 
     - name: Upload Artifacts
       if: ${{ github.event_name != 'pull_request' }}
