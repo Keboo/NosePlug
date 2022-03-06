@@ -18,7 +18,7 @@ defaults:
 
 env:
   configuration: Release
-  baseVersion: 1.0.0
+  baseVersion: 1.0.1
 
 jobs:
   build-mac:
@@ -63,18 +63,6 @@ jobs:
         build_version: ${{ env.buildVersion }}
         nuget_token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Pack
-      if: ${{ github.event_name != 'pull_request' }}
-      run: dotnet pack -p:PackageVersion=${{ env.nugetVersion }} --configuration ${{ env.configuration }} --output ${{ github.workspace }}
-
-    - name: Upload Artifacts
-      if: ${{ github.event_name != 'pull_request' }}
-      uses: actions/upload-artifact@v2
-      with:
-        name: NuGet
-        path: ${{ github.workspace }}/*nupkg
-        if-no-files-found: error
-
   build-windows:
     runs-on: windows-latest
 
@@ -95,6 +83,19 @@ jobs:
         configuration: ${{ env.configuration }}
         build_version: ${{ env.buildVersion }}
         nuget_token: ${{ secrets.GITHUB_TOKEN }}
+    
+    # Must pack on Windows so it contains .NET Framework
+    - name: Pack
+      if: ${{ github.event_name != 'pull_request' }}
+      run: dotnet pack -p:PackageVersion=${{ env.nugetVersion }} --configuration ${{ env.configuration }} --output ${{ github.workspace }}
+
+    - name: Upload Artifacts
+      if: ${{ github.event_name != 'pull_request' }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: NuGet
+        path: ${{ github.workspace }}/*nupkg
+        if-no-files-found: error
 
 
   ci-deployment:
