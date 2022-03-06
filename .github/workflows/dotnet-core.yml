@@ -18,7 +18,7 @@ defaults:
 
 env:
   configuration: Release
-  baseVersion: 1.0.1
+  baseVersion: 1.0.2
 
 jobs:
   build-mac:
@@ -87,16 +87,27 @@ jobs:
     # Must pack on Windows so it contains .NET Framework
     - name: Pack
       if: ${{ github.event_name != 'pull_request' }}
-      run: dotnet pack -p:PackageVersion=${{ env.nugetVersion }} --configuration ${{ env.configuration }} --output ${{ github.workspace }}
+      run: dotnet pack -p:PackageVersion=${{ env.nugetVersion }} --configuration ${{ env.configuration }} --output ${{ github.workspace }}/NuGetPreview
+
+    - name: Pack
+      if: ${{ github.event_name != 'pull_request' }}
+      run: dotnet pack -p:PackageVersion=${{ env.nugetVersion }} --configuration ${{ env.configuration }} --output ${{ github.workspace }}/NuGetRelease
 
     - name: Upload Artifacts
       if: ${{ github.event_name != 'pull_request' }}
       uses: actions/upload-artifact@v2
       with:
-        name: NuGet
-        path: ${{ github.workspace }}/*nupkg
+        name: NuGetPreview
+        path: ${{ github.workspace }}/NuGetPreview/*nupkg
         if-no-files-found: error
 
+    - name: Upload Artifacts
+      if: ${{ github.event_name != 'pull_request' }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: NuGetRelease
+        path: ${{ github.workspace }}/NuGetRelease/*nupkg
+        if-no-files-found: error
 
   ci-deployment:
     needs: [build-windows, build-linux, build-mac]
@@ -106,7 +117,7 @@ jobs:
     steps:
     - uses: actions/download-artifact@v3
       with:
-        name: NuGet
+        name: NuGetPreview
 
     - name: Push NuGet
       run: dotnet nuget push ${{ github.workspace }}/*nupkg --source https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }} --skip-duplicate
@@ -119,19 +130,7 @@ jobs:
     steps:
     - uses: actions/download-artifact@v3
       with:
-        name: NuGet
-
-    - name: Install NuGetPackageWrench
-      shell: pwsh
-      run: | 
-        dotnet tool install --global nupkgwrench
-
-        New-Item -Type Directory SymbolPackages
-        Move-Item *.snupkg ./SymbolPackages/
-        nupkgwrench release *.snupkg
-        Get-ChildItem *.nupkg | Rename-Item -NewName {[System.IO.Path]::ChangeExtension($_.Name, ".snupkg")}
-        
-        nupkgwrench release
+        name: NuGetRelease
 
     - name: Release
       uses: softprops/action-gh-release@v1
