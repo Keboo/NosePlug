@@ -21,7 +21,7 @@ public async Task ExampleTest()
     var plug = Nasal.Method(() => HasPublicMethod.NoParameters())
                     .Callback(() => invocationCount++);
 
-    using IDisposable _ = await mocker.ApplyAsync(plug);
+    using IDisposable _ = await Nasal.ApplyAsync(plug);
 
     //Act
     HasPublicMethod.NoParameters();
@@ -57,7 +57,7 @@ public async Task ExampleTest()
             invocationCount++;
         });
 
-    using IDisposable _ = await mocker.ApplyAsync(plug);
+    using IDisposable _ = await Nasal.ApplyAsync(plug);
 
     //Act
     HasPublicMethod.Overloaded("Foo", 42);
@@ -84,7 +84,7 @@ public async Task ExampleTest()
     var plug = Nasal.Method(() => HasPublicMethod.AsyncMethodWithReturn())
                     .Returns(() => Task.FromResult(42));
 
-    using IDisposable _ = await mocker.ApplyAsync(plug);
+    using IDisposable _ = await Nasal.ApplyAsync(plug);
 
     //Act
     int value = await HasPublicMethod.AsyncMethodWithReturn();
@@ -112,7 +112,7 @@ public async Task ExampleTest()
     var plug = Nasal.Property(() => HasPublicProperty.Foo)
                     .Returns(() => testGuid);
 
-    using IDisposable _ = await mocker.ApplyAsync(plug);
+    using IDisposable _ = await Nasal.ApplyAsync(plug);
 
     //Act
     Guid value = HasPublicProperty.Foo;
@@ -140,7 +140,7 @@ public async Task ExampleTest()
     var plug = Nasal.Property(() => HasPublicProperty.Foo)
                     .Callback(x => passedGuid = x);
 
-    using IDisposable _ = await mocker.ApplyAsync(plug);
+    using IDisposable _ = await Nasal.ApplyAsync(plug);
 
     //Act
     HasPublicProperty.Foo = testGuid;
@@ -175,7 +175,7 @@ public async Task ExampleTest()
                     .Callback(() => invocationCount++)
                     .CallOriginal();
 
-    using IDisposable _ = await mocker.ApplyAsync(plug);
+    using IDisposable _ = await Nasal.ApplyAsync(plug);
     HasPublicMethod.OverloadedValue = 0;
 
     //Act
