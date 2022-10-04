@@ -109,6 +109,17 @@ jobs:
         path: ${{ github.workspace }}/NuGetRelease/*nupkg
         if-no-files-found: error
 
+  automerge:
+    needs: [build-windows, build-linux, build-mac]
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+      contents: write
+
+    steps:
+      - uses: fastify/github-action-merge-dependabot@v3.0.0        
+
   ci-deployment:
     needs: [build-windows, build-linux, build-mac]
     if: github.event_name != 'pull_request'
