@@ -42,7 +42,7 @@ runs:
     
     - name: Test
       shell: pwsh
-      run: dotnet test NosePlug.Tests/NosePlug.Tests.csproj -p:BuildInParallel=false --no-build --configuration ${{ inputs.configuration }} --collect:"XPlat Code Coverage" -v d --blame-hang --blame-hang-timeout 30s --blame-hang-dump-type Full --verbosity normal
+      run: dotnet test NosePlug.Tests/NosePlug.Tests.csproj -p:BuildInParallel=false --no-build --configuration ${{ inputs.configuration }} --collect:"XPlat Code Coverage" --blame-hang --blame-hang-timeout 30s --blame-hang-dump-type Full --verbosity normal
 
     - name: TestResults
       if: always()
