@@ -14,7 +14,7 @@ internal class InterceptorKey : IEquatable<InterceptorKey?>
     private SemaphoreSlim Semaphore { get; } = new(1, 1);
 
     private string Name { get; }
-    private Type? DelcaringType { get; }
+    private Type? DeclaringType { get; }
     private IReadOnlyList<Type> ParameterTypes { get; }
     // Not possible in C# but IL allows methods to differ by return type
     private Type? ReturnType { get; }
@@ -26,7 +26,7 @@ internal class InterceptorKey : IEquatable<InterceptorKey?>
         Type? returnType)
     {
         Name = name;
-        DelcaringType = declaringType;
+        DeclaringType = declaringType;
         ParameterTypes = paramtersTypes;
         ReturnType = returnType;
     }
@@ -76,7 +76,7 @@ internal class InterceptorKey : IEquatable<InterceptorKey?>
     {
         return other != null &&
                Name == other.Name &&
-               EqualityComparer<Type?>.Default.Equals(DelcaringType, other.DelcaringType) &&
+               EqualityComparer<Type?>.Default.Equals(DeclaringType, other.DeclaringType) &&
                EqualityComparer<Type?>.Default.Equals(ReturnType, other.ReturnType) &&
                ParameterTypes.SequenceEqual(other.ParameterTypes);
     }
@@ -84,7 +84,7 @@ internal class InterceptorKey : IEquatable<InterceptorKey?>
     public override int GetHashCode()
     {
         int hashCode = ParameterTypes.Aggregate(42, (cur, x) => HashCode.Combine(cur, x));
-        return HashCode.Combine(hashCode, Name, DelcaringType, ReturnType);
+        return HashCode.Combine(hashCode, Name, DeclaringType, ReturnType);
     }
 
     internal async Task LockAsync()
