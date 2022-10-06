@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -19,7 +19,7 @@ internal class InterceptorKey : IEquatable<InterceptorKey?>
     // Not possible in C# but IL allows methods to differ by return type
     private Type? ReturnType { get; }
 
-    private InterceptorKey(
+    private InterceptorKey( 
         string name,
         Type? declaringType,
         IReadOnlyList<Type> paramtersTypes,
