@@ -118,7 +118,7 @@ jobs:
       contents: write
 
     steps:
-      - uses: fastify/github-action-merge-dependabot@v3.5.3      
+      - uses: fastify/github-action-merge-dependabot@v3.5.4      
 
   ci-deployment:
     needs: [build-windows, build-linux, build-mac]
