@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <LangVersion>10.0</LangVersion>
+    <LangVersion>11.0</LangVersion>
     <Nullable>enable</Nullable>
     <AnalysisLevel>preview</AnalysisLevel>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -20,7 +20,7 @@
   <PropertyGroup>
     <Title>NosePlug</Title>
     <Description>A library for testing code that smells</Description>
-    <Copyright>Copyright 2021</Copyright>
+    <Copyright>Copyright © 2021-$([System.DateTime]::Now.ToString("yyyy"))</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/Keboo/NosePlug</RepositoryUrl>
@@ -28,8 +28,10 @@
   </PropertyGroup>
 
   <!-- Source Link Properties -->
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+  <PropertyGroup>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSource>true</EmbedUntrackedSource>
     <IncludeSymbols>true</IncludeSymbols>

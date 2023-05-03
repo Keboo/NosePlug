@@ -1,8 +1,51 @@
-﻿using HarmonyLib;
+﻿
+/* Unmerged change from project 'NosePlug (net48)'
+Before:
+using HarmonyLib;
 using System;
-using System.Collections.Generic;
-using System.Reflection;
+After:
+using System;
+*/
 
+/* Unmerged change from project 'NosePlug (net472)'
+Before:
+using HarmonyLib;
+using System;
+After:
+using System;
+*/
+
+/* Unmerged change from project 'NosePlug (netcoreapp3.1)'
+Before:
+using HarmonyLib;
+using System;
+After:
+using System;
+*/
+
+/* Unmerged change from project 'NosePlug (net48)'
+Before:
+using System.Reflection;
+After:
+using System.Reflection;
+using HarmonyLib;
+*/
+
+/* Unmerged change from project 'NosePlug (net472)'
+Before:
+using System.Reflection;
+After:
+using System.Reflection;
+using HarmonyLib;
+*/
+
+/* Unmerged change from project 'NosePlug (netcoreapp3.1)'
+Before:
+using System.Reflection;
+After:
+using System.Reflection;
+using HarmonyLib;
+*/
 namespace NosePlug.Plugs;
 
 internal class PropertyPlug<TProperty> : Plug, IPropertyPlug<TProperty>

@@ -1,5 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
-using System.Text;
+﻿using System.Text;
+using Microsoft.CodeAnalysis;
 
 namespace NodePlug.Generators
 {
@@ -201,7 +201,6 @@ internal sealed class VoidInstanceMethodHandler{instanceGenericTypes} : BaseMeth
     {{
         if (TryGetHandler(__originalMethod, out VoidInstanceMethodHandler{instanceGenericTypes}? handler))
         {{
-            
             handler.Callback(__instance {(numParameters > 0 ? "," : "")}{string.Join(", ", GetCallbackParameters(numParameters))});
             return handler.ShouldCallOriginal;
         }}
