@@ -74,24 +74,22 @@ public class NasalInstanceMethodTests
         Assert.Equal("Plug for NosePlug.Tests.TestClasses.HasInstanceMethods.VoidMethodWithParameter has parameters (System.String, System.String) that do not match original method parameters (NosePlug.Tests.TestClasses.HasInstanceMethods this, System.String)", ex.Message);
     }
 
+    [Fact]
+    public async Task InstanceMethod_WithPrivateMethod_CanBePlugged()
+    {
+        int invocationCount = 0;
 
-    //[Fact]
-    //public async Task InstanceMethod_WithPrivateMethod_CanBePlugged()
-    //{
-    //    int invocationCount = 0;
+        HasInstanceMethods sut = new();
 
-    //    HasInstanceMethods sut = new();
+        IInstanceMethodPlug noParamsPlug = Nasal.InstanceMethod<HasInstanceMethods>("NoParameters")
+            .Callback((HasInstanceMethods _) => invocationCount++);
 
-    //    IInstanceMethodPlug noParamsPlug = Nasal.InstanceMethod<HasInstanceMethods>("NoParameters")
-    //        .Callback((HasInstanceMethods _) => invocationCount++);
+        using IDisposable _ = await Nasal.ApplyAsync(noParamsPlug);
 
-    //    using IDisposable _ = await Nasal.ApplyAsync(noParamsPlug);
+        sut.InvokeNoParameters();
 
-    //    sut.InvokeNoParameters();
-
-    //    Assert.Equal(1, invocationCount);
-    //}
-
+        Assert.Equal(1, invocationCount);
+    }
 
     [Fact]
     public async Task InstanceMethod_WithReturnValue_CanBePlugged()
@@ -194,5 +192,19 @@ public class NasalInstanceMethodTests
         sut.VoidMethod();
 
         Assert.True(wasCalled);
+    }
+
+    [Fact]
+    public async Task InstanceMethod_WithTimeZoneInfoIsDaylightSavingTime_CanBePlugged()
+    {
+        IInstanceMethodPlug<bool> methodPlug = Nasal
+            .InstanceMethod<TimeZoneInfo, bool>(x => x.IsDaylightSavingTime(DateTime.UtcNow))
+            .Returns<TimeZoneInfo, DateTime>((_, _) => true);
+
+        using var _ = await Nasal.ApplyAsync(methodPlug);
+
+        bool isDst = TimeZoneInfo.Utc.IsDaylightSavingTime(DateTime.UtcNow);
+
+        Assert.True(isDst);
     }
 }

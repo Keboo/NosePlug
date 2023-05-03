@@ -6,8 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="../Shims/HashCode.cs" 
-             Condition="$(TargetFramework) == 'net472' Or $(TargetFramework) == 'net48' " />
+    <Compile Include="../Shims/HashCode.cs" Condition="$(TargetFramework) == 'net472' Or $(TargetFramework) == 'net48' " />
   </ItemGroup>
   
   <ItemGroup>
