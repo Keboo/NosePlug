@@ -1,8 +1,6 @@
-﻿using NosePlug;
-using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading.Tasks;
+using NosePlug;
 
 namespace Moq.AutoMock;
 
@@ -44,7 +42,7 @@ public static partial class AutoMockerExtensions
     /// <param name="mocker">The AutoMocker instance.</param>
     /// <param name="methodExpression">An expression referencing a method with a return value. The paramters passed in the expression, are ignored.</param>
     /// <returns>The method plug.</returns>
-    public static IMethodPlug<TReturn> StaticMethod<TReturn>(this AutoMocker mocker, Expression<Func<TReturn>> methodExpression) 
+    public static IMethodPlug<TReturn> StaticMethod<TReturn>(this AutoMocker mocker, Expression<Func<TReturn>> methodExpression)
         => WithPlug(mocker, Nasal.Method(methodExpression));
 
     /// <summary>

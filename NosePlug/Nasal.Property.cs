@@ -1,7 +1,29 @@
-﻿using NosePlug.Plugs;
+﻿
+/* Unmerged change from project 'NosePlug (net48)'
+Before:
+using NosePlug.Plugs;
 using System;
+After:
+using System;
+*/
+
+/* Unmerged change from project 'NosePlug (net472)'
+Before:
+using NosePlug.Plugs;
+using System;
+After:
+using System;
+*/
+
+/* Unmerged change from project 'NosePlug (netcoreapp3.1)'
+Before:
+using NosePlug.Plugs;
+using System;
+After:
+using System;
+*/
 using System.Linq.Expressions;
-using System.Reflection;
+using NosePlug.Plugs;
 
 namespace NosePlug;
 
