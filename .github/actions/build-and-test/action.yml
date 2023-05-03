@@ -46,7 +46,7 @@ runs:
 
     - name: TestResults
       if: always()
-      uses: actions/upload-artifact@v2.2.3
+      uses: actions/upload-artifact@v3.1.2
       with:
           name: TestResults-${{ inputs.suffix }}
           path: NosePlug.Tests/TestResults
@@ -60,7 +60,7 @@ runs:
         tag: '${{ github.run_number }}_${{ github.run_id }}'
         
     - name: Upload coverage report artifact
-      uses: actions/upload-artifact@v2.2.3
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: CoverageReport-${{ inputs.suffix }}
         path: coveragereport
