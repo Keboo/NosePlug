@@ -53,7 +53,6 @@ public class NasalStaticMethodTests
     public async Task CanReplacePublicMethodWithReturnValue()
     {
         var returnValuePlug = Nasal.Method(() => HasPublicMethod.ReturnValue())
-            .CallOriginal()
             .Returns(4);
 
         using IDisposable _ = await Nasal.ApplyAsync(returnValuePlug);
