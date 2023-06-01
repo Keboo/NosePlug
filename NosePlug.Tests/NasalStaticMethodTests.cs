@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using HarmonyLib;
 using NosePlug.Tests.TestClasses;
 using Xunit;
 
@@ -10,6 +11,8 @@ public class NasalStaticMethodTests
     [Fact]
     public async Task CanReplaceAndUndoTaskRun()
     {
+        Harmony.DEBUG = true;
+
         var taskRunPlug = Nasal.Method(() => Task.Run((Func<int>)null!))
               .Returns(() => Task.FromResult(42));
 

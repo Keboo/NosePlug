@@ -5,8 +5,8 @@
     <Nullable>enable</Nullable>
     <AnalysisLevel>preview</AnalysisLevel>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AllFrameworks Condition="'$(OS)' == 'Windows_NT'">net472;net48;netcoreapp3.1;net6.0</AllFrameworks>
-    <AllFrameworks Condition="'$(OS)' != 'Windows_NT'">netcoreapp3.1;net6.0</AllFrameworks>
+    <AllFrameworks Condition="'$(OS)' == 'Windows_NT'">net472;net48;net6.0;net7.0</AllFrameworks>
+    <AllFrameworks Condition="'$(OS)' != 'Windows_NT'">net6.0;net7.0</AllFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
