@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="../Shims/HashCode.cs" Condition="$(TargetFramework) == 'net472' Or $(TargetFramework) == 'net48' " />
-  </ItemGroup>
-  
-  <ItemGroup>
     <CompilerVisibleProperty Include="SourceGenerator_EnableDebug" />
 
     <PackageReference Include="Lib.Harmony" Version="2.3.0-prerelease.2" />
