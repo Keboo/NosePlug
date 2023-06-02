@@ -6,14 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="../Shims/HashCode.cs" 
-             Condition="$(TargetFramework) == 'net472' Or $(TargetFramework) == 'net48' " />
-  </ItemGroup>
-  
-  <ItemGroup>
     <CompilerVisibleProperty Include="SourceGenerator_EnableDebug" />
 
-    <PackageReference Include="Lib.Harmony" Version="2.2.2" />
+    <PackageReference Include="Lib.Harmony" Version="2.3.0-prerelease.2" />
 
     <ProjectReference Include="../NosePlug.Generators/NosePlug.Generators.csproj">
       <OutputItemType>Analyzer</OutputItemType>
@@ -22,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="HarmonyLib"/>
-    <Using Include="System.Reflection"/>
+    <Using Include="HarmonyLib" />
+    <Using Include="System.Reflection" />
   </ItemGroup>
 </Project>

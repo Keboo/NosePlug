@@ -6,7 +6,6 @@ namespace NosePlug.Tests;
 
 public class NasalStaticMethodTests
 {
-
     [Fact]
     public async Task CanReplaceAndUndoTaskRun()
     {
