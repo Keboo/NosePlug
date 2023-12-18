@@ -95,7 +95,7 @@ jobs:
 
     - name: Upload Artifacts
       if: ${{ github.event_name != 'pull_request' }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: NuGetPreview
         path: ${{ github.workspace }}/NuGetPreview/*nupkg
@@ -103,7 +103,7 @@ jobs:
 
     - name: Upload Artifacts
       if: ${{ github.event_name != 'pull_request' }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: NuGetRelease
         path: ${{ github.workspace }}/NuGetRelease/*nupkg
