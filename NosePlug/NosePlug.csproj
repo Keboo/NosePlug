@@ -13,7 +13,7 @@
   <ItemGroup>
     <CompilerVisibleProperty Include="SourceGenerator_EnableDebug" />
 
-    <PackageReference Include="Lib.Harmony" Version="2.2.2" />
+    <PackageReference Include="Lib.Harmony" Version="2.3.0" />
 
     <ProjectReference Include="../NosePlug.Generators/NosePlug.Generators.csproj">
       <OutputItemType>Analyzer</OutputItemType>
