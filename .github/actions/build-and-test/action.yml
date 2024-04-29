@@ -52,7 +52,7 @@ runs:
           path: NosePlug.Tests/TestResults
 
     - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.2.5
       with:
         reports: '**/coverage.cobertura.xml'
         targetdir: 'coveragereport'
