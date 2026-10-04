@@ -21,6 +21,19 @@ env:
   baseVersion: 1.0.3
 
 jobs:
+  automerge:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+      contents: write
+
+    steps:
+      - uses: fastify/github-action-merge-dependabot@v3.10.1
+        with:
+          use-github-auto-merge: true
+
   build-mac:
     runs-on: macos-latest
 
@@ -133,7 +146,7 @@ jobs:
         name: NuGetRelease
 
     - name: Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: ${{ github.workspace }}/*nupkg
         generate_release_notes: true
