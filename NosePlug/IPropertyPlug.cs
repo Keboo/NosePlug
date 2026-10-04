@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NosePlug;
+﻿namespace NosePlug;
 
 /// <summary>
 /// A plug for a property.

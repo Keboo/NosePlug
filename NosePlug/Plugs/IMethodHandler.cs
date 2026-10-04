@@ -1,8 +1,4 @@
-﻿using HarmonyLib;
-using System;
-using System.Reflection;
-
-namespace NosePlug.Plugs;
+﻿namespace NosePlug.Plugs;
 
 internal interface IMethodHandler : IDisposable
 {

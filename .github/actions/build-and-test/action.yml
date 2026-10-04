@@ -18,11 +18,12 @@ runs:
   using: "composite"
   steps:
     - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: | 
           3.1.x
           6.x
+          7.x
       env:
         NUGET_AUTH_TOKEN: ${{ inputs.nuget_token }}
     
@@ -41,17 +42,17 @@ runs:
     
     - name: Test
       shell: pwsh
-      run: dotnet test NosePlug.Tests/NosePlug.Tests.csproj -p:BuildInParallel=false --no-build --configuration ${{ inputs.configuration }} --collect:"XPlat Code Coverage" --blame-hang --blame-hang-timeout 30s --blame-hang-dump-type Full --verbosity normal
+      run: dotnet test NosePlug.Tests/NosePlug.Tests.csproj -p:BuildInParallel=false --no-build --configuration ${{ inputs.configuration }} --collect:"XPlat Code Coverage" --blame-hang --blame-hang-timeout 30s --blame-hang-dump-type full --verbosity normal
 
     - name: TestResults
       if: always()
-      uses: actions/upload-artifact@v2.2.3
+      uses: actions/upload-artifact@v4.3.3
       with:
           name: TestResults-${{ inputs.suffix }}
           path: NosePlug.Tests/TestResults
 
     - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@4.8.12
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
       with:
         reports: '**/coverage.cobertura.xml'
         targetdir: 'coveragereport'
@@ -59,7 +60,7 @@ runs:
         tag: '${{ github.run_number }}_${{ github.run_id }}'
         
     - name: Upload coverage report artifact
-      uses: actions/upload-artifact@v2.2.3
+      uses: actions/upload-artifact@v4.3.3
       with:
         name: CoverageReport-${{ inputs.suffix }}
         path: coveragereport

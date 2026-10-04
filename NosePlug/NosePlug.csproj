@@ -19,4 +19,9 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="HarmonyLib"/>
+    <Using Include="System.Reflection"/>
+  </ItemGroup>
 </Project>

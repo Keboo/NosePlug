@@ -1,6 +1,42 @@
-﻿using HarmonyLib;
+﻿
+/* Unmerged change from project 'NosePlug (net48)'
+Before:
+using HarmonyLib;
 using System;
 using System.Reflection;
+using System.Text;
+After:
+using System;
+using System.Reflection;
+using System.Text;
+using HarmonyLib;
+*/
+
+/* Unmerged change from project 'NosePlug (net472)'
+Before:
+using HarmonyLib;
+using System;
+using System.Reflection;
+using System.Text;
+After:
+using System;
+using System.Reflection;
+using System.Text;
+using HarmonyLib;
+*/
+
+/* Unmerged change from project 'NosePlug (netcoreapp3.1)'
+Before:
+using HarmonyLib;
+using System;
+using System.Reflection;
+using System.Text;
+After:
+using System;
+using System.Reflection;
+using System.Text;
+using HarmonyLib;
+*/
 using System.Text;
 
 namespace NosePlug;

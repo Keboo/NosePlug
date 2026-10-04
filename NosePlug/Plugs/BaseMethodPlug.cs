@@ -1,9 +1,4 @@
-﻿using HarmonyLib;
-using System;
-using System.Reflection;
-using System.Threading.Tasks;
-
-namespace NosePlug.Plugs;
+﻿namespace NosePlug.Plugs;
 
 internal class BaseMethodPlug : Plug
 {

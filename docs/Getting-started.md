@@ -96,7 +96,7 @@ public async Task ExampleTest()
 
 ## Properties
 
-To intercept a method simply use the `Property` method on the `Nasal` class. The `IPropertyPlug<T>` instance that can be used to specify delegates to be invoked instead of the getter and/or setter methods for the property. To intercept the getter use the `Returns` method.  
+To intercept a property simply use the `Property` method on the `Nasal` class. The `IPropertyPlug<T>` instance that can be used to specify delegates to be invoked instead of the getter and/or setter methods for the property. To intercept the getter use the `Returns` method.  
 
 ```C#
 public class HasPublicProperty

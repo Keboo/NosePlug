@@ -1,8 +1,52 @@
-﻿using NosePlug;
+﻿
+/* Unmerged change from project 'NosePlug.AutoMock (net6.0)'
+Before:
+using NosePlug;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+After:
+using System;
+*/
+
+/* Unmerged change from project 'NosePlug.AutoMock (net48)'
+Before:
+using NosePlug;
+using System;
+After:
+using System;
+*/
+
+/* Unmerged change from project 'NosePlug.AutoMock (netcoreapp3.1)'
+Before:
+using NosePlug;
+using System;
+After:
+using System;
+*/
+using NosePlug;
+/* Unmerged change from project 'NosePlug.AutoMock (net6.0)'
+Before:
 using System.Threading.Tasks;
+After:
+using System.Threading.Tasks;
+using NosePlug;
+*/
+
+/* Unmerged change from project 'NosePlug.AutoMock (net48)'
+Before:
+using System.Threading.Tasks;
+After:
+using System.Threading.Tasks;
+using NosePlug;
+*/
+
+/* Unmerged change from project 'NosePlug.AutoMock (netcoreapp3.1)'
+Before:
+using System.Threading.Tasks;
+After:
+using System.Threading.Tasks;
+using NosePlug;
+*/
+
 
 namespace Moq.AutoMock;
 

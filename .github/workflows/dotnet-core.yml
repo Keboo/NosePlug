@@ -21,12 +21,25 @@ env:
   baseVersion: 1.0.3
 
 jobs:
+  automerge:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+      contents: write
+
+    steps:
+      - uses: fastify/github-action-merge-dependabot@v3.10.1
+        with:
+          use-github-auto-merge: true
+
   build-mac:
     runs-on: macos-latest
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     
     - name: Set Version
       run: |
@@ -47,7 +60,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     
     - name: Set Version
       run: |
@@ -68,7 +81,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     
     - name: Set Version
       run: |
@@ -95,7 +108,7 @@ jobs:
 
     - name: Upload Artifacts
       if: ${{ github.event_name != 'pull_request' }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: NuGetPreview
         path: ${{ github.workspace }}/NuGetPreview/*nupkg
@@ -103,22 +116,11 @@ jobs:
 
     - name: Upload Artifacts
       if: ${{ github.event_name != 'pull_request' }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: NuGetRelease
         path: ${{ github.workspace }}/NuGetRelease/*nupkg
         if-no-files-found: error
-
-  automerge:
-    needs: [build-windows, build-linux, build-mac]
-    runs-on: ubuntu-latest
-
-    permissions:
-      pull-requests: write
-      contents: write
-
-    steps:
-      - uses: fastify/github-action-merge-dependabot@v3.4.0      
 
   ci-deployment:
     needs: [build-windows, build-linux, build-mac]
@@ -126,7 +128,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: CI
     steps:
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: NuGetPreview
 
@@ -139,12 +141,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: Release
     steps:
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: NuGetRelease
 
     - name: Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: ${{ github.workspace }}/*nupkg
         generate_release_notes: true

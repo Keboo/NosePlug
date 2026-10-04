@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace NosePlug.Plugs;
+﻿namespace NosePlug.Plugs;
 
 internal partial class MethodPlug : BaseMethodPlug, IMethodPlug
 {

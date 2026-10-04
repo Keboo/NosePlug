@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace NosePlug.Plugs;
+﻿namespace NosePlug.Plugs;
 
 internal interface IPlug : NosePlug.IPlug, IDisposable
 {

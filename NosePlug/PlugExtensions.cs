@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NosePlug;
+﻿namespace NosePlug;
 
 /// <summary>
 /// Contains extension methods for returning vlaue rather than needing a delegate.
