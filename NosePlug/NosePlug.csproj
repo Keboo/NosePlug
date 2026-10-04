@@ -13,7 +13,8 @@
   <ItemGroup>
     <CompilerVisibleProperty Include="SourceGenerator_EnableDebug" />
 
-    <PackageReference Include="Lib.Harmony" Version="2.2.2" />
+    <PackageReference Include="Lib.Harmony" Version="2.2.2" Condition="'$(TargetFramework)' == 'net472' Or '$(TargetFramework)' == 'net48'" />
+    <PackageReference Include="Lib.Harmony" Version="2.4.2" Condition="'$(TargetFramework)' != 'net472' And '$(TargetFramework)' != 'net48'" />
 
     <ProjectReference Include="../NosePlug.Generators/NosePlug.Generators.csproj">
       <OutputItemType>Analyzer</OutputItemType>
