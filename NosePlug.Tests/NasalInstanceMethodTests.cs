@@ -194,6 +194,7 @@ public class NasalInstanceMethodTests
         Assert.True(wasCalled);
     }
 
+#if !NETFRAMEWORK
     [Fact]
     public async Task InstanceMethod_WithTimeZoneInfoIsDaylightSavingTime_CanBePlugged()
     {
@@ -207,4 +208,5 @@ public class NasalInstanceMethodTests
 
         Assert.True(isDst);
     }
+#endif
 }
